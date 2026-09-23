@@ -32,6 +32,16 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local curator media derivatives and approval queue
+/tools/curator/cache/
+/tools/curator/output/
+/tools/curator/manifest.json
+/tools/curator/manifest.json.tmp
+
+# generated Prisma client
+/src/generated/prisma/
 
 # vercel
 .vercel

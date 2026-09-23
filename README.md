@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frieren Games
 
-## Getting Started
+`frieren.oreotm.xyz` is a Frieren-themed minigame hub in development. The first game is FrierenGuessr, where a player identifies a TV episode from a curated still frame.
 
-First, run the development server:
+Product and engineering decisions live in `AGENTS.md` and `docs/`.
+
+## App development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Useful checks:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm test
+npm run lint
+npm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local curator
 
-## Learn More
+Install `ffmpeg`/`ffprobe`, copy `.env.example` to `.env.local`, set an absolute `CURATOR_MEDIA_ROOT`, and run:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run curator
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+See `tools/curator/README.md` for the media workflow, timestamp model, generated paths, and local safety boundary.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Development database
 
-## Deploy on Vercel
+Set `DATABASE_URL` in `.env.local` to a development-only Neon PostgreSQL database. Never use the production credential for local migration work.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run db:migrate
+npm run db:seed
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The schema includes curated Guessr content plus Auth.js users, accounts, and sessions.
+
+## Frame pipeline and admin
+
+After approving local frames and configuring the R2 variables from `.env.example`:
+
+```bash
+npm run frames:push
+```
+
+The command validates each WebP, uploads it under an opaque key, upserts its `Frame` record, and marks the local manifest entry as pushed. It is safe to retry.
+
+The frame manager at `/admin/frames` requires an authenticated user with the `ADMIN` role. See the Discord setup below for bootstrapping the first administrator, and `tools/frames/README.md` for the frame pipeline safety model.
+
+## Unlimited FrierenGuessr
+
+Generate a signing secret for anonymous game sessions and add it to `.env.local`:
+
+```bash
+openssl rand -base64 32
+```
+
+```env
+GUESSR_SESSION_SECRET="generated value"
+```
+
+Run `npm run dev`, then open `/guessr`. Anonymous state is kept in a signed HttpOnly cookie; answers and scoring remain server-side.
+
+## Discord authentication
+
+Create an application in the Discord Developer Portal and add this local OAuth redirect:
+
+```text
+http://localhost:3000/api/auth/callback/discord
+```
+
+For production, add the equivalent callback on the production origin. Then configure:
+
+```env
+AUTH_DISCORD_ID="Discord application client ID"
+AUTH_DISCORD_SECRET="Discord application client secret"
+AUTH_SECRET="random Auth.js secret"
+ADMIN_DISCORD_ID="your personal Discord user ID"
+```
+
+Generate `AUTH_SECRET` with `npx auth secret`. `ADMIN_DISCORD_ID` is read only on the server; when that Discord account signs in, its database role is promoted to `ADMIN`. Existing manually assigned admins are not demoted if the variable later changes.
+
+New Discord users are sent through `/onboarding` once to review their public username and display name. Discord provider IDs and direct Discord avatar URLs are not exposed by public site UI.

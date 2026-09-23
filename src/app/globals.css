@@ -1,26 +1,113 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f0e7;
+  --surface: #fcfaf5;
+  --foreground: #252923;
+  --muted: #646b61;
+  --border: #d8d4c7;
+  --sage: #657a64;
+  --gold: #b29257;
+  --magic: #a9ced2;
+  --shadow: #293329;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-sage: var(--sage);
+  --color-gold: var(--gold);
+  --color-magic: var(--magic);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: Georgia, "Times New Roman", serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #171a18;
+    --surface: #202521;
+    --foreground: #f1eee5;
+    --muted: #abb3a8;
+    --border: #3a443b;
+    --sage: #9eb39b;
+    --gold: #ceb477;
+    --magic: #8bbbc2;
+    --shadow: #080b09;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.magic-glow {
+  position: absolute;
+  inset: 10% 8% auto auto;
+  width: min(36rem, 70vw);
+  aspect-ratio: 1;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--magic) 42%, transparent),
+    transparent 68%
+  );
+  filter: blur(24px);
+}
+
+.admin-input {
+  min-height: 2.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  background: var(--background);
+  padding: 0.65rem 0.75rem;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.timeline-marker {
+  position: absolute;
+  top: 1.25rem;
+  width: 0.875rem;
+  height: 0.875rem;
+  transform: translateX(-50%);
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.timeline-marker span {
+  position: absolute;
+  top: 1.15rem;
+  left: 50%;
+  width: max-content;
+  transform: translateX(-50%);
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+}
+
+.reveal-enter {
+  animation: reveal-in 280ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-enter {
+    animation: none;
+  }
 }

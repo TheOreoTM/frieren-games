@@ -19,6 +19,7 @@ export type EpisodeOption = {
   id: number;
   season: number;
   episodeNumber: number;
+  title: string;
 };
 
 export type RoundReveal = {
@@ -90,7 +91,7 @@ export async function createUnlimitedSession(): Promise<UnlimitedSession> {
 export async function listEpisodeOptions(): Promise<EpisodeOption[]> {
   return getDb().episode.findMany({
     orderBy: { globalOrder: "asc" },
-    select: { id: true, season: true, episodeNumber: true },
+    select: { id: true, season: true, episodeNumber: true, title: true },
   });
 }
 

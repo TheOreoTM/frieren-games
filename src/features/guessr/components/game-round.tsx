@@ -52,6 +52,7 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
     ((reveal.correct.globalOrder - reveal.sequence.firstGlobalOrder) / range) * 100;
   const lineStart = Math.min(guessPosition, correctPosition);
   const lineWidth = Math.abs(correctPosition - guessPosition);
+  const exactMatch = reveal.distance === 0;
 
   return (
     <div className="mt-6 rounded-2xl border border-border bg-background/70 p-4">
@@ -61,12 +62,20 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
           className="absolute top-[1.625rem] h-1 rounded-full bg-gold"
           style={{ left: `${lineStart}%`, width: `${Math.max(lineWidth, 0.6)}%` }}
         />
-        <div className="timeline-marker bg-muted" style={{ left: `${guessPosition}%` }}>
-          <span>Your guess</span>
-        </div>
-        <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
-          <span>Answer</span>
-        </div>
+        {exactMatch ? (
+          <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
+            <span>Your guess &amp; answer</span>
+          </div>
+        ) : (
+          <>
+            <div className="timeline-marker bg-muted" style={{ left: `${guessPosition}%` }}>
+              <span>Your guess</span>
+            </div>
+            <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
+              <span>Answer</span>
+            </div>
+          </>
+        )}
       </div>
       <div className="mt-2 flex justify-between text-xs text-muted">
         <span>Beginning</span>
@@ -95,6 +104,7 @@ export function GameRound(props: GameRoundProps) {
     props.initialReveal?.guessed.season ?? seasons[0] ?? 1,
   );
   const [episodeId, setEpisodeId] = useState<number | null>(initiallyGuessed?.id ?? null);
+  const [previewEpisodeId, setPreviewEpisodeId] = useState<number | null>(null);
   const initialState: GuessActionState = {
     reveal: props.initialReveal,
     error: null,
@@ -105,11 +115,15 @@ export function GameRound(props: GameRoundProps) {
   );
   const reveal = state.reveal;
   const visibleEpisodes = props.episodes.filter((episode) => episode.season === season);
+  const previewEpisode = props.episodes.find(
+    (episode) => episode.id === (previewEpisodeId ?? episodeId),
+  );
 
   function changeSeason(nextSeason: number) {
     if (reveal) return;
     setSeason(nextSeason);
     setEpisodeId(null);
+    setPreviewEpisodeId(null);
   }
 
   return (
@@ -193,13 +207,23 @@ export function GameRound(props: GameRoundProps) {
                   type="button"
                   disabled={Boolean(reveal)}
                   aria-pressed={episodeId === episode.id}
+                  aria-label={`${episodeLabel(episode)}: ${episode.title}`}
                   onClick={() => setEpisodeId(episode.id)}
+                  onMouseEnter={() => setPreviewEpisodeId(episode.id)}
+                  onMouseLeave={() => setPreviewEpisodeId(null)}
+                  onFocus={() => setPreviewEpisodeId(episode.id)}
+                  onBlur={() => setPreviewEpisodeId(null)}
                   className={`aspect-square min-h-11 rounded-lg border text-sm font-semibold transition ${episodeId === episode.id ? "border-sage bg-sage text-white shadow-sm" : "border-border bg-background hover:border-sage hover:bg-sage/10"}`}
                 >
                   {episode.episodeNumber}
                 </button>
               ))}
             </div>
+            <p className="mt-3 flex min-h-10 items-center justify-center text-center text-sm leading-5 text-muted">
+              {previewEpisode
+                ? `${episodeLabel(previewEpisode)} · ${previewEpisode.title}`
+                : "Hover, focus, or select an episode to see its title."}
+            </p>
             {state.error ? <p className="mt-3 text-sm text-red-700 dark:text-red-300">{state.error}</p> : null}
             <button
               type="submit"

@@ -3,8 +3,10 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { auth } from "@/auth";
 import {
   createUnlimitedSession,
+  getGameResults,
   scoreRound,
 } from "@/features/guessr/server/game";
 import type { GuessActionState } from "@/features/guessr/components/game-round";
@@ -12,6 +14,7 @@ import {
   readUnlimitedSession,
   writeUnlimitedSession,
 } from "@/features/guessr/server/session";
+import { recordUnlimitedCompletion } from "@/features/progression/server/progression";
 
 export type { GuessActionState };
 
@@ -66,6 +69,23 @@ export async function advanceUnlimitedRound() {
   }
 
   session.currentRound += 1;
+  if (session.currentRound === session.frameIds.length) {
+    const account = await auth();
+    if (account?.user?.id) {
+      const results = await getGameResults(session);
+      await recordUnlimitedCompletion(account.user.id, {
+        id: session.gameId,
+        totalScore: results.totalScore,
+        rounds: results.rounds.map((round, index) => ({
+          roundNumber: round.roundNumber,
+          frameId: session.frameIds[index],
+          guessedEpisodeId: session.guesses[index].guessedEpisodeId,
+          distance: round.distance,
+          score: round.score,
+        })),
+      });
+    }
+  }
   await writeUnlimitedSession(session);
   redirect("/guessr/play");
 }

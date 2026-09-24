@@ -27,7 +27,11 @@ export async function SiteHeader() {
                   Admin
                 </Link>
               ) : null}
-              <div className="hidden items-center gap-2 px-2 sm:flex">
+              <Link
+                href={session.user.username ? `/user/${session.user.username}` : "/onboarding"}
+                aria-label="View your profile"
+                className="flex items-center gap-2 rounded-lg px-2 py-1 transition hover:bg-sage/10"
+              >
                 {session.user.image ? (
                   // The same-origin endpoint prevents the Discord account ID in the CDN URL from reaching the browser.
                   // eslint-disable-next-line @next/next/no-img-element
@@ -39,10 +43,11 @@ export async function SiteHeader() {
                     className="size-7 rounded-full bg-border object-cover"
                   />
                 ) : null}
-                <span className="max-w-40 truncate font-medium">
+                <span className="font-medium sm:hidden">Profile</span>
+                <span className="hidden max-w-40 truncate font-medium sm:block">
                   {session.user.displayName ?? session.user.name ?? session.user.username}
                 </span>
-              </div>
+              </Link>
               {!session.user.onboardedAt ? (
                 <Link href="/onboarding" className="rounded-lg bg-gold/20 px-3 py-2 font-semibold text-foreground">
                   Finish setup

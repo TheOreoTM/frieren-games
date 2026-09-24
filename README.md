@@ -74,6 +74,12 @@ Administrators prepare future challenges at `/admin/dailies`. Generate any futur
 
 Frames scheduled for today or a future non-void Daily are automatically held out of Unlimited. A frame is never assigned to more than one Daily, so the available scheduling horizon depends on the approved frame inventory.
 
+## Profiles and progression
+
+Signed-in players build a public game profile at `/user/[username]`. Ranked Daily completions and signed-in Unlimited completions contribute auditable statistics, XP, levels, and a small achievement set. Private Discord/account fields are never included in the public profile query.
+
+XP is stored as an append-only transaction ledger. Daily awards are keyed by ranked attempt, Unlimited awards by signed game ID, and achievement awards by achievement ID, so retries cannot pay twice. Unlimited awards 10 XP per completed game up to 100 XP per UTC day; the exact values and level curve live in `src/features/progression/domain/`.
+
 ## Discord authentication
 
 Create an application in the Discord Developer Portal and add this local OAuth redirect:

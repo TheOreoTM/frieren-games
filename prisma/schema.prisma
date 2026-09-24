@@ -24,6 +24,13 @@ enum DailyChallengeStatus {
   VOID
 }
 
+enum XPSource {
+  DAILY_COMPLETION
+  DAILY_PERFORMANCE
+  UNLIMITED_COMPLETION
+  ACHIEVEMENT
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -38,9 +45,12 @@ model User {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  dailyAttempts DailyAttempt[]
+  accounts          Account[]
+  sessions          Session[]
+  dailyAttempts     DailyAttempt[]
+  unlimitedAttempts UnlimitedAttempt[]
+  xpTransactions    XPTransaction[]
+  achievements      UserAchievement[]
 }
 
 model Account {
@@ -83,14 +93,15 @@ model VerificationToken {
 }
 
 model Episode {
-  id            Int               @id @default(autoincrement())
-  season        Int
-  episodeNumber Int
-  globalOrder   Int               @unique
-  title         String
-  durationMs    Int?
-  frames        Frame[]
-  dailyGuesses  DailyRoundGuess[] @relation("DailyGuessedEpisode")
+  id               Int                   @id @default(autoincrement())
+  season           Int
+  episodeNumber    Int
+  globalOrder      Int                   @unique
+  title            String
+  durationMs       Int?
+  frames           Frame[]
+  dailyGuesses     DailyRoundGuess[]     @relation("DailyGuessedEpisode")
+  unlimitedGuesses UnlimitedRoundGuess[] @relation("UnlimitedGuessedEpisode")
 
   @@unique([season, episodeNumber])
 }
@@ -108,8 +119,9 @@ model Frame {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
-  dailyRounds  DailyChallengeRound[]
-  dailyGuesses DailyRoundGuess[]
+  dailyRounds      DailyChallengeRound[]
+  dailyGuesses     DailyRoundGuess[]
+  unlimitedGuesses UnlimitedRoundGuess[]
 
   @@index([episodeId, enabled])
   @@index([difficulty, enabled])
@@ -178,4 +190,69 @@ model DailyRoundGuess {
   @@unique([attemptId, roundNumber])
   @@index([frameId])
   @@index([guessedEpisodeId])
+}
+
+model UnlimitedAttempt {
+  id          String   @id
+  userId      String
+  totalScore  Int
+  completedAt DateTime @default(now())
+
+  user    User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guesses UnlimitedRoundGuess[]
+
+  @@index([userId, completedAt])
+  @@index([userId, totalScore])
+}
+
+model UnlimitedRoundGuess {
+  id               String @id @default(cuid())
+  attemptId        String
+  roundNumber      Int
+  frameId          String
+  guessedEpisodeId Int
+  distance         Int
+  score            Int
+
+  attempt        UnlimitedAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  frame          Frame            @relation(fields: [frameId], references: [id], onDelete: Restrict)
+  guessedEpisode Episode          @relation("UnlimitedGuessedEpisode", fields: [guessedEpisodeId], references: [id], onDelete: Restrict)
+
+  @@unique([attemptId, roundNumber])
+  @@index([frameId])
+  @@index([guessedEpisodeId])
+}
+
+model XPTransaction {
+  id            String   @id @default(cuid())
+  userId        String
+  source        XPSource
+  sourceKey     String
+  amount        Int
+  earnedDateUtc DateTime @db.Date
+  createdAt     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, source, sourceKey])
+  @@index([userId, createdAt])
+  @@index([userId, source, earnedDateUtc])
+}
+
+model Achievement {
+  id String @id
+
+  users UserAchievement[]
+}
+
+model UserAchievement {
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Restrict)
+
+  @@id([userId, achievementId])
+  @@index([achievementId])
 }

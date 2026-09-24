@@ -70,7 +70,11 @@ export default async function GuessrLeaderboardPage({
                   ) : null}
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{entry.displayName}</p>
-                    {entry.username ? <p className="truncate text-xs text-muted">@{entry.username}</p> : null}
+                    {entry.username ? (
+                      <Link href={`/user/${entry.username}`} className="truncate text-xs text-muted hover:text-sage">
+                        @{entry.username}
+                      </Link>
+                    ) : null}
                   </div>
                 </div>
                 <span className="font-mono text-lg font-semibold">{entry.totalScore.toLocaleString()}</span>

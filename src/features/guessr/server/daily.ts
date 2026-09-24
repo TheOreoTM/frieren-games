@@ -1,6 +1,7 @@
 import "server-only";
 
 import { DailyChallengeStatus } from "@/generated/prisma/client";
+import { ensureDailyProgression } from "@/features/progression/server/progression";
 import { getDb } from "@/lib/db";
 import { publicFrameUrl } from "@/lib/r2";
 
@@ -206,9 +207,13 @@ export async function advanceDailyAttempt(userId: string, attemptId: string) {
     },
   });
   if (updated.count !== 1) throw new Error("Daily attempt changed while advancing.");
+  if (nextRound === STANDARD_ROUND_COUNT && attempt.ranked) {
+    await ensureDailyProgression(userId, attemptId);
+  }
 }
 
 export async function getDailyResults(userId: string, attemptId: string) {
+  await ensureDailyProgression(userId, attemptId);
   const attempt = await getDb().dailyAttempt.findFirst({
     where: { id: attemptId, userId, completedAt: { not: null } },
     include: {
@@ -303,7 +308,7 @@ export async function getUserDailyStreak(
     getDb().dailyChallenge.findMany({
       where: { dateUtc: { lte: today }, status: { not: DailyChallengeStatus.VOID } },
       orderBy: { dateUtc: "asc" },
-      select: { id: true },
+      select: { id: true, dateUtc: true },
     }),
     getDb().dailyAttempt.findMany({
       where: {
@@ -318,6 +323,7 @@ export async function getUserDailyStreak(
   return calculateDailyStreak(
     challenges.map((challenge) => challenge.id),
     new Set(completions.map((attempt) => attempt.challengeId)),
-    currentChallengeId,
+    currentChallengeId ??
+      challenges.find((challenge) => utcDateKey(challenge.dateUtc) === utcDateKey(today))?.id,
   );
 }

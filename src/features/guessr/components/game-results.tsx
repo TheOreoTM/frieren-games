@@ -18,11 +18,13 @@ export function GameResults({
   modeLabel,
   action,
   actionLabel,
+  progressionNote,
 }: {
   results: GameResultsData;
   modeLabel: string;
   action: () => Promise<void>;
   actionLabel: string;
+  progressionNote?: string;
 }) {
   return (
     <div className="mx-auto w-full max-w-4xl">
@@ -34,6 +36,11 @@ export function GameResults({
             {results.totalScore.toLocaleString()} <span className="text-base text-muted">/ 25,000</span>
           </p>
         </div>
+        {progressionNote ? (
+          <p className="mt-4 rounded-xl border border-sage/30 bg-sage/10 px-4 py-3 text-sm font-medium text-sage">
+            {progressionNote}
+          </p>
+        ) : null}
 
         <div className="mt-8 grid gap-3">
           {results.rounds.map((round) => (

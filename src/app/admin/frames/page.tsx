@@ -39,9 +39,12 @@ export default async function FrameAdminPage({
             </p>
             <h1 className="mt-2 font-serif text-4xl tracking-tight">Uploaded frames</h1>
           </div>
-          <p className="max-w-md text-sm leading-6 text-muted">
-            Only authenticated administrators can review or change uploaded frames.
-          </p>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <p className="max-w-md text-sm leading-6 text-muted">
+              Only authenticated administrators can review or change uploaded frames.
+            </p>
+            <a href="/admin/dailies" className="text-sm font-semibold text-sage">Manage Dailies →</a>
+          </div>
         </header>
 
         <form className="my-6 grid gap-3 rounded-2xl border border-border bg-surface p-4 sm:grid-cols-5">
@@ -123,6 +126,11 @@ export default async function FrameAdminPage({
                     <div><dt className="text-xs uppercase text-muted">Timestamp</dt><dd className="mt-1 font-mono">{timestampLabel(frame.timestampMs)}</dd></div>
                     <div><dt className="text-xs uppercase text-muted">Dimensions</dt><dd className="mt-1">{frame.width}×{frame.height}</dd></div>
                   </dl>
+                  {frame.dailyRounds.length > 0 ? (
+                    <p className="mt-3 text-xs text-muted">
+                      Daily use: {frame.dailyRounds.map((round) => `${round.challenge.dateUtc.toISOString().slice(0, 10)} R${round.roundNumber} (${round.challenge.status})`).join(", ")}
+                    </p>
+                  ) : null}
                   <div className="mt-4 flex flex-wrap gap-2">
                     <form action={updateFrameDifficulty} className="flex flex-1 gap-2">
                       <input type="hidden" name="id" value={frame.id} />

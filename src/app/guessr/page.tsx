@@ -22,11 +22,16 @@ export default function GuessrLandingPage() {
           <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
             Study a still from the anime, choose its season and episode, then trace how close your guess landed in the journey.
           </p>
-          <form action={startUnlimitedGame} className="mt-10">
-            <button type="submit" className="rounded-xl bg-sage px-7 py-4 text-base font-semibold text-white shadow-lg shadow-sage/15 transition hover:-translate-y-0.5 hover:brightness-105">
-              Start Unlimited
-            </button>
-          </form>
+          <div className="mt-10 flex flex-wrap gap-3">
+            <form action={startUnlimitedGame}>
+              <button type="submit" className="rounded-xl bg-sage px-7 py-4 text-base font-semibold text-white shadow-lg shadow-sage/15 transition hover:-translate-y-0.5 hover:brightness-105">
+                Start Unlimited
+              </button>
+            </form>
+            <Link href="/guessr/daily" className="rounded-xl border border-border bg-background px-7 py-4 text-base font-semibold transition hover:border-gold">
+              Play Daily
+            </Link>
+          </div>
         </section>
 
         <aside className="grid content-between rounded-[2rem] border border-border bg-foreground p-7 text-background sm:p-10">

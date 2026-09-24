@@ -66,6 +66,14 @@ GUESSR_SESSION_SECRET="generated value"
 
 Run `npm run dev`, then open `/guessr`. Anonymous state is kept in a signed HttpOnly cookie; answers and scoring remain server-side.
 
+## Daily FrierenGuessr
+
+Daily mode at `/guessr/daily` requires Discord sign-in. Every account gets one ranked five-round attempt per UTC date; completed replays are practice runs. The current leaderboard and saved Daily history are available at `/leaderboards/guessr`.
+
+Administrators prepare future challenges at `/admin/dailies`. Generate any future UTC date range, inspect or replace its frames, then approve it. Challenge composition locks when its date begins. If no approved challenge exists at 00:00 UTC, the first Daily request persists one fallback composition and reuses it for everyone. `VOID DAILY` is reserved for a broken challenge and invalidates its ranked results.
+
+Frames scheduled for today or a future non-void Daily are automatically held out of Unlimited. A frame is never assigned to more than one Daily, so the available scheduling horizon depends on the approved frame inventory.
+
 ## Discord authentication
 
 Create an application in the Discord Developer Portal and add this local OAuth redirect:

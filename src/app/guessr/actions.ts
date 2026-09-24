@@ -6,17 +6,14 @@ import { z } from "zod";
 import {
   createUnlimitedSession,
   scoreRound,
-  type RoundReveal,
 } from "@/features/guessr/server/game";
+import type { GuessActionState } from "@/features/guessr/components/game-round";
 import {
   readUnlimitedSession,
   writeUnlimitedSession,
 } from "@/features/guessr/server/session";
 
-export type GuessActionState = {
-  reveal: RoundReveal | null;
-  error: string | null;
-};
+export type { GuessActionState };
 
 export async function startUnlimitedGame() {
   await writeUnlimitedSession(await createUnlimitedSession());

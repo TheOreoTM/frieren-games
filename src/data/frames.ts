@@ -65,6 +65,13 @@ export async function listAdminFrames(filters: AdminFrameFilters) {
           title: true,
         },
       },
+      dailyRounds: {
+        orderBy: { challenge: { dateUtc: "desc" } },
+        select: {
+          roundNumber: true,
+          challenge: { select: { dateUtc: true, status: true } },
+        },
+      },
     },
   });
 

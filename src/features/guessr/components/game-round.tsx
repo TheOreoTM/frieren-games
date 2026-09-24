@@ -2,15 +2,15 @@
 
 import { useActionState, useMemo, useState } from "react";
 
-import {
-  advanceUnlimitedRound,
-  submitUnlimitedGuess,
-  type GuessActionState,
-} from "@/app/guessr/actions";
 import type {
   EpisodeOption,
   RoundReveal,
 } from "@/features/guessr/server/game";
+
+export type GuessActionState = {
+  reveal: RoundReveal | null;
+  error: string | null;
+};
 
 type GameRoundProps = {
   gameId: string;
@@ -22,6 +22,12 @@ type GameRoundProps = {
   episodes: EpisodeOption[];
   runningTotal: number;
   initialReveal: RoundReveal | null;
+  modeLabel: string;
+  submitGuess: (
+    previousState: GuessActionState,
+    formData: FormData,
+  ) => Promise<GuessActionState>;
+  advanceRound: () => Promise<void>;
 };
 
 function episodeLabel(episode: { season: number; episodeNumber: number }) {
@@ -94,7 +100,7 @@ export function GameRound(props: GameRoundProps) {
     error: null,
   };
   const [state, submitAction, pending] = useActionState(
-    submitUnlimitedGuess,
+    props.submitGuess,
     initialState,
   );
   const reveal = state.reveal;
@@ -110,7 +116,7 @@ export function GameRound(props: GameRoundProps) {
     <div className="mx-auto w-full max-w-6xl">
       <header className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">Unlimited</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">{props.modeLabel}</p>
           <h1 className="mt-1 font-serif text-3xl tracking-tight sm:text-4xl">
             Round {props.roundNumber} <span className="text-muted">/ {props.roundCount}</span>
           </h1>
@@ -151,7 +157,7 @@ export function GameRound(props: GameRoundProps) {
               </div>
               <p className="mt-5 border-t border-border pt-4 text-lg font-medium">{reveal.correct.title}</p>
               <RevealTimeline reveal={reveal} />
-              <form action={advanceUnlimitedRound} className="mt-5">
+              <form action={props.advanceRound} className="mt-5">
                 <button className="w-full rounded-xl bg-sage px-5 py-3.5 font-semibold text-white transition hover:brightness-105" type="submit">
                   {props.roundNumber === props.roundCount ? "View results" : "Next round"}
                 </button>

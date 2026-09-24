@@ -17,6 +17,9 @@ export async function SiteHeader() {
           <Link href="/guessr" className="rounded-lg px-3 py-2 font-medium text-muted transition hover:text-foreground">
             Guessr
           </Link>
+          <Link href="/guessr/daily" className="hidden rounded-lg px-3 py-2 font-medium text-muted transition hover:text-foreground md:block">
+            Daily
+          </Link>
           {session?.user ? (
             <>
               {session.user.role === UserRole.ADMIN ? (

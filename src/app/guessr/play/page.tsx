@@ -9,6 +9,11 @@ import {
 } from "@/features/guessr/server/game";
 import { readUnlimitedSession } from "@/features/guessr/server/session";
 import { STANDARD_ROUND_COUNT } from "@/features/guessr/domain/score";
+import {
+  advanceUnlimitedRound,
+  startUnlimitedGame,
+  submitUnlimitedGuess,
+} from "../actions";
 
 export const metadata: Metadata = {
   title: "Play FrierenGuessr | Frieren Games",
@@ -21,7 +26,12 @@ export default async function UnlimitedPlayPage() {
   if (session.currentRound === STANDARD_ROUND_COUNT) {
     return (
       <main className="min-h-screen px-4 py-8 sm:px-8 sm:py-12">
-        <GameResults results={await getGameResults(session)} />
+        <GameResults
+          results={await getGameResults(session)}
+          modeLabel="Unlimited complete"
+          action={startUnlimitedGame}
+          actionLabel="Play again"
+        />
       </main>
     );
   }
@@ -35,6 +45,9 @@ export default async function UnlimitedPlayPage() {
         key={`${round.gameId}-${round.roundNumber}`}
         {...round}
         initialReveal={round.reveal}
+        modeLabel="Unlimited"
+        submitGuess={submitUnlimitedGuess}
+        advanceRound={advanceUnlimitedRound}
       />
     </main>
   );

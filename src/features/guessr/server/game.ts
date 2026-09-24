@@ -7,11 +7,13 @@ import { publicFrameUrl } from "@/lib/r2";
 
 import { episodeDistance } from "../domain/episode-distance";
 import { selectUnlimitedFrames } from "../domain/frame-selection";
+import { isReservedForUnlimited } from "../domain/daily-policy";
 import {
   scoreEpisodeDistance,
   STANDARD_ROUND_COUNT,
 } from "../domain/score";
 import type { UnlimitedSession } from "../domain/session-token";
+import { startOfUtcDate } from "../domain/utc-date";
 
 export type EpisodeOption = {
   id: number;
@@ -52,11 +54,28 @@ async function episodeSequenceBounds() {
 }
 
 export async function createUnlimitedSession(): Promise<UnlimitedSession> {
+  const todayUtc = startOfUtcDate(new Date());
   const eligibleFrames = await getDb().frame.findMany({
     where: { enabled: true },
-    select: { id: true, episodeId: true },
+    select: {
+      id: true,
+      episodeId: true,
+      dailyRounds: {
+        where: { challenge: { dateUtc: { gte: todayUtc } } },
+        select: { challenge: { select: { dateUtc: true, status: true } } },
+      },
+    },
   });
-  const selected = selectUnlimitedFrames(eligibleFrames, STANDARD_ROUND_COUNT);
+  const selected = selectUnlimitedFrames(
+    eligibleFrames.filter(
+      (frame) =>
+        !isReservedForUnlimited(
+          frame.dailyRounds.map((round) => round.challenge),
+          todayUtc,
+        ),
+    ),
+    STANDARD_ROUND_COUNT,
+  );
 
   return {
     version: 1,

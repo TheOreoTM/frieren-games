@@ -7,7 +7,7 @@ import {
   enumerateUtcDates,
   parseUtcDateKey,
   utcDateKey,
-} from "@/features/guessr/domain/utc-date";
+} from "@/lib/utc-date";
 import { listAdminDailies } from "@/features/guessr/server/daily-admin";
 import { requireAdmin } from "@/lib/authorization";
 

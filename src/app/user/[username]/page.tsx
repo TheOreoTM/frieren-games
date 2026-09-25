@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { utcDateKey } from "@/features/guessr/domain/utc-date";
+import { utcDateKey } from "@/lib/utc-date";
 import { getPublicProfile } from "@/features/profiles/server/public-profile";
 
 export const metadata: Metadata = { title: "Player Profile" };

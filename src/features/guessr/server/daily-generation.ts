@@ -10,7 +10,7 @@ import {
   parseUtcDateKey,
   startOfUtcDate,
   utcDateKey,
-} from "../domain/utc-date";
+} from "@/lib/utc-date";
 
 const dailyWithRounds = {
   rounds: { orderBy: { roundNumber: "asc" as const } },

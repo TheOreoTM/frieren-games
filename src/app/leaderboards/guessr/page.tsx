@@ -9,7 +9,7 @@ import {
   parseUtcDateKey,
   startOfUtcDate,
   utcDateKey,
-} from "@/features/guessr/domain/utc-date";
+} from "@/lib/utc-date";
 
 export const metadata: Metadata = {
   title: "Daily Leaderboard",

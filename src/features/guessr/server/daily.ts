@@ -9,7 +9,7 @@ import { dailyAttemptPlan } from "../domain/daily-policy";
 import { calculateDailyStreak } from "../domain/daily-streak";
 import { assignSharedRanks } from "../domain/leaderboard";
 import { STANDARD_ROUND_COUNT } from "../domain/score";
-import { startOfUtcDate, utcDateKey } from "../domain/utc-date";
+import { startOfUtcDate, utcDateKey } from "@/lib/utc-date";
 import { ensureCurrentDaily } from "./daily-generation";
 import { listEpisodeOptions, scoreRound } from "./game";
 

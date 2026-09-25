@@ -10,7 +10,7 @@ import { selectUnlimitedFrames } from "../domain/frame-selection";
 import { isReservedForUnlimited } from "../domain/daily-policy";
 import { scoreEpisodeDistance, STANDARD_ROUND_COUNT } from "../domain/score";
 import type { UnlimitedSession } from "../domain/session-token";
-import { startOfUtcDate } from "../domain/utc-date";
+import { startOfUtcDate } from "@/lib/utc-date";
 
 export type EpisodeOption = {
   id: number;

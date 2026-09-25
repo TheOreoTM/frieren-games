@@ -14,7 +14,7 @@ import {
   enumerateUtcDates,
   startOfUtcDate,
   utcDateKey,
-} from "../domain/utc-date";
+} from "@/lib/utc-date";
 import { createDailyChallenge } from "./daily-generation";
 
 function isUniqueConflict(error: unknown): boolean {

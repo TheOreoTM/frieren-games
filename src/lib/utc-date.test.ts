@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { enumerateUtcDates, parseUtcDateKey, utcDateKey } from "./utc-date";
 
-describe("UTC Daily dates", () => {
+describe("UTC dates", () => {
   it("round-trips strict UTC date keys", () => {
     expect(utcDateKey(parseUtcDateKey("2026-09-23"))).toBe("2026-09-23");
     expect(() => parseUtcDateKey("2026-02-30")).toThrow();

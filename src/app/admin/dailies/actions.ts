@@ -11,7 +11,7 @@ import {
   replaceDailyRound,
   voidDaily,
 } from "@/features/guessr/server/daily-admin";
-import { parseUtcDateKey } from "@/features/guessr/domain/utc-date";
+import { parseUtcDateKey } from "@/lib/utc-date";
 import { requireAdmin } from "@/lib/authorization";
 
 const challengeIdSchema = z.string().cuid();

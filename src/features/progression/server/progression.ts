@@ -7,7 +7,7 @@ import {
 } from "@/generated/prisma/client";
 import { calculateDailyStreak } from "@/features/guessr/domain/daily-streak";
 import { STANDARD_ROUND_COUNT } from "@/features/guessr/domain/score";
-import { startOfUtcDate, utcDateKey } from "@/features/guessr/domain/utc-date";
+import { startOfUtcDate, utcDateKey } from "@/lib/utc-date";
 import { getDb } from "@/lib/db";
 
 import {

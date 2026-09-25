@@ -1,4 +1,4 @@
-import { startOfUtcDate, utcDateKey } from "./utc-date";
+import { startOfUtcDate, utcDateKey } from "../../../lib/utc-date";
 
 export type DailyStatus = "DRAFT" | "APPROVED" | "VOID";
 

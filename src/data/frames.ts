@@ -3,7 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { DailyChallengeStatus, Prisma } from "@/generated/prisma/client";
-import { startOfUtcDate } from "@/features/guessr/domain/utc-date";
+import { startOfUtcDate } from "@/lib/utc-date";
 import { getDb } from "@/lib/db";
 import { publicFrameUrl } from "@/lib/r2";
 

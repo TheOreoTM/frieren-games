@@ -1,8 +1,8 @@
-# Frieren Minigame Hub — Project Spec
+# Magic in Passing — Project Spec
 
 ## 1. Product vision
 
-`frieren.oreotm.xyz` is a focused Frieren fan-game hub. The first flagship game is **FrierenGuessr**, where players see a still frame from the TV anime and guess the season and episode.
+**Magic in Passing**, hosted at `frieren.oreotm.xyz`, is a focused, unofficial Frieren fan-game collection. The first flagship game is **FrierenGuessr**, where players see a still frame from the TV anime and guess the season and episode.
 
 The long-term hub may later include games such as:
 - Frierendle

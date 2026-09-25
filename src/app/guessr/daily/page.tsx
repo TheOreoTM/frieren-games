@@ -17,7 +17,7 @@ import {
 import { advanceDailyRound, startDailyGame, submitDailyGuess } from "./actions";
 
 export const metadata: Metadata = {
-  title: "Daily FrierenGuessr | Frieren Games",
+  title: "Daily FrierenGuessr | Magic in Passing",
 };
 
 export default async function DailyPage({

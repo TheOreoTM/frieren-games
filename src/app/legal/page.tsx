@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Project Notice | Frieren Games",
+    title: "Project Notice | Magic in Passing",
     description: "Unofficial fan-project, copyright, privacy, and contact information.",
 };
 
@@ -15,10 +15,10 @@ export default function LegalPage() {
                     <section>
                         <h2 className="font-serif text-2xl text-foreground">Rights and attribution</h2>
                         <p className="mt-2">
-                            Frieren Games is a non-commercial, unofficial fan project. Frieren: Beyond Journey&apos;s
-                            End, its characters, animation, and related properties belong to their respective authors,
-                            publishers, studios, and license holders. This site is not endorsed by or affiliated with
-                            them.
+                            Magic in Passing is a non-commercial, unofficial fan project. Frieren: Beyond
+                            Journey&apos;s End, its characters, animation, and related properties belong to their
+                            respective authors, publishers, studios, and license holders. This site is not endorsed by
+                            or affiliated with them.
                         </p>
                     </section>
                     <section>

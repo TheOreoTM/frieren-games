@@ -5,8 +5,8 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-border bg-surface/60 px-5 py-7 sm:px-8">
       <div className="mx-auto flex max-w-7xl flex-col gap-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>
-          Unofficial fan project. Frieren and related properties belong to their respective
-          rights holders.
+          Magic in Passing is an unofficial fan project. Frieren and related properties belong
+          to their respective rights holders.
         </p>
         <nav className="flex shrink-0 gap-5 font-medium" aria-label="Project information">
           <Link href="/legal" className="transition hover:text-sage">

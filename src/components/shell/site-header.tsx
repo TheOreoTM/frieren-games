@@ -12,10 +12,14 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 px-4 backdrop-blur-md sm:px-8">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-2 py-2 sm:gap-4">
-        <Link href="/" className="flex shrink-0 items-center gap-2 font-serif text-lg font-semibold tracking-tight">
+        <Link
+          href="/"
+          aria-label="Magic in Passing home"
+          className="flex shrink-0 items-center gap-2 font-serif text-lg font-semibold tracking-tight"
+        >
           <SiteMark />
-          <span className="hidden sm:inline">Frieren Games</span>
-          <span className="sm:hidden">Frieren</span>
+          <span className="hidden sm:inline">Magic in Passing</span>
+          <span className="sm:hidden">Magic</span>
         </Link>
 
         <nav className="flex min-w-0 items-center gap-0 text-sm sm:gap-2" aria-label="Account navigation">

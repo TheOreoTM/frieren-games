@@ -20,24 +20,24 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://frieren.oreotm.xyz"),
   title: {
-    default: "Frieren Games",
+    default: "Magic in Passing",
     template: "%s",
   },
-  applicationName: "Frieren Games",
-  description: "Play FrierenGuessr: identify Frieren anime episodes from carefully curated still frames.",
+  applicationName: "Magic in Passing",
+  description: "Small games from a long journey. Play FrierenGuessr and test which moments stayed with you.",
   openGraph: {
     type: "website",
-    siteName: "Frieren Games",
-    title: "Frieren Games",
-    description: "A calm fan-made hub for FrierenGuessr and quiet competition.",
+    siteName: "Magic in Passing",
+    title: "Magic in Passing",
+    description: "A calm, unofficial Frieren fan-game collection.",
     url: "/",
   },
   twitter: {
     card: "summary",
-    title: "Frieren Games",
-    description: "A calm fan-made hub for FrierenGuessr and quiet competition.",
+    title: "Magic in Passing",
+    description: "Small games from a long journey.",
   },
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/icon.png" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

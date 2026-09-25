@@ -18,7 +18,7 @@ import {
 } from "../actions";
 
 export const metadata: Metadata = {
-  title: "Play FrierenGuessr | Frieren Games",
+  title: "Play FrierenGuessr | Magic in Passing",
 };
 
 export default async function UnlimitedPlayPage() {

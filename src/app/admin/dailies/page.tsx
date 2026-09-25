@@ -14,7 +14,7 @@ import {
   voidDailyAction,
 } from "./actions";
 
-export const metadata: Metadata = { title: "Daily Admin | Frieren Games" };
+export const metadata: Metadata = { title: "Daily Admin | Magic in Passing" };
 
 function monthBounds(month: string) {
   const first = parseUtcDateKey(`${month}-01`);

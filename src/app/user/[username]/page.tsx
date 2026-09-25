@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { utcDateKey } from "@/features/guessr/domain/utc-date";
 import { getPublicProfile } from "@/features/profiles/server/public-profile";
 
-export const metadata: Metadata = { title: "Player Profile | Frieren Games" };
+export const metadata: Metadata = { title: "Player Profile | Magic in Passing" };
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (

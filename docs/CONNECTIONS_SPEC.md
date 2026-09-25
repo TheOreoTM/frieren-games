@@ -1,6 +1,6 @@
 # Connections — Product and Engineering Plan
 
-Status: **rules approved; Increments 1–2 complete; gameplay not started**
+Status: **rules approved; Increments 1–3 complete; anonymous Daily playable**
 
 This document defines the first release of Connections for Magic in Passing. It is intentionally
 game-specific. Guessr remains independent, and this plan does not introduce a generic game engine.
@@ -290,7 +290,7 @@ Stop for review.
 
 Stop for review.
 
-### Increment 3 — Anonymous Daily gameplay
+### Increment 3 — Anonymous Daily gameplay (complete)
 
 - `/connections`,
 - answer-safe puzzle projection,

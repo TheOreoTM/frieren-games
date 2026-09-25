@@ -16,10 +16,6 @@ export default function Home() {
 
         <div className="grid gap-14 py-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)] lg:gap-20 lg:py-20">
           <div>
-            <div className="mb-8 flex items-center gap-3">
-              <SiteMark brand={brand} className="size-11" />
-              <p className="font-serif text-lg font-semibold">{brand.name}</p>
-            </div>
             <h1 className="max-w-4xl text-5xl leading-[0.98] font-semibold tracking-[-0.055em] sm:text-7xl lg:text-[5.5rem]">
               How well do you remember the journey?
             </h1>
@@ -39,13 +35,16 @@ export default function Home() {
                 href="/guessr/daily"
                 className="border-foreground/40 hover:border-foreground border-b py-1 text-sm font-semibold transition"
               >
-                Today&apos;s Daily →
+                Today{"'"}s Daily →
               </Link>
             </div>
           </div>
 
           <aside className="border-border self-end pt-5">
-            <p className="text-muted text-sm">How it works</p>
+            <p className="text-muted text-sm">
+              How it works{" "}
+              <span className="pl-2 text-xs">(Hint: its just geoguessr)</span>
+            </p>
             <dl className="divide-border mt-3 divide-y">
               <div className="flex items-baseline justify-between py-4">
                 <dt>Frames</dt>

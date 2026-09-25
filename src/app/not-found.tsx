@@ -6,7 +6,7 @@ export default function NotFound() {
       <section className="mx-auto max-w-xl text-center">
         <p className="text-gold font-mono text-sm font-semibold">404</p>
         <h1 className="mt-3 font-serif text-5xl">
-          This path has passed into myth
+          You have reached the land where souls rest
         </h1>
         <p className="text-muted mt-5 leading-7">
           The page may have moved, or it may never have existed.

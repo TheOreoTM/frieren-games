@@ -1,5 +1,4 @@
 import {
-  CONNECTIONS_DIFFICULTIES,
   CONNECTIONS_GROUP_COUNT,
   CONNECTIONS_GROUP_SIZE,
   CONNECTIONS_TILE_COUNT,
@@ -33,7 +32,6 @@ export function validateConnectionsPuzzle(
 
   const groupIds = new Set<string>();
   const positions = new Set<number>();
-  const difficulties = new Set<string>();
   const labels = new Set<string>();
   const tileIds = new Set<string>();
   const tileTexts = new Set<string>();
@@ -70,14 +68,6 @@ export function validateConnectionsPuzzle(
       });
     }
     positions.add(group.position);
-
-    if (difficulties.has(group.difficulty)) {
-      issues.push({
-        path: `${groupPath}.difficulty`,
-        message: "Each difficulty must be used exactly once.",
-      });
-    }
-    difficulties.add(group.difficulty);
 
     const normalizedLabel = normalizeConnectionsText(group.label);
     if (!normalizedLabel) {
@@ -140,15 +130,6 @@ export function validateConnectionsPuzzle(
       path: "groups",
       message: `A puzzle must contain exactly ${CONNECTIONS_TILE_COUNT} tiles.`,
     });
-  }
-
-  for (const difficulty of CONNECTIONS_DIFFICULTIES) {
-    if (!difficulties.has(difficulty)) {
-      issues.push({
-        path: "groups",
-        message: `A puzzle must contain one ${difficulty} group.`,
-      });
-    }
   }
 
   return issues;

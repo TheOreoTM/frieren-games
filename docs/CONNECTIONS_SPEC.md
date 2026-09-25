@@ -56,7 +56,6 @@ Authoring requirements:
 - group labels are unique within the puzzle,
 - each group has exactly four tiles,
 - the puzzle has exactly four groups,
-- difficulty uses `EASY`, `MEDIUM`, `HARD`, and `TRICKY`, one level per group,
 - alternate valid groups and accidental ambiguity require human review,
 - title wording and answer-bearing metadata are never sent before the relevant group is solved,
 - spoiler scope is stated before play when needed.
@@ -135,7 +134,6 @@ ConnectionsGroup
   id
   puzzleId
   position                unique within puzzle
-  difficulty              EASY | MEDIUM | HARD | TRICKY
   label
   explanation?
 
@@ -191,7 +189,7 @@ puzzle date. `VOID` remains explicit for emergency invalidation.
 The first `/admin/connections` should support:
 
 1. create or open a puzzle for a future UTC date,
-2. enter four groups, their difficulty, labels, optional explanations, and four tiles each,
+2. enter four group labels, optional explanations, and four tiles each,
 3. add a spoiler note when appropriate,
 4. validate structure and duplicate text,
 5. preview multiple shuffled board arrangements,

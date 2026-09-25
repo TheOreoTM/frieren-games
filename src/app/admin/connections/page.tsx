@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { SubmitButton } from "@/components/ui/submit-button";
 import { deterministicShuffle } from "@/features/connections/domain/shuffle";
-import { CONNECTIONS_DIFFICULTIES } from "@/features/connections/domain/types";
 import { listAdminConnectionsPuzzles } from "@/features/connections/server/admin";
 import { requireAdmin } from "@/lib/authorization";
 import {
@@ -58,13 +57,6 @@ function dateLabel(value: Date) {
   }).format(value);
 }
 
-const difficultyStyles = {
-  EASY: "border-sage/35 bg-sage/10",
-  MEDIUM: "border-gold/40 bg-gold/10",
-  HARD: "border-sky-400/35 bg-sky-400/10",
-  TRICKY: "border-violet-400/35 bg-violet-400/10",
-} as const;
-
 export default async function ConnectionsAdminPage({
   searchParams,
 }: {
@@ -101,14 +93,13 @@ export default async function ConnectionsAdminPage({
   const canAuthor = selected?.editable ?? canCreate;
   const editorGroups =
     selected?.domainPuzzle.groups ??
-    CONNECTIONS_DIFFICULTIES.map((difficulty, index) => ({
-      id: `new-${difficulty}`,
+    Array.from({ length: 4 }, (_, index) => ({
+      id: `new-group-${index + 1}`,
       position: index + 1,
-      difficulty,
       label: "",
       explanation: null,
       tiles: Array.from({ length: 4 }, (_, tileIndex) => ({
-        id: `new-${difficulty}-${tileIndex}`,
+        id: `new-group-${index + 1}-${tileIndex}`,
         text: "",
       })),
     }));
@@ -266,37 +257,21 @@ export default async function ConnectionsAdminPage({
                   {editorGroups.map((group, groupIndex) => (
                     <fieldset
                       key={group.id}
-                      className={`rounded-xl border p-4 ${difficultyStyles[group.difficulty]}`}
+                      className="border-border rounded-xl border p-4"
                     >
                       <legend className="px-2 text-sm font-bold">
                         Group {group.position}
                       </legend>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <label className="text-muted grid gap-1 text-xs font-semibold tracking-wide uppercase">
-                          Difficulty
-                          <select
-                            className="admin-input"
-                            name={`groups.${groupIndex}.difficulty`}
-                            defaultValue={group.difficulty}
-                          >
-                            {CONNECTIONS_DIFFICULTIES.map((difficulty) => (
-                              <option key={difficulty} value={difficulty}>
-                                {difficulty}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-muted grid gap-1 text-xs font-semibold tracking-wide uppercase">
-                          Category label
-                          <input
-                            className="admin-input"
-                            name={`groups.${groupIndex}.label`}
-                            maxLength={120}
-                            defaultValue={group.label}
-                            required
-                          />
-                        </label>
-                      </div>
+                      <label className="text-muted grid gap-1 text-xs font-semibold tracking-wide uppercase">
+                        Category label
+                        <input
+                          className="admin-input"
+                          name={`groups.${groupIndex}.label`}
+                          maxLength={120}
+                          defaultValue={group.label}
+                          required
+                        />
+                      </label>
                       <label className="text-muted mt-3 grid gap-1 text-xs font-semibold tracking-wide uppercase">
                         Explanation
                         <input

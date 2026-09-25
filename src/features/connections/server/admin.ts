@@ -17,14 +17,13 @@ import {
   normalizeConnectionsText,
   validateConnectionsPuzzle,
 } from "../domain/puzzle";
-import type { ConnectionsDifficulty, ConnectionsPuzzle } from "../domain/types";
+import type { ConnectionsPuzzle } from "../domain/types";
 
 export type ConnectionsPuzzleDraftInput = {
   dateUtc: Date;
   spoilerNote?: string | null;
   groups: Array<{
     position: number;
-    difficulty: ConnectionsDifficulty;
     label: string;
     explanation?: string | null;
     tiles: string[];
@@ -61,7 +60,6 @@ function validationPuzzle(
     groups: input.groups.map((group, groupIndex) => ({
       id: `draft-group-${groupIndex}`,
       position: group.position,
-      difficulty: group.difficulty,
       label: cleanText(group.label),
       explanation: cleanOptionalText(group.explanation),
       tiles: group.tiles.map((text, tileIndex) => ({
@@ -94,7 +92,6 @@ function storedPuzzleToDomain(
     groups: puzzle.groups.map((group) => ({
       id: group.id,
       position: group.position,
-      difficulty: group.difficulty,
       label: group.label,
       explanation: group.explanation,
       tiles: group.tiles.map((tile) => ({ id: tile.id, text: tile.text })),
@@ -165,7 +162,6 @@ export async function saveConnectionsPuzzleDraft(
           data: {
             puzzleId: stored.id,
             position: group.position,
-            difficulty: group.difficulty,
             label: group.label,
             explanation: group.explanation,
             tiles: {

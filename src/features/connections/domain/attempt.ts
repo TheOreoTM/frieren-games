@@ -3,7 +3,6 @@ import {
   CONNECTIONS_GROUP_SIZE,
   CONNECTIONS_MAX_MISTAKES,
   type ConnectionsAttemptState,
-  type ConnectionsGroup,
   type ConnectionsPuzzle,
   type ConnectionsTile,
 } from "./types";
@@ -45,7 +44,6 @@ export type ConnectionsSubmissionResult =
 export type ConnectionsPlayerGroup = {
   id: string;
   position: number;
-  difficulty: ConnectionsGroup["difficulty"];
   label: string;
   explanation: string | null;
   tiles: ConnectionsTile[];
@@ -196,7 +194,6 @@ export function projectConnectionsPuzzle(
     .map((group) => ({
       id: group.id,
       position: group.position,
-      difficulty: group.difficulty,
       label: group.label,
       explanation: group.explanation ?? null,
       tiles: group.tiles.map((tile) => ({ ...tile })),

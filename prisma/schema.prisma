@@ -30,13 +30,6 @@ enum ConnectionsPuzzleStatus {
   VOID
 }
 
-enum ConnectionsDifficulty {
-  EASY
-  MEDIUM
-  HARD
-  TRICKY
-}
-
 enum ConnectionsSubmissionResult {
   CORRECT
   INCORRECT
@@ -291,10 +284,9 @@ model ConnectionsPuzzle {
 }
 
 model ConnectionsGroup {
-  id          String                @id @default(cuid())
+  id          String  @id @default(cuid())
   puzzleId    String
   position    Int
-  difficulty  ConnectionsDifficulty
   label       String
   explanation String?
 
@@ -304,7 +296,6 @@ model ConnectionsGroup {
 
   @@unique([id, puzzleId])
   @@unique([puzzleId, position])
-  @@unique([puzzleId, difficulty])
   @@index([puzzleId])
 }
 

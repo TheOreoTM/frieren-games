@@ -60,12 +60,11 @@ describe("Connections puzzle validation", () => {
     );
   });
 
-  it("requires unique IDs, positions, labels, and difficulties", () => {
+  it("requires unique IDs, positions, and labels", () => {
     const puzzle = connectionsPuzzleFixture();
     puzzle.groups[1].id = puzzle.groups[0].id;
     puzzle.groups[1].position = puzzle.groups[0].position;
     puzzle.groups[1].label = " mages ";
-    puzzle.groups[1].difficulty = puzzle.groups[0].difficulty;
     puzzle.groups[1].tiles[0].id = puzzle.groups[0].tiles[0].id;
 
     const issuePaths = validateConnectionsPuzzle(puzzle).map(
@@ -77,7 +76,6 @@ describe("Connections puzzle validation", () => {
         "groups[1].id",
         "groups[1].position",
         "groups[1].label",
-        "groups[1].difficulty",
         "groups[1].tiles[0].id",
       ]),
     );

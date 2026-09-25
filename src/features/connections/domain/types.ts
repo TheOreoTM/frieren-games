@@ -4,15 +4,6 @@ export const CONNECTIONS_TILE_COUNT =
   CONNECTIONS_GROUP_COUNT * CONNECTIONS_GROUP_SIZE;
 export const CONNECTIONS_MAX_MISTAKES = 4;
 
-export const CONNECTIONS_DIFFICULTIES = [
-  "EASY",
-  "MEDIUM",
-  "HARD",
-  "TRICKY",
-] as const;
-
-export type ConnectionsDifficulty = (typeof CONNECTIONS_DIFFICULTIES)[number];
-
 export type ConnectionsTile = {
   id: string;
   text: string;
@@ -21,7 +12,6 @@ export type ConnectionsTile = {
 export type ConnectionsGroup = {
   id: string;
   position: number;
-  difficulty: ConnectionsDifficulty;
   label: string;
   explanation?: string | null;
   tiles: ConnectionsTile[];

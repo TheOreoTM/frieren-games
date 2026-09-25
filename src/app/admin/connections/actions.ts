@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { CONNECTIONS_DIFFICULTIES } from "@/features/connections/domain/types";
 import {
   approveConnectionsPuzzle,
   returnConnectionsPuzzleToDraft,
@@ -16,8 +15,6 @@ import { addUtcDays, parseUtcDateKey, utcDateKey } from "@/lib/utc-date";
 
 const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const puzzleIdSchema = z.string().cuid();
-const difficultySchema = z.enum(CONNECTIONS_DIFFICULTIES);
-
 const draftSchema = z.object({
   date: dateKeySchema,
   spoilerNote: z.string().max(500),
@@ -25,7 +22,6 @@ const draftSchema = z.object({
     .array(
       z.object({
         position: z.number().int().min(1).max(4),
-        difficulty: difficultySchema,
         label: z.string().max(120),
         explanation: z.string().max(500),
         tiles: z.array(z.string().max(80)).length(4),
@@ -59,9 +55,8 @@ function readDraft(formData: FormData) {
   return draftSchema.parse({
     date: formData.get("date"),
     spoilerNote: formData.get("spoilerNote") ?? "",
-    groups: CONNECTIONS_DIFFICULTIES.map((_, groupIndex) => ({
+    groups: Array.from({ length: 4 }, (_, groupIndex) => ({
       position: groupIndex + 1,
-      difficulty: formData.get(`groups.${groupIndex}.difficulty`),
       label: formData.get(`groups.${groupIndex}.label`) ?? "",
       explanation: formData.get(`groups.${groupIndex}.explanation`) ?? "",
       tiles: Array.from(

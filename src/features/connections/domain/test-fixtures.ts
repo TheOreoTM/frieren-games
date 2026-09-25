@@ -8,7 +8,6 @@ export function connectionsPuzzleFixture(): ConnectionsPuzzle {
       {
         id: "group-a",
         position: 1,
-        difficulty: "EASY",
         label: "Mages",
         explanation: "Characters who use magic.",
         tiles: [
@@ -21,7 +20,6 @@ export function connectionsPuzzleFixture(): ConnectionsPuzzle {
       {
         id: "group-b",
         position: 2,
-        difficulty: "MEDIUM",
         label: "Places",
         tiles: [
           { id: "tile-05", text: "Auberst" },
@@ -33,7 +31,6 @@ export function connectionsPuzzleFixture(): ConnectionsPuzzle {
       {
         id: "group-c",
         position: 3,
-        difficulty: "HARD",
         label: "Spells",
         tiles: [
           { id: "tile-09", text: "Zoltraak" },
@@ -45,7 +42,6 @@ export function connectionsPuzzleFixture(): ConnectionsPuzzle {
       {
         id: "group-d",
         position: 4,
-        difficulty: "TRICKY",
         label: "Demons",
         tiles: [
           { id: "tile-13", text: "Aura" },

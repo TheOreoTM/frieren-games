@@ -86,6 +86,12 @@ export default async function DailyAdminPage({
           </div>
           <div className="flex gap-3 text-sm font-semibold">
             <Link
+              href="/admin/connections"
+              className="border-border rounded-lg border px-4 py-2"
+            >
+              Connections
+            </Link>
+            <Link
               href="/admin/frames"
               className="border-border rounded-lg border px-4 py-2"
             >

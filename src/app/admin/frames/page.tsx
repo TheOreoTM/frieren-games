@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   listAdminFrames,
   listFrameFilterOptions,
@@ -48,12 +50,10 @@ export default async function FrameAdminPage({
               Only authenticated administrators can review or change uploaded
               frames.
             </p>
-            <a
-              href="/admin/dailies"
-              className="text-sage text-sm font-semibold"
-            >
-              Manage Dailies →
-            </a>
+            <div className="text-sage flex gap-4 text-sm font-semibold">
+              <Link href="/admin/dailies">Manage Dailies →</Link>
+              <Link href="/admin/connections">Connections →</Link>
+            </div>
           </div>
         </header>
 

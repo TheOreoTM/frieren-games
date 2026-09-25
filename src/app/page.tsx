@@ -1,11 +1,6 @@
 import Link from "next/link";
 
-import { SiteMark } from "@/components/shell/site-mark";
-import { resolveSiteBrand } from "@/lib/site-brand";
-
 export default function Home() {
-  const brand = resolveSiteBrand();
-
   return (
     <main className="px-5 py-12 sm:px-8 sm:py-20">
       <section className="mx-auto w-full max-w-7xl">

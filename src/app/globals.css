@@ -42,19 +42,11 @@
 
 body {
   background-color: var(--background);
-  background-image:
-    linear-gradient(
-      90deg,
-      transparent 0,
-      transparent calc(50% - 0.5px),
-      color-mix(in srgb, var(--border) 22%, transparent) 50%,
-      transparent calc(50% + 0.5px)
-    ),
-    radial-gradient(
-      circle at 75% 10%,
-      color-mix(in srgb, var(--magic) 10%, transparent),
-      transparent 26rem
-    );
+  background-image: radial-gradient(
+    circle at 75% 10%,
+    color-mix(in srgb, var(--magic) 10%, transparent),
+    transparent 26rem
+  );
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }

@@ -33,23 +33,14 @@ export default async function GuessrLeaderboardPage({
 
   return (
     <main className="min-h-screen px-5 py-10 sm:px-8 sm:py-16">
-      <section className="mx-auto max-w-5xl">
-        <Link
-          href="/guessr"
-          className="text-muted hover:text-sage text-sm font-medium transition"
-        >
-          ← FrierenGuessr
-        </Link>
-
-        <div className="mt-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <section className="mx-auto max-w-6xl">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-muted text-sm font-medium">Daily leaderboard</p>
-            <h1 className="mt-2 text-5xl font-semibold tracking-[-0.05em] sm:text-6xl">
-              Daily standings
+            <h1 className="text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
+              Leaderboard
             </h1>
-            <p className="text-muted mt-4 text-sm leading-6">
-              {dateKey} · Equal scores share a rank. Completion speed does not
-              break ties.
+            <p className="text-muted mt-3 text-sm leading-6">
+              Daily · {dateKey}. Equal scores share a rank.
             </p>
           </div>
           <Link
@@ -61,12 +52,13 @@ export default async function GuessrLeaderboardPage({
         </div>
 
         <nav
-          className="border-border mt-10 flex items-center justify-between border-y py-4 text-sm font-semibold"
+          className="mt-10 flex items-center justify-between gap-6 text-sm"
           aria-label="Daily leaderboard dates"
         >
           {navigation.previousDateKey ? (
             <Link
               href={`/leaderboards/guessr?date=${navigation.previousDateKey}`}
+              className="text-muted hover:text-foreground transition"
             >
               ← {navigation.previousDateKey}
             </Link>
@@ -74,7 +66,10 @@ export default async function GuessrLeaderboardPage({
             <span className="text-muted">No earlier Daily</span>
           )}
           {navigation.nextDateKey ? (
-            <Link href={`/leaderboards/guessr?date=${navigation.nextDateKey}`}>
+            <Link
+              href={`/leaderboards/guessr?date=${navigation.nextDateKey}`}
+              className="text-muted hover:text-foreground transition"
+            >
               {navigation.nextDateKey} →
             </Link>
           ) : (
@@ -83,25 +78,25 @@ export default async function GuessrLeaderboardPage({
         </nav>
 
         {!leaderboard.challenge ? (
-          <div className="border-border text-muted mt-8 border-y py-14 text-center">
+          <div className="text-muted mt-14 py-12 text-center">
             No Daily was saved for this date.
           </div>
         ) : leaderboard.challenge.status === "VOID" ? (
-          <div className="border-gold/50 bg-gold/10 mt-8 border-y py-14 text-center">
+          <div className="bg-gold/10 mt-12 py-12 text-center">
             This Daily was voided. Its scores are not ranked.
           </div>
         ) : (
-          <div className="border-border mt-8 border-y">
-            <div className="text-muted grid grid-cols-[2.5rem_1fr_auto] gap-3 py-3 text-xs sm:grid-cols-[4rem_1fr_auto]">
+          <div className="mt-12">
+            <div className="text-muted border-border grid grid-cols-[2.5rem_1fr_auto] gap-3 border-b pb-3 text-xs sm:grid-cols-[4rem_1fr_auto]">
               <span>Rank</span>
               <span>Player</span>
               <span className="text-right">Score</span>
             </div>
-            <ol className="border-border border-t">
+            <ol className="divide-border divide-y">
               {leaderboard.entries.map((entry) => (
                 <li
                   key={entry.attemptId}
-                  className="border-border grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 border-b py-4 last:border-0 sm:grid-cols-[4rem_1fr_auto] sm:py-5"
+                  className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-3 py-4 sm:grid-cols-[4rem_1fr_auto] sm:py-5"
                 >
                   <span
                     className={`font-mono text-lg ${entry.rank <= 3 ? "text-gold" : "text-muted"}`}
@@ -140,7 +135,7 @@ export default async function GuessrLeaderboardPage({
                 </li>
               ))}
               {leaderboard.entries.length === 0 ? (
-                <li className="text-muted py-14 text-center">
+                <li className="text-muted py-12 text-center">
                   No ranked finishes yet. The first score could be yours.
                 </li>
               ) : null}

@@ -1,13 +1,15 @@
-import { PrismaPg } from "@prisma/adapter-pg";
 import { z } from "zod";
 
 import { episodeSeedData } from "../../prisma/episode-seed-data";
-import { PrismaClient } from "../../src/generated/prisma/client";
 import { readManifest } from "../curator/src/manifest";
-import { frameInputFromManifest, objectKeyForLocalId } from "./frame-input";
+import { objectKeyForLocalId } from "./frame-input";
 import { curatorManifestPath, readVerifiedFrameBytes } from "./local-frame";
 import type { ManifestFrame } from "./manifest-schema";
-import { planFramePromotion } from "./promotion-plan";
+import {
+  buildPromotionApplySql,
+  buildPromotionPreflightSql,
+  executeNativePromotionSql,
+} from "./native-promotion";
 import { parseProductionPromotionOptions } from "./promotion-policy";
 import { createFrameObjectWriter } from "./r2-storage";
 
@@ -74,111 +76,41 @@ async function main() {
   console.log(`Verifying ${manifest.frames.length} approved local frame(s)...`);
 
   const verifiedFrames = await verifyLocalInventory(manifest.frames);
-  const prisma = new PrismaClient({
-    adapter: new PrismaPg({ connectionString: options.databaseUrl }),
-  });
+  executeNativePromotionSql(
+    options.databaseUrl,
+    buildPromotionPreflightSql(manifest.frames),
+  );
+  console.log(
+    `Preflight passed for ${manifest.frames.length} frame record(s); no immutable conflicts found.`,
+  );
 
-  try {
-    const ids = manifest.frames.map((record) => record.localId);
-    const objectKeys = manifest.frames.map((record) =>
-      objectKeyForLocalId(record.localId),
-    );
-    const existingFrames =
-      ids.length === 0
-        ? []
-        : await prisma.frame.findMany({
-            where: {
-              OR: [{ id: { in: ids } }, { objectKey: { in: objectKeys } }],
-            },
-            include: {
-              episode: { select: { season: true, episodeNumber: true } },
-            },
-          });
-    const plan = planFramePromotion(manifest.frames, existingFrames);
-
+  if (!options.apply) {
     console.log(
-      `Plan: ${plan.creates} create, ${plan.difficultyUpdates} difficulty update, ${plan.unchanged} unchanged.`,
+      `Dry run complete. Re-run with --apply --confirm=${options.targetLabel} to synchronize this inventory.`,
     );
-
-    if (!options.apply) {
-      console.log(
-        `Dry run complete. Re-run with --apply --confirm=${options.targetLabel} to write this plan.`,
-      );
-      return;
-    }
-
-    const putFrameObject = createFrameObjectWriter(options.r2);
-    for (const [index, frame] of verifiedFrames.entries()) {
-      await putFrameObject(
-        objectKeyForLocalId(frame.record.localId),
-        frame.bytes,
-      );
-      console.log(
-        `Uploaded ${index + 1}/${verifiedFrames.length}: ${frame.record.localId}`,
-      );
-    }
-
-    await prisma.$transaction(
-      async (database) => {
-        for (const episode of episodeSeedData) {
-          await database.episode.upsert({
-            where: {
-              season_episodeNumber: {
-                season: episode.season,
-                episodeNumber: episode.episodeNumber,
-              },
-            },
-            create: episode,
-            update: {
-              globalOrder: episode.globalOrder,
-              title: episode.title,
-            },
-          });
-        }
-
-        const episodes = await database.episode.findMany({
-          where: {
-            OR: episodeSeedData.map((episode) => ({
-              season: episode.season,
-              episodeNumber: episode.episodeNumber,
-            })),
-          },
-          select: { id: true, season: true, episodeNumber: true },
-        });
-        const episodeIds = new Map(
-          episodes.map((episode) => [
-            episodeKey(episode.season, episode.episodeNumber),
-            episode.id,
-          ]),
-        );
-
-        for (const { record } of verifiedFrames) {
-          const episodeId = episodeIds.get(
-            episodeKey(record.season, record.episode),
-          );
-          if (!episodeId) {
-            throw new Error(
-              `Production episode S${record.season}E${record.episode} was not synchronized.`,
-            );
-          }
-          const input = frameInputFromManifest(record, episodeId);
-          await database.frame.upsert({
-            where: { id: input.id },
-            create: input,
-            update: { difficulty: input.difficulty },
-          });
-        }
-      },
-      { isolationLevel: "Serializable" },
-    );
-
-    console.log(
-      `Production promotion complete: ${verifiedFrames.length} object(s) verified in R2 and ${verifiedFrames.length} Frame record(s) synchronized.`,
-    );
-    console.log("The local curator manifest was not modified.");
-  } finally {
-    await prisma.$disconnect();
+    return;
   }
+
+  const putFrameObject = createFrameObjectWriter(options.r2);
+  for (const [index, frame] of verifiedFrames.entries()) {
+    await putFrameObject(
+      objectKeyForLocalId(frame.record.localId),
+      frame.bytes,
+    );
+    console.log(
+      `Uploaded ${index + 1}/${verifiedFrames.length}: ${frame.record.localId}`,
+    );
+  }
+
+  executeNativePromotionSql(
+    options.databaseUrl,
+    buildPromotionApplySql(episodeSeedData, manifest.frames),
+  );
+
+  console.log(
+    `Production promotion complete: ${verifiedFrames.length} object(s) verified in R2 and ${verifiedFrames.length} Frame record(s) synchronized.`,
+  );
+  console.log("The local curator manifest was not modified.");
 }
 
 main().catch((error: unknown) => {

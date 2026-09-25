@@ -71,9 +71,10 @@ dry-run first:
 npm run frames:promote
 ```
 
-The dry-run validates every local WebP, reads the production Frame inventory, detects immutable
-metadata conflicts, and prints the proposed create/update counts. It does not write to PostgreSQL
-or R2.
+The dry-run validates every local WebP and uses Prisma's native database transport to detect
+immutable metadata conflicts. It reports the validated inventory size but does not write to
+PostgreSQL or R2. The native transport is intentional because it follows the same connection path
+as `prisma migrate deploy` and remains usable on networks where direct PostgreSQL TCP is blocked.
 
 Apply only after checking the displayed database hostname, bucket, public origin, and plan:
 

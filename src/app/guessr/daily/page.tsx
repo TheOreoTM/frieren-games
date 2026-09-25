@@ -13,6 +13,7 @@ import {
   getTodayDailyOverview,
   getUserDailyStreak,
 } from "@/features/guessr/server/daily";
+import { getDailyGameProgression } from "@/features/progression/server/progression";
 
 import { advanceDailyRound, startDailyGame, submitDailyGuess } from "./actions";
 
@@ -53,13 +54,20 @@ export default async function DailyPage({
     if (pageData.kind === "complete") {
       const results = await getDailyResults(session.user.id, attemptId);
       if (!results) redirect("/guessr/daily");
-      const [leaderboard, streak] = await Promise.all([
+      const [leaderboard, streak, progression] = await Promise.all([
         getDailyLeaderboard(pageData.attempt.challenge.dateUtc),
         getUserDailyStreak(session.user.id, new Date(), pageData.attempt.challenge.id),
+        getDailyGameProgression(session.user.id, attemptId),
       ]);
+      if (!progression) redirect("/guessr/daily");
       return (
         <main className="min-h-screen px-4 py-8 sm:px-8 sm:py-12">
-          <DailyResults results={results} leaderboard={leaderboard} streak={streak} />
+          <DailyResults
+            results={results}
+            leaderboard={leaderboard}
+            streak={streak}
+            progression={progression}
+          />
         </main>
       );
     }

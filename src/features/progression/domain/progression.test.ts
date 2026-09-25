@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   dailyPerformanceXp,
   deduplicateXpAwards,
+  gameProgressionSummary,
   levelProgress,
   unlimitedXpGrant,
 } from "./progression";
@@ -38,5 +39,15 @@ describe("progression XP", () => {
     expect(levelProgress(100)).toMatchObject({ level: 2, earnedThisLevel: 0, neededThisLevel: 300 });
     expect(levelProgress(399).level).toBe(2);
     expect(levelProgress(400).level).toBe(3);
+  });
+
+  it("summarizes XP earned by a game and detects a level up", () => {
+    expect(gameProgressionSummary(110, 35)).toMatchObject({
+      totalXp: 110,
+      xpGained: 35,
+      leveledUp: true,
+      level: { level: 2, earnedThisLevel: 10, neededThisLevel: 300 },
+    });
+    expect(gameProgressionSummary(90, 10).leveledUp).toBe(false);
   });
 });

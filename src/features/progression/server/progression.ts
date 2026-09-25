@@ -10,6 +10,7 @@ import { ACHIEVEMENTS, earnedAchievementIds, newAchievementIds } from "../domain
 import {
   DAILY_COMPLETION_XP,
   dailyPerformanceXp,
+  gameProgressionSummary,
   UNLIMITED_DAILY_XP_CAP,
   unlimitedXpGrant,
 } from "../domain/progression";
@@ -115,7 +116,12 @@ async function achievementProgress(database: Database, userId: string, now: Date
   };
 }
 
-async function ensureAchievements(database: Database, userId: string, now: Date) {
+async function ensureAchievements(
+  database: Database,
+  userId: string,
+  now: Date,
+  earnedAt: Date,
+) {
   const [progress, unlocked] = await Promise.all([
     achievementProgress(database, userId, now),
     database.userAchievement.findMany({
@@ -132,7 +138,11 @@ async function ensureAchievements(database: Database, userId: string, now: Date)
 
   if (newIds.length > 0) {
     await database.userAchievement.createMany({
-      data: newIds.map((achievementId) => ({ userId, achievementId })),
+      data: newIds.map((achievementId) => ({
+        userId,
+        achievementId,
+        unlockedAt: earnedAt,
+      })),
       skipDuplicates: true,
     });
   }
@@ -143,6 +153,7 @@ async function ensureAchievements(database: Database, userId: string, now: Date)
       sourceKey: achievementId,
       amount: ACHIEVEMENTS[achievementId].xp,
       earnedDateUtc: startOfUtcDate(now),
+      createdAt: earnedAt,
     })),
     skipDuplicates: true,
   });
@@ -162,9 +173,13 @@ async function awardDailyInTransaction(
       completedAt: { not: null },
       challenge: { status: { not: DailyChallengeStatus.VOID } },
     },
-    select: { totalScore: true, challenge: { select: { dateUtc: true } } },
+    select: {
+      totalScore: true,
+      completedAt: true,
+      challenge: { select: { dateUtc: true } },
+    },
   });
-  if (!attempt) return;
+  if (!attempt || !attempt.completedAt) return;
 
   const performanceXp = dailyPerformanceXp(attempt.totalScore);
   await database.xPTransaction.createMany({
@@ -175,6 +190,7 @@ async function awardDailyInTransaction(
         sourceKey: attemptId,
         amount: DAILY_COMPLETION_XP,
         earnedDateUtc: attempt.challenge.dateUtc,
+        createdAt: attempt.completedAt,
       },
       ...(performanceXp > 0
         ? [{
@@ -183,12 +199,13 @@ async function awardDailyInTransaction(
             sourceKey: attemptId,
             amount: performanceXp,
             earnedDateUtc: attempt.challenge.dateUtc,
+            createdAt: attempt.completedAt,
           }]
         : []),
     ],
     skipDuplicates: true,
   });
-  await ensureAchievements(database, userId, now);
+  await ensureAchievements(database, userId, now, attempt.completedAt);
 }
 
 export async function ensureDailyProgression(userId: string, attemptId: string, now = new Date()) {
@@ -243,12 +260,13 @@ export async function recordUnlimitedCompletion(
             sourceKey: game.id,
             amount,
             earnedDateUtc: startOfUtcDate(now),
+            createdAt: now,
           },
         });
       }
     }
 
-    await ensureAchievements(database, userId, now);
+    await ensureAchievements(database, userId, now, existing?.completedAt ?? now);
     const total = await database.xPTransaction.aggregate({
       where: {
         userId,
@@ -271,4 +289,92 @@ export async function getUnlimitedXpToday(userId: string, now = new Date()) {
     _sum: { amount: true },
   });
   return { earned: result._sum.amount ?? 0, cap: UNLIMITED_DAILY_XP_CAP };
+}
+
+type RewardRow = {
+  source: XPSource;
+  sourceKey: string;
+  amount: number;
+};
+
+function rewardLabel(reward: RewardRow) {
+  if (reward.source === XPSource.DAILY_COMPLETION) return "Daily completion";
+  if (reward.source === XPSource.DAILY_PERFORMANCE) return "Score bonus";
+  if (reward.source === XPSource.UNLIMITED_COMPLETION) return "Unlimited completion";
+
+  const achievementId = reward.sourceKey as keyof typeof ACHIEVEMENTS;
+  return ACHIEVEMENTS[achievementId]
+    ? `Achievement · ${ACHIEVEMENTS[achievementId].name}`
+    : "Achievement unlocked";
+}
+
+async function progressionResult(userId: string, rewards: RewardRow[]) {
+  const total = await getDb().xPTransaction.aggregate({
+    where: { userId },
+    _sum: { amount: true },
+  });
+  const xpGained = rewards.reduce((sum, reward) => sum + reward.amount, 0);
+
+  return {
+    ...gameProgressionSummary(total._sum.amount ?? 0, xpGained),
+    rewards: rewards.map((reward) => ({
+      label: rewardLabel(reward),
+      amount: reward.amount,
+    })),
+  };
+}
+
+async function rewardsForCompletion(
+  userId: string,
+  completedAt: Date,
+  directSourceKey: string,
+) {
+  const batch = await getDb().xPTransaction.findMany({
+    where: { userId, createdAt: completedAt },
+    select: { source: true, sourceKey: true, amount: true },
+    orderBy: { amount: "desc" },
+  });
+  if (batch.length > 0) return batch;
+
+  // Rewards created before completion batching was introduced can still show
+  // their direct completion and performance XP on historical result screens.
+  return getDb().xPTransaction.findMany({
+    where: {
+      userId,
+      sourceKey: directSourceKey,
+      source: { not: XPSource.ACHIEVEMENT },
+    },
+    select: { source: true, sourceKey: true, amount: true },
+    orderBy: { amount: "desc" },
+  });
+}
+
+export async function getDailyGameProgression(userId: string, attemptId: string) {
+  const attempt = await getDb().dailyAttempt.findFirst({
+    where: { id: attemptId, userId, completedAt: { not: null } },
+    select: { completedAt: true },
+  });
+  if (!attempt?.completedAt) return null;
+
+  return progressionResult(
+    userId,
+    await rewardsForCompletion(userId, attempt.completedAt, attemptId),
+  );
+}
+
+export async function getUnlimitedGameProgression(userId: string, gameId: string) {
+  const attempt = await getDb().unlimitedAttempt.findFirst({
+    where: { id: gameId, userId },
+    select: { completedAt: true },
+  });
+  if (!attempt) return null;
+
+  const [summary, dailyCap] = await Promise.all([
+    progressionResult(
+      userId,
+      await rewardsForCompletion(userId, attempt.completedAt, gameId),
+    ),
+    getUnlimitedXpToday(userId),
+  ]);
+  return { ...summary, dailyCap };
 }

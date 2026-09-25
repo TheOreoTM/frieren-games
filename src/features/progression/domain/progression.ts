@@ -40,6 +40,22 @@ export function levelProgress(totalXp: number) {
   };
 }
 
+export function gameProgressionSummary(totalXp: number, xpGained: number) {
+  if (!Number.isInteger(xpGained) || xpGained < 0 || xpGained > totalXp) {
+    throw new Error("XP gained must be a non-negative integer no greater than total XP.");
+  }
+
+  const level = levelProgress(totalXp);
+  const previousLevel = levelProgress(totalXp - xpGained).level;
+
+  return {
+    totalXp,
+    xpGained,
+    level,
+    leveledUp: level.level > previousLevel,
+  };
+}
+
 export type XPAward = {
   source: string;
   sourceKey: string;

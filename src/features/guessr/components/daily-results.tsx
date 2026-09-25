@@ -2,20 +2,24 @@ import Link from "next/link";
 
 import { startDailyGame } from "@/app/guessr/daily/actions";
 import type { getDailyLeaderboard, getDailyResults } from "@/features/guessr/server/daily";
+import type { getDailyGameProgression } from "@/features/progression/server/progression";
 
 import { GameResults } from "./game-results";
 
 type Results = NonNullable<Awaited<ReturnType<typeof getDailyResults>>>;
 type Leaderboard = Awaited<ReturnType<typeof getDailyLeaderboard>>;
+type Progression = NonNullable<Awaited<ReturnType<typeof getDailyGameProgression>>>;
 
 export function DailyResults({
   results,
   leaderboard,
   streak,
+  progression,
 }: {
   results: Results;
   leaderboard: Leaderboard;
   streak: number;
+  progression: Progression;
 }) {
   if (results.void) {
     return (
@@ -34,6 +38,7 @@ export function DailyResults({
         modeLabel={`${results.ranked ? "Ranked Daily" : "Daily practice"} · ${results.dateKey}`}
         action={startDailyGame}
         actionLabel="Play practice run"
+        progression={progression}
       />
       <aside className="rounded-2xl border border-border bg-surface p-5 xl:sticky xl:top-20 xl:self-start">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">Current streak</p>

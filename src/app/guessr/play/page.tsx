@@ -10,7 +10,7 @@ import {
 } from "@/features/guessr/server/game";
 import { readUnlimitedSession } from "@/features/guessr/server/session";
 import { STANDARD_ROUND_COUNT } from "@/features/guessr/domain/score";
-import { getUnlimitedXpToday } from "@/features/progression/server/progression";
+import { getUnlimitedGameProgression } from "@/features/progression/server/progression";
 import {
   advanceUnlimitedRound,
   startUnlimitedGame,
@@ -27,21 +27,20 @@ export default async function UnlimitedPlayPage() {
 
   if (session.currentRound === STANDARD_ROUND_COUNT) {
     const account = await auth();
-    const unlimitedXp = account?.user?.id
-      ? await getUnlimitedXpToday(account.user.id)
-      : null;
+    const [results, progression] = await Promise.all([
+      getGameResults(session),
+      account?.user?.id
+        ? getUnlimitedGameProgression(account.user.id, session.gameId)
+        : Promise.resolve(null),
+    ]);
     return (
       <main className="min-h-screen px-4 py-8 sm:px-8 sm:py-12">
         <GameResults
-          results={await getGameResults(session)}
+          results={results}
           modeLabel="Unlimited complete"
           action={startUnlimitedGame}
           actionLabel="Play again"
-          progressionNote={
-            unlimitedXp
-              ? `Unlimited XP today: ${unlimitedXp.earned} / ${unlimitedXp.cap}`
-              : undefined
-          }
+          progression={progression ?? undefined}
         />
       </main>
     );

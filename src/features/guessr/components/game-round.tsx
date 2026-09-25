@@ -55,7 +55,7 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
   const exactMatch = reveal.distance === 0;
 
   return (
-    <div className="border-border bg-background/70 mt-6 rounded-2xl border p-4">
+    <div className="border-border mt-6 border-y py-4">
       <div
         className="relative mx-4 h-16"
         role="img"
@@ -158,18 +158,14 @@ export function GameRound(props: GameRoundProps) {
     <div className="mx-auto w-full max-w-6xl">
       <header className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <p className="text-sage text-xs font-semibold tracking-[0.2em] uppercase">
-            {props.modeLabel}
-          </p>
-          <h1 className="mt-1 font-serif text-3xl tracking-tight sm:text-4xl">
+          <p className="text-muted text-sm font-medium">{props.modeLabel}</p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
             Round {props.roundNumber}{" "}
             <span className="text-muted">/ {props.roundCount}</span>
           </h1>
         </div>
         <div className="text-right">
-          <p className="text-muted text-xs tracking-wide uppercase">
-            Running score
-          </p>
+          <p className="text-muted text-xs">Running score</p>
           <p className="mt-1 font-mono text-xl font-semibold">
             {props.runningTotal.toLocaleString()}
           </p>
@@ -178,7 +174,7 @@ export function GameRound(props: GameRoundProps) {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(19rem,0.8fr)]">
         <section>
-          <div className="border-border overflow-hidden rounded-2xl border bg-[#111411] shadow-[0_24px_70px_-40px_var(--shadow)]">
+          <div className="border-border overflow-hidden border bg-[#111411]">
             {/* Runtime-configured R2 domain; answer-safe object names are enforced during push. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -194,15 +190,13 @@ export function GameRound(props: GameRoundProps) {
 
           {reveal ? (
             <section
-              className="reveal-enter border-border bg-surface mt-5 rounded-2xl border p-5 sm:p-6"
+              className="reveal-enter border-border mt-5 border-y py-5 sm:py-6"
               aria-live="polite"
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-sage text-xs font-semibold tracking-[0.18em] uppercase">
-                    Round result
-                  </p>
-                  <p className="mt-2 font-serif text-4xl tracking-tight">
+                  <p className="text-muted text-sm font-medium">Round result</p>
+                  <p className="mt-2 text-4xl font-semibold tracking-[-0.04em]">
                     {reveal.score.toLocaleString()} pts
                   </p>
                 </div>
@@ -224,7 +218,7 @@ export function GameRound(props: GameRoundProps) {
               <form action={props.advanceRound} className="mt-5">
                 <SubmitButton
                   pendingLabel="Continuing…"
-                  className="bg-sage w-full rounded-xl px-5 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+                  className="bg-foreground text-background w-full px-5 py-3.5 font-semibold transition hover:opacity-80 disabled:cursor-wait disabled:opacity-60"
                 >
                   {props.roundNumber === props.roundCount
                     ? "View results"
@@ -235,7 +229,7 @@ export function GameRound(props: GameRoundProps) {
           ) : null}
         </section>
 
-        <aside className="border-border bg-surface rounded-2xl border p-5 lg:sticky lg:top-6 lg:self-start">
+        <aside className="border-border border p-5 lg:sticky lg:top-20 lg:self-start">
           <p className="text-sm font-semibold">Which episode is this?</p>
           <div
             className="mt-4 flex gap-2"
@@ -249,7 +243,7 @@ export function GameRound(props: GameRoundProps) {
                 aria-pressed={season === seasonNumber}
                 disabled={Boolean(reveal)}
                 onClick={() => changeSeason(seasonNumber)}
-                className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition ${season === seasonNumber ? "border-sage bg-sage/15 text-sage" : "border-border hover:border-sage/60"}`}
+                className={`flex-1 border px-3 py-2 text-sm font-semibold transition ${season === seasonNumber ? "border-foreground bg-foreground text-background" : "border-border hover:border-foreground/60"}`}
               >
                 Season {seasonNumber}
               </button>
@@ -271,7 +265,7 @@ export function GameRound(props: GameRoundProps) {
                   onMouseLeave={() => setPreviewEpisodeId(null)}
                   onFocus={() => setPreviewEpisodeId(episode.id)}
                   onBlur={() => setPreviewEpisodeId(null)}
-                  className={`aspect-square min-h-11 rounded-lg border text-sm font-semibold transition ${episodeId === episode.id ? "border-sage bg-sage text-white shadow-sm" : "border-border bg-background hover:border-sage hover:bg-sage/10"}`}
+                  className={`aspect-square min-h-11 rounded-sm border text-sm font-semibold transition ${episodeId === episode.id ? "border-foreground bg-foreground text-background" : "border-border bg-background hover:border-foreground"}`}
                 >
                   {episode.episodeNumber}
                 </button>
@@ -293,7 +287,7 @@ export function GameRound(props: GameRoundProps) {
             <button
               type="submit"
               disabled={episodeId === null || pending || Boolean(reveal)}
-              className="bg-foreground text-background mt-5 w-full rounded-xl px-5 py-3.5 font-semibold transition enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-foreground text-background mt-5 w-full px-5 py-3.5 font-semibold transition enabled:hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {pending ? "Scoring…" : reveal ? "Guess locked" : "Lock in"}
             </button>

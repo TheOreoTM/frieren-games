@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f4f0e7;
-  --surface: #fcfaf5;
-  --foreground: #252923;
-  --muted: #646b61;
-  --border: #d8d4c7;
-  --sage: #657a64;
-  --gold: #b29257;
-  --magic: #a9ced2;
-  --shadow: #293329;
+  --background: #f3efe6;
+  --surface: #faf7f0;
+  --foreground: #22251f;
+  --muted: #62675e;
+  --border: #cfcbbe;
+  --sage: #586d57;
+  --gold: #9b7942;
+  --magic: #9bc6ca;
+  --shadow: #263026;
 }
 
 @theme inline {
@@ -28,8 +28,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #171a18;
-    --surface: #202521;
+    --background: #181b18;
+    --surface: #20241f;
     --foreground: #f1eee5;
     --muted: #abb3a8;
     --border: #3a443b;
@@ -41,9 +41,26 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(50% - 0.5px),
+      color-mix(in srgb, var(--border) 22%, transparent) 50%,
+      transparent calc(50% + 0.5px)
+    ),
+    radial-gradient(
+      circle at 75% 10%,
+      color-mix(in srgb, var(--magic) 10%, transparent),
+      transparent 26rem
+    );
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--sage) 28%, transparent);
 }
 
 :where(a, button, input, select, textarea):focus-visible {

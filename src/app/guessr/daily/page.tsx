@@ -108,41 +108,41 @@ export default async function DailyPage({
 
   const isVoid = overview.challenge.status === "VOID";
   return (
-    <main className="relative flex min-h-screen items-center overflow-hidden px-5 py-12">
-      <div className="magic-glow" aria-hidden="true" />
-      <section className="border-border bg-surface/95 relative mx-auto w-full max-w-3xl rounded-[2rem] border p-8 shadow-[0_30px_100px_-55px_var(--shadow)] sm:p-12">
+    <main className="px-5 py-10 sm:px-8 sm:py-16">
+      <section className="mx-auto w-full max-w-4xl">
         <Link href="/guessr" className="text-muted text-sm font-medium">
           ← FrierenGuessr
         </Link>
-        <p className="text-sage mt-10 text-xs font-semibold tracking-[0.22em] uppercase">
-          Shared worldwide · resets 00:00 UTC
-        </p>
-        <h1 className="mt-3 font-serif text-5xl tracking-tight">
-          Today&apos;s Daily
+        <h1 className="mt-12 text-5xl font-semibold tracking-[-0.05em] sm:text-6xl">
+          Today&apos;s five frames
         </h1>
-        <p className="text-muted mt-4 max-w-xl leading-7">
+        <p className="text-muted mt-5 max-w-xl text-lg leading-8">
           Everyone receives the same five frames. Your first run is ranked;
           later runs are practice.
         </p>
-        <div className="mt-7 flex flex-wrap gap-3 text-sm">
-          <span className="border-border rounded-full border px-3 py-1.5">
-            Streak: {overview.streak}
-          </span>
-          <span className="border-border rounded-full border px-3 py-1.5">
-            {overview.rankedAttempt?.completedAt
-              ? `Ranked score: ${overview.rankedAttempt.totalScore.toLocaleString()}`
-              : "Ranked attempt available"}
-          </span>
+        <div className="border-border mt-9 grid max-w-xl grid-cols-2 border-y text-sm">
+          <div className="border-border border-r py-4 pr-5">
+            <p className="text-muted">Current streak</p>
+            <p className="mt-1 font-mono text-xl">{overview.streak}</p>
+          </div>
+          <div className="py-4 pl-5">
+            <p className="text-muted">Ranked run</p>
+            <p className="mt-1 font-medium">
+              {overview.rankedAttempt?.completedAt
+                ? overview.rankedAttempt.totalScore.toLocaleString()
+                : "Available"}
+            </p>
+          </div>
         </div>
         {isVoid ? (
-          <p className="border-gold/40 bg-gold/10 mt-8 rounded-xl border p-4">
+          <p className="border-gold bg-gold/10 mt-8 border-l-2 p-4">
             Today&apos;s challenge has been voided.
           </p>
         ) : (
           <form action={startDailyGame} className="mt-8">
             <SubmitButton
               pendingLabel="Preparing Daily…"
-              className="bg-sage rounded-xl px-7 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+              className="bg-foreground text-background px-7 py-4 font-semibold transition hover:opacity-80 disabled:cursor-wait disabled:opacity-60"
             >
               {overview.rankedAttempt?.completedAt
                 ? "Start practice run"
@@ -152,9 +152,9 @@ export default async function DailyPage({
         )}
         <Link
           href="/leaderboards/guessr"
-          className="text-sage mt-6 inline-block text-sm font-semibold"
+          className="border-foreground/30 hover:border-foreground mt-7 inline-block border-b pb-1 text-sm font-semibold transition"
         >
-          View Daily leaderboards →
+          View leaderboard →
         </Link>
       </section>
     </main>

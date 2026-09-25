@@ -28,11 +28,13 @@ export function DailyResults({
 }) {
   if (results.void) {
     return (
-      <section className="border-border bg-surface mx-auto max-w-2xl rounded-[2rem] border p-8 text-center">
-        <p className="text-sage text-xs font-semibold tracking-[0.22em] uppercase">
+      <section className="border-border mx-auto max-w-2xl border-y py-8 text-center">
+        <p className="text-muted text-sm font-medium">
           Daily {results.dateKey}
         </p>
-        <h1 className="mt-3 font-serif text-4xl">This Daily was voided</h1>
+        <h1 className="mt-3 text-4xl font-semibold tracking-tight">
+          This Daily was voided
+        </h1>
         <p className="text-muted mt-4">
           Its scores are unranked and it does not count against your streak.
         </p>
@@ -49,11 +51,9 @@ export function DailyResults({
         actionLabel="Play practice run"
         progression={progression}
       />
-      <aside className="border-border bg-surface rounded-2xl border p-5 xl:sticky xl:top-20 xl:self-start">
-        <p className="text-sage text-xs font-semibold tracking-[0.18em] uppercase">
-          Current streak
-        </p>
-        <p className="mt-2 font-serif text-4xl">
+      <aside className="border-border border p-5 xl:sticky xl:top-20 xl:self-start">
+        <p className="text-muted text-sm">Current streak</p>
+        <p className="mt-2 text-4xl font-semibold tracking-tight">
           {streak} day{streak === 1 ? "" : "s"}
         </p>
         <h2 className="border-border mt-7 border-t pt-5 font-semibold">
@@ -63,7 +63,7 @@ export function DailyResults({
           {leaderboard.entries.slice(0, 10).map((entry) => (
             <li
               key={entry.attemptId}
-              className="bg-background/70 grid grid-cols-[2rem_1fr_auto] items-center gap-2 rounded-lg px-3 py-2 text-sm"
+              className="border-border grid grid-cols-[2rem_1fr_auto] items-center gap-2 border-t px-1 py-2.5 text-sm"
             >
               <span className="text-muted font-mono">{entry.rank}</span>
               <span className="truncate font-medium">{entry.displayName}</span>
@@ -78,7 +78,7 @@ export function DailyResults({
         </ol>
         <Link
           href={`/leaderboards/guessr?date=${results.dateKey}`}
-          className="text-sage mt-5 inline-block text-sm font-semibold"
+          className="border-foreground/30 hover:border-foreground mt-5 inline-block border-b pb-1 text-sm font-semibold transition"
         >
           View full leaderboard →
         </Link>

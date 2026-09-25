@@ -152,12 +152,10 @@ export function GameResults({
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <section className="reveal-enter border-border bg-surface rounded-3xl border p-6 shadow-[0_24px_70px_-50px_var(--shadow)] sm:p-10">
+      <section className="reveal-enter border-border border-y py-7 sm:py-10">
         <header className="text-center">
-          <p className="text-sage text-xs font-semibold tracking-[0.2em] uppercase">
-            {modeLabel}
-          </p>
-          <h1 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
+          <p className="text-muted text-sm font-medium">{modeLabel}</p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">
             Game complete
           </h1>
           <p className="text-muted mt-2 text-sm">
@@ -199,7 +197,9 @@ export function GameResults({
           <ProgressionPanel progression={progression} />
 
           <section>
-            <h2 className="font-serif text-xl">Round recap</h2>
+            <h2 className="text-xl font-semibold tracking-tight">
+              Round recap
+            </h2>
             <div className="divide-border mt-2 divide-y">
               {results.rounds.map((round) => (
                 <article
@@ -236,7 +236,7 @@ export function GameResults({
           <form action={action}>
             <SubmitButton
               pendingLabel="Preparing your next journey…"
-              className="bg-sage w-full rounded-xl px-6 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+              className="bg-foreground text-background w-full px-6 py-4 font-semibold transition hover:opacity-80 disabled:cursor-wait disabled:opacity-60"
             >
               {actionLabel}
             </SubmitButton>

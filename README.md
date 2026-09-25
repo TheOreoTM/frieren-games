@@ -19,6 +19,17 @@ npm run lint
 npm run build
 ```
 
+The focused browser suite uses Playwright. Install its Chromium runtime once, then run it against
+the development database:
+
+```bash
+npx playwright install --with-deps chromium
+npm run test:e2e
+```
+
+The Connections browser flow is read-only with respect to puzzle content and therefore expects a
+complete approved puzzle for the current UTC date.
+
 Before a production deployment, run `npm run env:check` against the intended environment and follow [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md).
 
 ## Site branding

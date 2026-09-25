@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
     "curator": "node --env-file-if-exists=.env.local --import tsx tools/curator/src/server.ts",
     "frames:push": "node --env-file-if-exists=.env.local --import tsx tools/frames/push.ts",
     "frames:promote": "node --env-file-if-exists=.env.frames-production.local --import tsx tools/frames/promote.ts",
@@ -32,6 +33,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.19.3",
     "@types/pg": "^8.23.1",

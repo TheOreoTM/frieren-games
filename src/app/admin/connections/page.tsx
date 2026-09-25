@@ -282,7 +282,7 @@ export default async function ConnectionsAdminPage({
                           placeholder="Optional reveal context"
                         />
                       </label>
-                      <div className="mt-3 grid grid-cols-2 gap-2">
+                      <div className="mt-3 grid grid-cols-1 gap-2">
                         {group.tiles.map((tile, tileIndex) => (
                           <label
                             key={tile.id}

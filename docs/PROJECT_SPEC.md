@@ -63,6 +63,10 @@ Add:
 
 Add Frierendle, Connections, and other games after Guessr is polished and stable.
 
+The approved Connections rules and implementation sequence are defined in
+[`docs/CONNECTIONS_SPEC.md`](CONNECTIONS_SPEC.md). Connections remains independent from Guessr and
+must not be implemented through a generic game payload or universal game engine.
+
 ## 3. FrierenGuessr rules
 
 ### Standard game

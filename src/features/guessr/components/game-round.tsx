@@ -73,7 +73,7 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
         />
         {exactMatch ? (
           <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
-            <span>Your guess &amp; answer</span>
+            <span className="timeline-marker-label-above">Your guess &amp; answer</span>
           </div>
         ) : (
           <>
@@ -81,7 +81,7 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
               <span>Your guess</span>
             </div>
             <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
-              <span>Answer</span>
+              <span className="timeline-marker-label-above">Answer</span>
             </div>
           </>
         )}

@@ -10,7 +10,8 @@ export default function Home() {
     <main className="px-5 py-12 sm:px-8 sm:py-20">
       <section className="mx-auto w-full max-w-7xl">
         <p className="text-muted border-border border-b pb-3 text-sm">
-          An unofficial Frieren fan project
+          An <span className="font-bold">unofficial</span> Frieren fan project{" "}
+          <span className="text-[8px]">Please no copyright strike</span>
         </p>
 
         <div className="grid gap-14 py-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)] lg:gap-20 lg:py-20">
@@ -43,8 +44,8 @@ export default function Home() {
             </div>
           </div>
 
-          <aside className="border-border self-end border-t pt-5">
-            <p className="text-muted text-sm">In a game</p>
+          <aside className="border-border self-end pt-5">
+            <p className="text-muted text-sm">How it works</p>
             <dl className="divide-border mt-3 divide-y">
               <div className="flex items-baseline justify-between py-4">
                 <dt>Frames</dt>

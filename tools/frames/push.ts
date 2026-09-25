@@ -1,25 +1,16 @@
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { lstat, readFile } from "node:fs/promises";
-import path from "node:path";
 import { loadEnvFile } from "node:process";
-import { fileURLToPath } from "node:url";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { z } from "zod";
 
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { readManifest, writeManifest } from "../curator/src/manifest";
-import { isPathInsideRoot } from "../curator/src/paths";
 import { frameInputFromManifest } from "./frame-input";
+import { curatorManifestPath, readVerifiedFrameBytes } from "./local-frame";
 import { putFrameObject, validateR2Environment } from "./r2-storage";
-import { inspectWebp } from "./webp";
 
 if (existsSync(".env.local")) loadEnvFile(".env.local");
-
-const curatorRoot = fileURLToPath(new URL("../curator/", import.meta.url));
-const outputDirectory = path.join(curatorRoot, "output");
-const manifestPath = path.join(curatorRoot, "manifest.json");
 
 function errorMessage(error: unknown) {
   if (error instanceof z.ZodError) {
@@ -38,7 +29,7 @@ async function main() {
   if (!connectionString) throw new Error("DATABASE_URL is required.");
   validateR2Environment();
 
-  const manifest = await readManifest(manifestPath);
+  const manifest = await readManifest(curatorManifestPath);
   const prisma = new PrismaClient({
     adapter: new PrismaPg({ connectionString }),
   });
@@ -53,26 +44,7 @@ async function main() {
       }
 
       try {
-        const imagePath = path.resolve(curatorRoot, record.outputFile);
-        if (!isPathInsideRoot(outputDirectory, imagePath)) {
-          throw new Error("Output path escapes tools/curator/output.");
-        }
-        const imageStats = await lstat(imagePath);
-        if (!imageStats.isFile() || imageStats.isSymbolicLink()) {
-          throw new Error("Output is not a regular image file.");
-        }
-
-        const bytes = await readFile(imagePath);
-        const sha256 = createHash("sha256").update(bytes).digest("hex");
-        if (sha256 !== record.sha256)
-          throw new Error("WebP checksum differs from the approved manifest.");
-
-        const image = inspectWebp(bytes);
-        if (image.width !== record.width || image.height !== record.height) {
-          throw new Error(
-            `WebP dimensions ${image.width}×${image.height} do not match manifest ${record.width}×${record.height}.`,
-          );
-        }
+        const bytes = await readVerifiedFrameBytes(record);
 
         const episode = await prisma.episode.findUnique({
           where: {
@@ -120,7 +92,7 @@ async function main() {
           pushedAt: new Date().toISOString(),
           lastError: undefined,
         };
-        await writeManifest(manifestPath, manifest);
+        await writeManifest(curatorManifestPath, manifest);
         summary.pushed += 1;
         console.log(`Pushed ${record.localId}.`);
       } catch (error) {
@@ -129,7 +101,7 @@ async function main() {
           status: "FAILED",
           lastError: errorMessage(error),
         };
-        await writeManifest(manifestPath, manifest);
+        await writeManifest(curatorManifestPath, manifest);
         summary.failed += 1;
         console.error(`Failed ${record.localId}: ${errorMessage(error)}`);
       }

@@ -17,6 +17,11 @@ The developer is actively learning and participating in the project. AI should a
 ## Working style
 
 - Work in small, reviewable increments.
+- When changing the repository, create small, coherent git commits as each verified checkpoint is completed. Do not leave all changes for one large commit at the end.
+- Keep each commit focused on one concern and leave the repository in a working state where practical. A very small task may use a single commit.
+- Before committing, inspect `git status` and the relevant diff. Stage only files or hunks that belong to the current task; never include unrelated or pre-existing developer changes.
+- Follow the Conventional Commits format for commit messages, using a concise imperative description (for example, `feat: add episode picker`, `fix: preserve daily progress`, or `docs: clarify setup`). Prefer the most specific appropriate type, such as `feat`, `fix`, `test`, `docs`, `refactor`, or `chore`.
+- Do not amend, rebase, rewrite history, or push commits unless the developer explicitly asks.
 - Do not implement multiple major roadmap phases in one pass.
 - Before a meaningful architectural change, explain the choice and relevant tradeoffs.
 - Do not ask permission for trivial implementation details or routine refactors.

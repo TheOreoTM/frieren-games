@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SubmitButton } from "@/components/ui/submit-button";
 import { addUtcDays, enumerateUtcDates, parseUtcDateKey, utcDateKey } from "@/features/guessr/domain/utc-date";
 import { listAdminDailies } from "@/features/guessr/server/daily-admin";
 import { requireAdmin } from "@/lib/authorization";
@@ -81,10 +82,17 @@ export default async function DailyAdminPage({
             Last UTC date
             <input className="admin-input" type="date" name="end" min={utcDateKey(tomorrow)} defaultValue={utcDateKey(defaultEnd)} required />
           </label>
-          <button className="self-end rounded-lg bg-sage px-5 py-3 font-semibold text-white" type="submit">Generate range</button>
+          <SubmitButton pendingLabel="Generating…" className="self-end rounded-lg bg-sage px-5 py-3 font-semibold text-white disabled:cursor-wait disabled:opacity-60">Generate range</SubmitButton>
         </form>
 
-        {params.notice ? <p className="mt-4 rounded-xl border border-sage/30 bg-sage/10 px-4 py-3 text-sm">{params.notice}</p> : null}
+        {params.notice ? (
+          <p
+            className={`mt-4 rounded-xl border px-4 py-3 text-sm ${params.notice.startsWith("Error:") ? "border-red-300 bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-200" : "border-sage/30 bg-sage/10"}`}
+            role={params.notice.startsWith("Error:") ? "alert" : "status"}
+          >
+            {params.notice}
+          </p>
+        ) : null}
 
         <nav className="my-7 flex items-center justify-between">
           <Link href={`/admin/dailies?month=${shiftMonth(month, -1)}`} className="font-semibold">← Previous month</Link>
@@ -128,7 +136,7 @@ export default async function DailyAdminPage({
                             <input type="hidden" name="challengeId" value={challenge.id} />
                             <input type="hidden" name="roundNumber" value={round.roundNumber} />
                             <input type="hidden" name="month" value={month} />
-                            <button className="font-semibold text-sage" type="submit">Replace</button>
+                            <SubmitButton pendingLabel="Replacing…" className="font-semibold text-sage disabled:cursor-wait disabled:opacity-60">Replace</SubmitButton>
                           </form>
                         ) : null}
                       </div>
@@ -141,13 +149,13 @@ export default async function DailyAdminPage({
                       <form action={regenerateDailyAction}>
                         <input type="hidden" name="challengeId" value={challenge.id} />
                         <input type="hidden" name="month" value={month} />
-                        <button className="rounded-lg border border-border px-3 py-2 text-sm font-semibold" type="submit">Regenerate</button>
+                        <SubmitButton pendingLabel="Regenerating…" className="rounded-lg border border-border px-3 py-2 text-sm font-semibold disabled:cursor-wait disabled:opacity-60">Regenerate</SubmitButton>
                       </form>
                       {challenge.status !== "APPROVED" ? (
                         <form action={approveDailyAction}>
                           <input type="hidden" name="challengeId" value={challenge.id} />
                           <input type="hidden" name="month" value={month} />
-                          <button className="rounded-lg bg-sage px-3 py-2 text-sm font-semibold text-white" type="submit">Approve</button>
+                          <SubmitButton pendingLabel="Approving…" className="rounded-lg bg-sage px-3 py-2 text-sm font-semibold text-white disabled:cursor-wait disabled:opacity-60">Approve</SubmitButton>
                         </form>
                       ) : null}
                     </>
@@ -160,7 +168,7 @@ export default async function DailyAdminPage({
                         <input type="checkbox" name="confirmVoid" value="yes" required />
                         Invalidate ranked results
                       </label>
-                      <button className="rounded-lg border border-red-300 px-3 py-2 text-sm font-semibold text-red-700 dark:text-red-300" type="submit">VOID DAILY</button>
+                      <SubmitButton pendingLabel="Voiding…" className="rounded-lg border border-red-300 px-3 py-2 text-sm font-semibold text-red-700 disabled:cursor-wait disabled:opacity-60 dark:text-red-300">VOID DAILY</SubmitButton>
                     </form>
                   ) : null}
                 </div>

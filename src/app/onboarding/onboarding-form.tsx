@@ -30,6 +30,7 @@ export function OnboardingForm({
           maxLength={24}
           autoComplete="username"
           aria-describedby="username-help username-error"
+          aria-invalid={Boolean(state.errors?.username)}
           required
         />
         <span id="username-help" className="text-xs font-normal leading-5 text-muted">
@@ -51,6 +52,7 @@ export function OnboardingForm({
           maxLength={40}
           autoComplete="name"
           aria-describedby="display-name-error"
+          aria-invalid={Boolean(state.errors?.displayName)}
           required
         />
         {state.errors?.displayName ? (
@@ -60,7 +62,7 @@ export function OnboardingForm({
         ) : null}
       </label>
 
-      {state.message ? <p className="text-sm text-red-700 dark:text-red-300">{state.message}</p> : null}
+      {state.message ? <p className="text-sm text-red-700 dark:text-red-300" role="alert">{state.message}</p> : null}
 
       <button
         type="submit"

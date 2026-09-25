@@ -3,6 +3,8 @@ import {
   listFrameFilterOptions,
   parseAdminFrameFilters,
 } from "@/data/frames";
+import { SubmitButton } from "@/components/ui/submit-button";
+import { isReservedForUnlimited } from "@/features/guessr/domain/daily-policy";
 import { requireAdmin } from "@/lib/authorization";
 
 import { updateFrameDifficulty, updateFrameEnabled } from "./actions";
@@ -139,14 +141,31 @@ export default async function FrameAdminPage({
                         <option value="MEDIUM">Medium</option>
                         <option value="HARD">Hard</option>
                       </select>
-                      <button type="submit" className="rounded-lg border border-border px-3 text-sm font-semibold">Save</button>
+                      <SubmitButton pendingLabel="Saving…" className="rounded-lg border border-border px-3 text-sm font-semibold disabled:cursor-wait disabled:opacity-60">Save</SubmitButton>
                     </form>
                     <form action={updateFrameEnabled}>
                       <input type="hidden" name="id" value={frame.id} />
                       <input type="hidden" name="enabled" value={String(!frame.enabled)} />
-                      <button type="submit" className="rounded-lg border border-border px-3 py-2.5 text-sm font-semibold">
+                      <SubmitButton
+                        pendingLabel="Saving…"
+                        disabled={
+                          frame.enabled &&
+                          isReservedForUnlimited(
+                            frame.dailyRounds.map((round) => round.challenge),
+                          )
+                        }
+                        title={
+                          frame.enabled &&
+                          isReservedForUnlimited(
+                            frame.dailyRounds.map((round) => round.challenge),
+                          )
+                            ? "Replace or void the current/future Daily reservation first."
+                            : undefined
+                        }
+                        className="rounded-lg border border-border px-3 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+                      >
                         {frame.enabled ? "Disable" : "Enable"}
-                      </button>
+                      </SubmitButton>
                     </form>
                   </div>
                 </div>

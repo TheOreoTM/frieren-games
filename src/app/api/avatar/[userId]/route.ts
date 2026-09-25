@@ -22,7 +22,15 @@ export async function GET(
     return new NextResponse(null, { status: 404 });
   }
 
-  const upstream = await fetch(upstreamUrl, { next: { revalidate: 86_400 } });
+  let upstream: Response;
+  try {
+    upstream = await fetch(upstreamUrl, {
+      redirect: "error",
+      next: { revalidate: 86_400 },
+    });
+  } catch {
+    return new NextResponse(null, { status: 404 });
+  }
   const contentType = upstream.headers.get("content-type");
   if (!upstream.ok || !contentType?.startsWith("image/")) {
     return new NextResponse(null, { status: 404 });

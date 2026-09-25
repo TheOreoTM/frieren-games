@@ -2,7 +2,8 @@ import "server-only";
 
 import { z } from "zod";
 
-import { Prisma } from "@/generated/prisma/client";
+import { DailyChallengeStatus, Prisma } from "@/generated/prisma/client";
+import { startOfUtcDate } from "@/features/guessr/domain/utc-date";
 import { getDb } from "@/lib/db";
 import { publicFrameUrl } from "@/lib/r2";
 
@@ -94,5 +95,24 @@ export async function setFrameDifficulty(id: string, difficulty: "EASY" | "MEDIU
 }
 
 export async function setFrameEnabled(id: string, enabled: boolean) {
-  await getDb().frame.update({ where: { id }, data: { enabled } });
+  await getDb().$transaction(async (database) => {
+    if (!enabled) {
+      const reservation = await database.dailyChallengeRound.findFirst({
+        where: {
+          frameId: id,
+          challenge: {
+            dateUtc: { gte: startOfUtcDate(new Date()) },
+            status: { not: DailyChallengeStatus.VOID },
+          },
+        },
+        select: { challenge: { select: { dateUtc: true } } },
+      });
+      if (reservation) {
+        throw new Error(
+          `This frame is reserved for the ${reservation.challenge.dateUtc.toISOString().slice(0, 10)} Daily. Replace or void that Daily first.`,
+        );
+      }
+    }
+    await database.frame.update({ where: { id }, data: { enabled } });
+  });
 }

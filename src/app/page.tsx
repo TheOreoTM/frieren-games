@@ -13,12 +13,12 @@ export default function Home() {
           <span className="block text-sage">made for quiet competition.</span>
         </h1>
         <p className="mt-7 max-w-2xl text-lg leading-8 text-muted">
-          FrierenGuessr is taking shape: identify an episode from a single
-          frame, then see how close your memory carried you.
+          Identify an episode from a carefully curated frame, challenge the shared Daily,
+          and build a quiet record of how far your memory carries you.
         </p>
         <div className="mt-12 flex items-center gap-3 text-sm text-muted">
           <span className="h-px w-10 bg-gold" aria-hidden="true" />
-          FrierenGuessr Unlimited is ready to play.
+          Unlimited, Daily competition, profiles, and progression are ready.
         </div>
         <Link
           href="/guessr"

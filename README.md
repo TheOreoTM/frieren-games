@@ -19,6 +19,8 @@ npm run lint
 npm run build
 ```
 
+Before a production deployment, run `npm run env:check` against the intended environment and follow [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md).
+
 ## Local curator
 
 Install `ffmpeg`/`ffprobe`, copy `.env.example` to `.env.local`, set an absolute `CURATOR_MEDIA_ROOT`, and run:

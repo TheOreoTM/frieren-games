@@ -1,3 +1,5 @@
+import { SubmitButton } from "@/components/ui/submit-button";
+
 export type GameResultsData = {
   totalScore: number;
   rounds: Array<{
@@ -63,9 +65,9 @@ export function GameResults({
         </div>
 
         <form action={action} className="mt-8">
-          <button type="submit" className="w-full rounded-xl bg-sage px-6 py-4 font-semibold text-white transition hover:brightness-105">
+          <SubmitButton pendingLabel="Preparing your next journey…" className="w-full rounded-xl bg-sage px-6 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
             {actionLabel}
-          </button>
+          </SubmitButton>
         </form>
       </section>
     </div>

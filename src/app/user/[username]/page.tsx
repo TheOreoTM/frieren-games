@@ -60,7 +60,14 @@ export default async function UserProfilePage({
                 <span className="font-semibold">{profile.totalXp.toLocaleString()} XP</span>
                 <span className="text-muted">Next level at {profile.level.nextLevelXp.toLocaleString()} XP</span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-border">
+              <div
+                className="mt-2 h-2 overflow-hidden rounded-full bg-border"
+                role="progressbar"
+                aria-label={`Level ${profile.level.level} progress`}
+                aria-valuemin={profile.level.levelStartXp}
+                aria-valuemax={profile.level.nextLevelXp}
+                aria-valuenow={profile.totalXp}
+              >
                 <div className="h-full rounded-full bg-sage" style={{ width: `${levelPercent}%` }} />
               </div>
             </div>

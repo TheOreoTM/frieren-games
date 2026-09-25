@@ -2,6 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 
+import { SubmitButton } from "@/components/ui/submit-button";
 import type {
   EpisodeOption,
   RoundReveal,
@@ -56,7 +57,15 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
 
   return (
     <div className="mt-6 rounded-2xl border border-border bg-background/70 p-4">
-      <div className="relative mx-4 h-16" aria-label="Chronological distance between guess and answer">
+      <div
+        className="relative mx-4 h-16"
+        role="img"
+        aria-label={
+          reveal.distance === 0
+            ? "Your guess exactly matches the answer on the episode timeline."
+            : `Your guess is ${reveal.distance} episodes away from the answer on the chronological timeline.`
+        }
+      >
         <div className="absolute inset-x-0 top-7 h-px bg-border" />
         <div
           className="absolute top-[1.625rem] h-1 rounded-full bg-gold"
@@ -153,11 +162,12 @@ export function GameRound(props: GameRoundProps) {
               height={props.imageHeight}
               className="aspect-video h-auto w-full object-contain"
               fetchPriority="high"
+              decoding="async"
             />
           </div>
 
           {reveal ? (
-            <section className="reveal-enter mt-5 rounded-2xl border border-border bg-surface p-5 sm:p-6">
+            <section className="reveal-enter mt-5 rounded-2xl border border-border bg-surface p-5 sm:p-6" aria-live="polite">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">Round result</p>
@@ -172,9 +182,9 @@ export function GameRound(props: GameRoundProps) {
               <p className="mt-5 border-t border-border pt-4 text-lg font-medium">{reveal.correct.title}</p>
               <RevealTimeline reveal={reveal} />
               <form action={props.advanceRound} className="mt-5">
-                <button className="w-full rounded-xl bg-sage px-5 py-3.5 font-semibold text-white transition hover:brightness-105" type="submit">
+                <SubmitButton pendingLabel="Continuing…" className="w-full rounded-xl bg-sage px-5 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
                   {props.roundNumber === props.roundCount ? "View results" : "Next round"}
-                </button>
+                </SubmitButton>
               </form>
             </section>
           ) : null}
@@ -182,13 +192,12 @@ export function GameRound(props: GameRoundProps) {
 
         <aside className="rounded-2xl border border-border bg-surface p-5 lg:sticky lg:top-6 lg:self-start">
           <p className="text-sm font-semibold">Which episode is this?</p>
-          <div className="mt-4 flex gap-2" role="tablist" aria-label="Season">
+          <div className="mt-4 flex gap-2" role="group" aria-label="Choose a season">
             {seasons.map((seasonNumber) => (
               <button
                 key={seasonNumber}
                 type="button"
-                role="tab"
-                aria-selected={season === seasonNumber}
+                aria-pressed={season === seasonNumber}
                 disabled={Boolean(reveal)}
                 onClick={() => changeSeason(seasonNumber)}
                 className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition ${season === seasonNumber ? "border-sage bg-sage/15 text-sage" : "border-border hover:border-sage/60"}`}
@@ -224,7 +233,7 @@ export function GameRound(props: GameRoundProps) {
                 ? `${episodeLabel(previewEpisode)} · ${previewEpisode.title}`
                 : "Hover, focus, or select an episode to see its title."}
             </p>
-            {state.error ? <p className="mt-3 text-sm text-red-700 dark:text-red-300">{state.error}</p> : null}
+            {state.error ? <p className="mt-3 text-sm text-red-700 dark:text-red-300" role="alert">{state.error}</p> : null}
             <button
               type="submit"
               disabled={episodeId === null || pending || Boolean(reveal)}

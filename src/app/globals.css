@@ -46,6 +46,11 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--magic) 80%, var(--foreground));
+  outline-offset: 3px;
+}
+
 .magic-glow {
   position: absolute;
   inset: 10% 8% auto auto;
@@ -107,7 +112,12 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-enter {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

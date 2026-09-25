@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { DailyResults } from "@/features/guessr/components/daily-results";
 import { GameRound } from "@/features/guessr/components/game-round";
 import {
@@ -104,9 +105,9 @@ export default async function DailyPage({
           <p className="mt-8 rounded-xl border border-gold/40 bg-gold/10 p-4">Today&apos;s challenge has been voided.</p>
         ) : (
           <form action={startDailyGame} className="mt-8">
-            <button className="rounded-xl bg-sage px-7 py-4 font-semibold text-white transition hover:brightness-105" type="submit">
+            <SubmitButton pendingLabel="Preparing Daily…" className="rounded-xl bg-sage px-7 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
               {overview.rankedAttempt?.completedAt ? "Start practice run" : "Start ranked Daily"}
-            </button>
+            </SubmitButton>
           </form>
         )}
         <Link href="/leaderboards/guessr" className="mt-6 inline-block text-sm font-semibold text-sage">

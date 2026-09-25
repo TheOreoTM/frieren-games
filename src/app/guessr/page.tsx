@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SubmitButton } from "@/components/ui/submit-button";
+
 import { startUnlimitedGame } from "./actions";
 
 export const metadata: Metadata = {
@@ -24,9 +26,9 @@ export default function GuessrLandingPage() {
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
             <form action={startUnlimitedGame}>
-              <button type="submit" className="rounded-xl bg-sage px-7 py-4 text-base font-semibold text-white shadow-lg shadow-sage/15 transition hover:-translate-y-0.5 hover:brightness-105">
+              <SubmitButton pendingLabel="Preparing game…" className="rounded-xl bg-sage px-7 py-4 text-base font-semibold text-white shadow-lg shadow-sage/15 transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
                 Start Unlimited
-              </button>
+              </SubmitButton>
             </form>
             <Link href="/guessr/daily" className="rounded-xl border border-border bg-background px-7 py-4 text-base font-semibold transition hover:border-gold">
               Play Daily

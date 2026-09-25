@@ -1,12 +1,38 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { z } from "zod";
 
-const r2EnvironmentSchema = z.object({
+export const r2EnvironmentSchema = z.object({
   R2_ACCOUNT_ID: z.string().min(1),
   R2_ACCESS_KEY_ID: z.string().min(1),
   R2_SECRET_ACCESS_KEY: z.string().min(1),
   R2_BUCKET: z.string().min(1),
 });
+
+export type R2Environment = z.infer<typeof r2EnvironmentSchema>;
+
+export function createFrameObjectWriter(environment: R2Environment) {
+  const parsed = r2EnvironmentSchema.parse(environment);
+  const client = new S3Client({
+    region: "auto",
+    endpoint: `https://${parsed.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: parsed.R2_ACCESS_KEY_ID,
+      secretAccessKey: parsed.R2_SECRET_ACCESS_KEY,
+    },
+  });
+
+  return async (objectKey: string, bytes: Uint8Array) => {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: parsed.R2_BUCKET,
+        Key: objectKey,
+        Body: bytes,
+        ContentType: "image/webp",
+        CacheControl: "public, max-age=31536000, immutable",
+      }),
+    );
+  };
+}
 
 let cached:
   | {

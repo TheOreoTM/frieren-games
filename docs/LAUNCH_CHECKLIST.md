@@ -23,6 +23,8 @@ Use this checklist for the first production deploy and for later high-risk relea
 
 - Confirm the public R2 hostname uses HTTPS and only exposes approved opaque `frames/<id>.webp` objects.
 - Keep R2 write keys local to the frame-push workflow; rotate them if they are ever copied to an unintended environment.
+- Run `npm run frames:promote` as a dry-run, review the named database and R2 targets, then apply
+  with the exact configured confirmation label.
 - Verify a production frame response has an immutable long-lived cache policy.
 - Confirm the local curator still binds only to `127.0.0.1` and is not run as part of the Vercel build or start commands.
 

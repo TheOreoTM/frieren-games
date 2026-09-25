@@ -49,3 +49,45 @@ ADMIN_DISCORD_ID="your personal Discord user ID"
 ```
 
 Run `npm run dev`, sign in with that Discord account, and open `http://localhost:3000/admin/frames`. The route and every mutation perform their own server-side role check. Deletion is intentionally omitted; disable a frame instead.
+
+## Production promotion
+
+The curator manifest has one local workflow status, so do not edit `PUSHED` records or point
+`.env.local` at production. Production promotion deliberately ignores the development push status
+and synchronizes every locally approved manifest record to an explicitly named target.
+
+First apply the reviewed Prisma migrations to the production database using
+`prisma migrate deploy`. Then create the ignored production promotion environment file:
+
+```bash
+cp .env.frames-production.example .env.frames-production.local
+```
+
+Fill it with the production Neon and R2 values. This custom filename is intentional: Next.js does
+not automatically load the R2 write credentials during normal production builds. Run the default
+dry-run first:
+
+```bash
+npm run frames:promote
+```
+
+The dry-run validates every local WebP, reads the production Frame inventory, detects immutable
+metadata conflicts, and prints the proposed create/update counts. It does not write to PostgreSQL
+or R2.
+
+Apply only after checking the displayed database hostname, bucket, public origin, and plan:
+
+```bash
+npm run frames:promote -- --apply --confirm=frieren-production
+```
+
+Use the exact `PRODUCTION_TARGET_LABEL` configured in `.env.frames-production.local`. An apply run:
+
+- verifies and uploads every approved WebP under its existing opaque object key,
+- synchronizes the canonical Episode catalogue,
+- creates missing Frame rows and updates difficulty only on matching rows,
+- aborts rather than changing conflicting episode, timestamp, object-key, or dimension metadata,
+- leaves `tools/curator/manifest.json` untouched and is safe to retry.
+
+The production R2 bucket may be the same bucket used during development or a separate bucket. In
+either case, uploads are idempotent because object keys derive from stable opaque frame IDs.

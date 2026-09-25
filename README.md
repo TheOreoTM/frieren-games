@@ -61,6 +61,11 @@ npm run frames:push
 
 The command validates each WebP, uploads it under an opaque key, upserts its `Frame` record, and marks the local manifest entry as pushed. It is safe to retry.
 
+To synchronize that curated inventory into the separate production database and R2 target, use the
+guarded `npm run frames:promote` workflow documented in
+[`tools/frames/README.md`](tools/frames/README.md). It defaults to a dry-run and never changes the
+local manifest.
+
 The frame manager at `/admin/frames` requires an authenticated user with the `ADMIN` role. See the Discord setup below for bootstrapping the first administrator, and `tools/frames/README.md` for the frame pipeline safety model.
 
 ## Unlimited FrierenGuessr

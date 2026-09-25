@@ -2,21 +2,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SubmitButton } from "@/components/ui/submit-button";
+import { resolveSiteBrand } from "@/lib/site-brand";
 
 import { startUnlimitedGame } from "./actions";
 
 export const metadata: Metadata = {
-  title: "FrierenGuessr | Magic in Passing",
+  title: "FrierenGuessr",
   description: "Identify a Frieren episode from a single still frame.",
 };
 
 export default function GuessrLandingPage() {
+  const brand = resolveSiteBrand();
+
   return (
     <main className="relative flex min-h-screen items-center overflow-hidden px-5 py-12 sm:px-8">
       <div className="magic-glow" aria-hidden="true" />
       <div className="relative mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[1.15fr_0.85fr]">
         <section className="rounded-[2rem] border border-border bg-surface/95 p-7 shadow-[0_30px_100px_-55px_var(--shadow)] sm:p-12">
-          <Link href="/" className="text-sm font-medium text-muted transition hover:text-sage">← Magic in Passing</Link>
+          <Link href="/" className="text-sm font-medium text-muted transition hover:text-sage">← {brand.name}</Link>
           <p className="mt-12 text-xs font-semibold uppercase tracking-[0.24em] text-sage">Five frames · Twenty-five thousand points</p>
           <h1 className="mt-4 max-w-2xl font-serif text-5xl leading-[1.02] tracking-[-0.04em] sm:text-7xl">
             How far does your memory reach?

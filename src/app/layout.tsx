@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { SiteFooter } from "@/components/shell/site-footer";
 import { SiteHeader } from "@/components/shell/site-header";
+import { resolveSiteBrand } from "@/lib/site-brand";
 
 import "./globals.css";
 
@@ -17,28 +18,32 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://frieren.oreotm.xyz"),
-  title: {
-    default: "Magic in Passing",
-    template: "%s",
-  },
-  applicationName: "Magic in Passing",
-  description: "Small games from a long journey. Play FrierenGuessr and test which moments stayed with you.",
-  openGraph: {
-    type: "website",
-    siteName: "Magic in Passing",
-    title: "Magic in Passing",
-    description: "A calm, unofficial Frieren fan-game collection.",
-    url: "/",
-  },
-  twitter: {
-    card: "summary",
-    title: "Magic in Passing",
-    description: "Small games from a long journey.",
-  },
-  icons: { icon: "/icon.png" },
-};
+export function generateMetadata(): Metadata {
+  const brand = resolveSiteBrand();
+
+  return {
+    metadataBase: new URL("https://frieren.oreotm.xyz"),
+    title: {
+      default: brand.name,
+      template: `%s | ${brand.name}`,
+    },
+    applicationName: brand.name,
+    description: `${brand.tagline} Play FrierenGuessr and test which moments stayed with you.`,
+    openGraph: {
+      type: "website",
+      siteName: brand.name,
+      title: brand.name,
+      description: "A calm, unofficial Frieren fan-game collection.",
+      url: "/",
+    },
+    twitter: {
+      card: "summary",
+      title: brand.name,
+      description: brand.tagline,
+    },
+    icons: { icon: brand.iconPath },
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 
+import { resolveSiteBrand } from "@/lib/site-brand";
+
 export const metadata: Metadata = {
-    title: "Project Notice | Magic in Passing",
+    title: "Project Notice",
     description: "Unofficial fan-project, copyright, privacy, and contact information.",
 };
 
 export default function LegalPage() {
+    const brand = resolveSiteBrand();
+
     return (
         <main className="min-h-screen px-5 py-10 sm:px-8">
             <article className="mx-auto max-w-3xl rounded-[2rem] border border-border bg-surface p-7 sm:p-10">
@@ -15,7 +19,7 @@ export default function LegalPage() {
                     <section>
                         <h2 className="font-serif text-2xl text-foreground">Rights and attribution</h2>
                         <p className="mt-2">
-                            Magic in Passing is a non-commercial, unofficial fan project. Frieren: Beyond
+                            {brand.name} is a non-commercial, unofficial fan project. Frieren: Beyond
                             Journey&apos;s End, its characters, animation, and related properties belong to their
                             respective authors, publishers, studios, and license holders. This site is not endorsed by
                             or affiliated with them.

@@ -1,13 +1,21 @@
 import Image from "next/image";
 
-export function SiteMark({ className = "size-9" }: { className?: string }) {
+import { resolveSiteBrand, type SiteBrand } from "@/lib/site-brand";
+
+export function SiteMark({
+  brand = resolveSiteBrand(),
+  className = "size-9",
+}: {
+  brand?: SiteBrand;
+  className?: string;
+}) {
   return (
     <Image
-      src="/brand/magic-in-passing-mark.png"
+      src={brand.markPath}
       alt=""
       width={64}
       height={64}
-      className={className}
+      className={`${className} object-contain`}
       aria-hidden="true"
       unoptimized
     />

@@ -5,7 +5,7 @@ import { getDailyLeaderboard, getDailyLeaderboardNavigation } from "@/features/g
 import { parseUtcDateKey, startOfUtcDate, utcDateKey } from "@/features/guessr/domain/utc-date";
 
 export const metadata: Metadata = {
-  title: "Daily Leaderboard | Magic in Passing",
+  title: "Daily Leaderboard",
 };
 
 export default async function GuessrLeaderboardPage({

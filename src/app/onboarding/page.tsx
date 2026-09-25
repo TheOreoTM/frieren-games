@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 import { OnboardingForm } from "./onboarding-form";
 
 export const metadata: Metadata = {
-  title: "Choose your name | Magic in Passing",
+  title: "Choose your name",
 };
 
 export default async function OnboardingPage() {

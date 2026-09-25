@@ -3,23 +3,25 @@ import Link from "next/link";
 import { auth, signIn, signOut } from "@/auth";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { UserRole } from "@/generated/prisma/client";
+import { resolveSiteBrand } from "@/lib/site-brand";
 
 import { SiteMark } from "./site-mark";
 
 export async function SiteHeader() {
   const session = await auth();
+  const brand = resolveSiteBrand();
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/90 px-4 backdrop-blur-md sm:px-8">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-2 py-2 sm:gap-4">
         <Link
           href="/"
-          aria-label="Magic in Passing home"
+          aria-label={`${brand.name} home`}
           className="flex shrink-0 items-center gap-2 font-serif text-lg font-semibold tracking-tight"
         >
-          <SiteMark />
-          <span className="hidden sm:inline">Magic in Passing</span>
-          <span className="sm:hidden">Magic</span>
+          <SiteMark brand={brand} />
+          <span className="hidden sm:inline">{brand.name}</span>
+          <span className="sm:hidden">{brand.shortName}</span>
         </Link>
 
         <nav className="flex min-w-0 items-center gap-0 text-sm sm:gap-2" aria-label="Account navigation">

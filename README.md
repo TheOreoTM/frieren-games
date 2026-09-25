@@ -21,6 +21,15 @@ npm run build
 
 Before a production deployment, run `npm run env:check` against the intended environment and follow [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md).
 
+## Site branding
+
+Names, taglines, header marks, favicon paths, and recurring special-occasion dates live in
+[`src/lib/site-brand.ts`](src/lib/site-brand.ts). Nyamon activates automatically on April 1 UTC.
+
+To preview or force a brand on another occasion, set `NEXT_PUBLIC_SITE_BRAND_OVERRIDE` to
+`nyamon` or `default`, then restart or redeploy the app. Leave it unset to use the automatic
+schedule.
+
 ## Local curator
 
 Install `ffmpeg`/`ffprobe`, copy `.env.example` to `.env.local`, set an absolute `CURATOR_MEDIA_ROOT`, and run:

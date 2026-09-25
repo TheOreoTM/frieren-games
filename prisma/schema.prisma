@@ -24,6 +24,24 @@ enum DailyChallengeStatus {
   VOID
 }
 
+enum ConnectionsPuzzleStatus {
+  DRAFT
+  APPROVED
+  VOID
+}
+
+enum ConnectionsDifficulty {
+  EASY
+  MEDIUM
+  HARD
+  TRICKY
+}
+
+enum ConnectionsSubmissionResult {
+  CORRECT
+  INCORRECT
+}
+
 enum XPSource {
   DAILY_COMPLETION
   DAILY_PERFORMANCE
@@ -45,12 +63,13 @@ model User {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  accounts          Account[]
-  sessions          Session[]
-  dailyAttempts     DailyAttempt[]
-  unlimitedAttempts UnlimitedAttempt[]
-  xpTransactions    XPTransaction[]
-  achievements      UserAchievement[]
+  accounts            Account[]
+  sessions            Session[]
+  dailyAttempts       DailyAttempt[]
+  unlimitedAttempts   UnlimitedAttempt[]
+  xpTransactions      XPTransaction[]
+  achievements        UserAchievement[]
+  connectionsAttempts ConnectionsAttempt[]
 }
 
 model Account {
@@ -255,4 +274,96 @@ model UserAchievement {
 
   @@id([userId, achievementId])
   @@index([achievementId])
+}
+
+model ConnectionsPuzzle {
+  id          String                  @id @default(cuid())
+  dateUtc     DateTime                @unique @db.Date
+  status      ConnectionsPuzzleStatus @default(DRAFT)
+  spoilerNote String?
+  approvedAt  DateTime?
+  voidedAt    DateTime?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  groups   ConnectionsGroup[]
+  attempts ConnectionsAttempt[]
+}
+
+model ConnectionsGroup {
+  id          String                @id @default(cuid())
+  puzzleId    String
+  position    Int
+  difficulty  ConnectionsDifficulty
+  label       String
+  explanation String?
+
+  puzzle             ConnectionsPuzzle       @relation(fields: [puzzleId], references: [id], onDelete: Cascade)
+  tiles              ConnectionsTile[]
+  matchedSubmissions ConnectionsSubmission[]
+
+  @@unique([id, puzzleId])
+  @@unique([puzzleId, position])
+  @@unique([puzzleId, difficulty])
+  @@index([puzzleId])
+}
+
+model ConnectionsTile {
+  id             String @id @default(cuid())
+  groupId        String
+  puzzleId       String
+  text           String
+  normalizedText String
+
+  group           ConnectionsGroup            @relation(fields: [groupId, puzzleId], references: [id, puzzleId], onDelete: Cascade)
+  submissionTiles ConnectionsSubmissionTile[]
+
+  @@unique([puzzleId, normalizedText])
+  @@index([groupId, puzzleId])
+}
+
+model ConnectionsAttempt {
+  id          String    @id @default(cuid())
+  puzzleId    String
+  userId      String
+  ranked      Boolean
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  failedAt    DateTime?
+
+  puzzle      ConnectionsPuzzle       @relation(fields: [puzzleId], references: [id], onDelete: Restrict)
+  user        User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions ConnectionsSubmission[]
+  // A partial unique index in the migration enforces one ranked attempt per user/puzzle.
+
+  @@index([userId, puzzleId, ranked])
+  @@index([puzzleId, ranked, completedAt, failedAt])
+}
+
+model ConnectionsSubmission {
+  id             String                      @id @default(cuid())
+  attemptId      String
+  sequence       Int
+  result         ConnectionsSubmissionResult
+  matchedGroupId String?
+  oneAway        Boolean                     @default(false)
+  createdAt      DateTime                    @default(now())
+
+  attempt      ConnectionsAttempt          @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  matchedGroup ConnectionsGroup?           @relation(fields: [matchedGroupId], references: [id], onDelete: Restrict)
+  tiles        ConnectionsSubmissionTile[]
+
+  @@unique([attemptId, sequence])
+  @@index([matchedGroupId])
+}
+
+model ConnectionsSubmissionTile {
+  submissionId String
+  tileId       String
+
+  submission ConnectionsSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  tile       ConnectionsTile       @relation(fields: [tileId], references: [id], onDelete: Restrict)
+
+  @@id([submissionId, tileId])
+  @@index([tileId])
 }

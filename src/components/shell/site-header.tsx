@@ -40,6 +40,12 @@ export async function SiteHeader() {
           >
             Daily
           </Link>
+          <Link
+            href="/connections"
+            className="text-muted hover:text-foreground hidden border-b border-transparent px-3 py-4 font-medium transition hover:border-current lg:block"
+          >
+            Connections
+          </Link>
           {session?.user ? (
             <>
               {session.user.role === UserRole.ADMIN ? (

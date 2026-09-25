@@ -1,6 +1,6 @@
 # Connections — Product and Engineering Plan
 
-Status: **rules approved; implementation not started**
+Status: **rules approved; Increments 1–2 complete; gameplay not started**
 
 This document defines the first release of Connections for Magic in Passing. It is intentionally
 game-specific. Guessr remains independent, and this plan does not introduce a generic game engine.
@@ -142,6 +142,7 @@ ConnectionsGroup
 ConnectionsTile
   id
   groupId
+  puzzleId
   text
   normalizedText
 
@@ -174,6 +175,8 @@ Important constraints:
 - four group positions per puzzle,
 - four tiles per group enforced at the application boundary,
 - unique normalized tile text per puzzle enforced during validation and transactionally on save,
+- tile `puzzleId` is intentionally stored so PostgreSQL can enforce that uniqueness across all four
+  groups; its composite group foreign key also guarantees that the group belongs to that puzzle,
 - one ranked attempt per user and puzzle, preferably with a partial unique index,
 - one tile occurrence per submission,
 - exactly four tiles per submission enforced server-side,
@@ -269,7 +272,7 @@ Critical browser coverage after the core flow exists:
 
 ## 12. Reviewable implementation sequence
 
-### Increment 1 — Pure domain contract
+### Increment 1 — Pure domain contract (complete)
 
 - shared UTC-date extraction required by both games,
 - Connections puzzle and attempt types,
@@ -280,7 +283,7 @@ Critical browser coverage after the core flow exists:
 
 Stop for review.
 
-### Increment 2 — Persistence and admin authoring
+### Increment 2 — Persistence and admin authoring (complete)
 
 - explicit Prisma models and migration,
 - server-only data layer,

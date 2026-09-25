@@ -1,7 +1,11 @@
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream } from "node:fs";
 import { mkdir, readFile, stat, unlink } from "node:fs/promises";
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import {
+  createServer,
+  type IncomingMessage,
+  type ServerResponse,
+} from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,17 +27,40 @@ const cacheDirectory = path.join(curatorRoot, "cache");
 const outputDirectory = path.join(curatorRoot, "output");
 const manifestPath = path.join(curatorRoot, "manifest.json");
 const staticFiles = new Map([
-  ["/", { path: path.join(publicDirectory, "index.html"), type: "text/html; charset=utf-8" }],
-  ["/app.js", { path: path.join(publicDirectory, "app.js"), type: "text/javascript; charset=utf-8" }],
-  ["/styles.css", { path: path.join(publicDirectory, "styles.css"), type: "text/css; charset=utf-8" }],
+  [
+    "/",
+    {
+      path: path.join(publicDirectory, "index.html"),
+      type: "text/html; charset=utf-8",
+    },
+  ],
+  [
+    "/app.js",
+    {
+      path: path.join(publicDirectory, "app.js"),
+      type: "text/javascript; charset=utf-8",
+    },
+  ],
+  [
+    "/styles.css",
+    {
+      path: path.join(publicDirectory, "styles.css"),
+      type: "text/css; charset=utf-8",
+    },
+  ],
 ]);
 
 function sendJson(response: ServerResponse, status: number, value: unknown) {
-  response.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
+  response.writeHead(status, {
+    "Content-Type": "application/json; charset=utf-8",
+  });
   response.end(JSON.stringify(value));
 }
 
-function publicEpisode(episode: DiscoveredEpisode, approvedCounts: Map<string, number>) {
+function publicEpisode(
+  episode: DiscoveredEpisode,
+  approvedCounts: Map<string, number>,
+) {
   const episodeKey = episode.episode
     ? `${episode.episode.season}:${episode.episode.episode}`
     : "unmapped";
@@ -54,7 +81,9 @@ function publicEpisode(episode: DiscoveredEpisode, approvedCounts: Map<string, n
 }
 
 async function readJsonBody(request: IncomingMessage): Promise<unknown> {
-  if (request.headers["content-type"]?.split(";", 1)[0] !== "application/json") {
+  if (
+    request.headers["content-type"]?.split(";", 1)[0] !== "application/json"
+  ) {
     throw new Error("Expected application/json.");
   }
 
@@ -116,7 +145,13 @@ async function serveFile(
     end = match[2] ? Number(match[2]) : fileStats.size - 1;
   }
 
-  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || end < start || end >= fileStats.size) {
+  if (
+    !Number.isSafeInteger(start) ||
+    !Number.isSafeInteger(end) ||
+    start < 0 ||
+    end < start ||
+    end >= fileStats.size
+  ) {
     response.writeHead(416, { "Content-Range": `bytes */${fileStats.size}` });
     response.end();
     return;
@@ -177,7 +212,11 @@ async function main() {
     const pending = proxyByEpisodeId.get(episode.id);
     if (pending) return pending;
 
-    const created = createPreviewProxy(episode, cacheDirectory, ffmpegPath).catch((error) => {
+    const created = createPreviewProxy(
+      episode,
+      cacheDirectory,
+      ffmpegPath,
+    ).catch((error) => {
       proxyByEpisodeId.delete(episode.id);
       throw error;
     });
@@ -187,7 +226,10 @@ async function main() {
 
   const server = createServer(async (request, response) => {
     response.setHeader("Cache-Control", "no-store");
-    response.setHeader("Content-Security-Policy", "default-src 'self'; media-src 'self'; script-src 'self'; style-src 'self'");
+    response.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self'; media-src 'self'; script-src 'self'; style-src 'self'",
+    );
     response.setHeader("X-Content-Type-Options", "nosniff");
 
     try {
@@ -201,13 +243,17 @@ async function main() {
           approvedCounts.set(key, (approvedCounts.get(key) ?? 0) + 1);
         }
         sendJson(response, 200, {
-          episodes: episodes.map((episode) => publicEpisode(episode, approvedCounts)),
+          episodes: episodes.map((episode) =>
+            publicEpisode(episode, approvedCounts),
+          ),
           approvedTotal: manifest.frames.length,
         });
         return;
       }
 
-      const previewMatch = /^\/api\/episodes\/([0-9a-f-]+)\/preview$/.exec(url.pathname);
+      const previewMatch = /^\/api\/episodes\/([0-9a-f-]+)\/preview$/.exec(
+        url.pathname,
+      );
       if (request.method === "POST" && previewMatch) {
         const episode = episodeById.get(previewMatch[1]);
         if (!episode) {
@@ -228,19 +274,30 @@ async function main() {
           return;
         }
 
-        const filePath = episode.playback === "source" ? episode.absolutePath : await ensureProxy(episode);
+        const filePath =
+          episode.playback === "source"
+            ? episode.absolutePath
+            : await ensureProxy(episode);
         await serveFile(request, response, filePath, mediaType(filePath));
         return;
       }
 
       if (request.method === "POST" && url.pathname === "/api/approve") {
         const body = (await readJsonBody(request)) as Record<string, unknown>;
-        const episode = typeof body.episodeId === "string" ? episodeById.get(body.episodeId) : undefined;
+        const episode =
+          typeof body.episodeId === "string"
+            ? episodeById.get(body.episodeId)
+            : undefined;
         const timestampMs = body.timestampMs;
         const difficulty = body.difficulty;
 
-        if (!episode?.episode) throw new Error("Select a mapped episode before approval.");
-        if (!Number.isSafeInteger(timestampMs) || (timestampMs as number) < 0 || (timestampMs as number) > episode.probe.durationMs) {
+        if (!episode?.episode)
+          throw new Error("Select a mapped episode before approval.");
+        if (
+          !Number.isSafeInteger(timestampMs) ||
+          (timestampMs as number) < 0 ||
+          (timestampMs as number) > episode.probe.durationMs
+        ) {
           throw new Error("Timestamp is outside the selected episode.");
         }
         if (!DIFFICULTIES.includes(difficulty as Difficulty)) {
@@ -287,12 +344,19 @@ async function main() {
         };
 
         const result = approvalQueue.then(approval, approval);
-        approvalQueue = result.then(() => undefined, () => undefined);
-        sendJson(response, 201, { frame: await result, approvedTotal: manifest.frames.length });
+        approvalQueue = result.then(
+          () => undefined,
+          () => undefined,
+        );
+        sendJson(response, 201, {
+          frame: await result,
+          approvedTotal: manifest.frames.length,
+        });
         return;
       }
 
-      const staticFile = request.method === "GET" ? staticFiles.get(url.pathname) : undefined;
+      const staticFile =
+        request.method === "GET" ? staticFiles.get(url.pathname) : undefined;
       if (staticFile) {
         await serveFile(request, response, staticFile.path, staticFile.type);
         return;
@@ -302,14 +366,17 @@ async function main() {
     } catch (error) {
       console.error(error);
       sendJson(response, 400, {
-        error: error instanceof Error ? error.message : "Unexpected curator error.",
+        error:
+          error instanceof Error ? error.message : "Unexpected curator error.",
       });
     }
   });
 
   server.listen(rawPort, LOOPBACK_HOST, () => {
     const mappedCount = episodes.filter((episode) => episode.episode).length;
-    console.log(`Found ${episodes.length} video file(s); ${mappedCount} mapped to episodes.`);
+    console.log(
+      `Found ${episodes.length} video file(s); ${mappedCount} mapped to episodes.`,
+    );
     console.log(`Curator ready at ${origin}`);
   });
 }

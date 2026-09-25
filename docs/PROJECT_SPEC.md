@@ -5,6 +5,7 @@
 **Magic in Passing**, hosted at `frieren.oreotm.xyz`, is a focused, unofficial Frieren fan-game collection. The first flagship game is **FrierenGuessr**, where players see a still frame from the TV anime and guess the season and episode.
 
 The long-term hub may later include games such as:
+
 - Frierendle
 - Connections
 - Who Said It?
@@ -20,6 +21,7 @@ The hub architecture should make additional games easy to add, but the codebase 
 ### v0.1 — First playable Guessr
 
 Must include:
+
 - hub shell/homepage,
 - modern Frieren-inspired light/dark visual system,
 - Discord authentication and first-login onboarding,
@@ -38,6 +40,7 @@ Must include:
 ### v0.2 — Daily competition
 
 Add:
+
 - one five-round Daily challenge per UTC date,
 - one ranked Daily attempt per account,
 - unranked replay after completion,
@@ -52,6 +55,7 @@ Add:
 ### v0.3 — Profiles and progression
 
 Add:
+
 - public profiles,
 - game stats/history,
 - XP ledger,
@@ -74,6 +78,7 @@ must not be implemented through a generic game payload or universal game engine.
 A standard game contains 5 rounds.
 
 Each round:
+
 1. Display one approved frame.
 2. Player selects a season.
 3. Player selects an episode from that season.
@@ -83,6 +88,7 @@ Each round:
 7. Continue to the next round.
 
 Maximum score:
+
 - 5,000 points per round
 - 25,000 points per standard game
 
@@ -102,7 +108,7 @@ S2E02 -> globalOrder 30
 Distance is:
 
 ```ts
-Math.abs(actual.globalOrder - guessed.globalOrder)
+Math.abs(actual.globalOrder - guessed.globalOrder);
 ```
 
 There is no separate season bonus or season penalty.
@@ -115,26 +121,24 @@ Canonical v1 formula:
 export function scoreEpisodeDistance(distance: number): number {
   if (distance === 0) return 5000;
 
-  return Math.round(
-    5000 * Math.exp(-0.12 * Math.pow(distance, 1.25)),
-  );
+  return Math.round(5000 * Math.exp(-0.12 * Math.pow(distance, 1.25)));
 }
 ```
 
 Reference values:
 
 | Distance | Score |
-|---:|---:|
-| 0 | 5000 |
-| 1 | 4435 |
-| 2 | 3759 |
-| 3 | 3113 |
-| 4 | 2536 |
-| 5 | 2039 |
-| 8 | 995 |
-| 10 | 592 |
-| 15 | 145 |
-| 20 | 31 |
+| -------: | ----: |
+|        0 |  5000 |
+|        1 |  4435 |
+|        2 |  3759 |
+|        3 |  3113 |
+|        4 |  2536 |
+|        5 |  2039 |
+|        8 |   995 |
+|       10 |   592 |
+|       15 |   145 |
+|       20 |    31 |
 
 The curve must be defined in one domain module and covered by unit tests so it can be tuned later without inconsistent behavior.
 
@@ -143,6 +147,7 @@ The curve must be defined in one domain module and covered by unit tests so it c
 ### Input
 
 Use:
+
 - season tabs,
 - episode-number grid,
 - clear selected state,
@@ -153,6 +158,7 @@ Avoid dropdowns as the primary interaction.
 ### Reveal
 
 After submission, show:
+
 - points earned,
 - guessed season + episode,
 - correct season + episode,
@@ -170,6 +176,7 @@ For cross-season guesses, the timeline should visually preserve the continuous e
 Purpose: casual play and practice.
 
 Rules:
+
 - playable anonymously,
 - five rounds per game,
 - random eligible approved frames,
@@ -179,6 +186,7 @@ Rules:
 - logged-in users may retain personal Unlimited stats.
 
 Potential later difficulty modes:
+
 - Casual
 - Normal
 - Hard
@@ -190,6 +198,7 @@ Launch only Normal + Daily unless implementation is already trivial.
 Purpose: shared competitive challenge.
 
 Rules:
+
 - exactly one challenge per UTC date,
 - exactly five rounds,
 - everyone receives the same frame set and order,
@@ -204,6 +213,7 @@ Rules:
 ## 6. Daily generation
 
 A generated Daily should obey these constraints where inventory permits:
+
 - exactly 5 frames,
 - five distinct episodes,
 - no exact frame that has appeared in a previous ranked Daily,
@@ -215,6 +225,7 @@ A generated Daily should obey these constraints where inventory permits:
 ### Scheduling
 
 Admin can:
+
 - select an arbitrary date range,
 - generate candidates for all those dates,
 - review each day,
@@ -225,6 +236,7 @@ Admin can:
 ### Missing Daily fallback
 
 If no approved challenge exists when a UTC date becomes active:
+
 1. generate a valid challenge,
 2. persist it immediately,
 3. mark it as the authoritative challenge for that date,
@@ -233,6 +245,7 @@ If no approved challenge exists when a UTC date becomes active:
 ### Locking
 
 Once a challenge's date begins:
+
 - round composition is immutable,
 - normal admin editing is disabled.
 
@@ -256,6 +269,7 @@ The data model must support later seasons without schema redesign.
 ### Frame properties
 
 An approved Frame should conceptually know:
+
 - opaque ID,
 - episode ID,
 - timestamp in milliseconds,
@@ -270,6 +284,7 @@ An approved Frame should conceptually know:
 ### Eligibility exclusions
 
 Do not use frames that are primarily:
+
 - opening sequence,
 - ending sequence,
 - credits,
@@ -310,6 +325,7 @@ Frieren - S01E01.mkv
 The parser should be configurable/fallback-friendly rather than coupled to one exact naming pattern.
 
 The curator should derive:
+
 - season,
 - episode,
 - source path,
@@ -318,6 +334,7 @@ The curator should derive:
 ### Browser playback caveat
 
 Direct MKV playback in browsers is unreliable. The curator should therefore:
+
 - play the source directly only when browser-compatible,
 - otherwise generate/cache a local preview proxy suitable for browser playback,
 - use the original source file for final still extraction.
@@ -327,6 +344,7 @@ A practical preview proxy is a local H.264 MP4. It should be treated as disposab
 ### UI
 
 Primary screen:
+
 - large video player,
 - season/episode/title indicator,
 - current timestamp,
@@ -339,6 +357,7 @@ Primary screen:
 - optional scene-detection jump markers.
 
 Keyboard shortcuts:
+
 - `Space`: play/pause
 - `Left` / `Right`: roughly -5s / +5s
 - `Shift+Left` / `Shift+Right`: roughly -1s / +1s
@@ -354,6 +373,7 @@ No crop editor in v1.
 ### Approve action
 
 Approving a frame should:
+
 1. record the exact current playhead timestamp,
 2. call FFmpeg against the original source,
 3. extract the exact frame,
@@ -396,6 +416,7 @@ pnpm frames:push
 ```
 
 The push operation should:
+
 - validate manifest records,
 - skip already-pushed frames safely,
 - upload only approved WebPs,
@@ -431,10 +452,12 @@ Discord is the first identity provider.
 ### Anonymous play
 
 Anonymous users may:
+
 - play Unlimited,
 - see results.
 
 Anonymous users do not:
+
 - maintain streaks,
 - submit ranked Daily leaderboard scores,
 - persist progression.
@@ -442,6 +465,7 @@ Anonymous users do not:
 ### First login
 
 After successful Discord OAuth for a new account:
+
 1. prefill `username` from Discord username,
 2. prefill `displayName` from Discord display/global name where available,
 3. show onboarding once,
@@ -459,6 +483,7 @@ Never expose raw Discord IDs publicly.
 ## 11. Profiles
 
 A mature profile may show:
+
 - avatar,
 - display name,
 - username,
@@ -481,6 +506,7 @@ No friends/followers/comments/feed are required in the initial roadmap.
 Use an append-only-ish XP transaction ledger so awards are auditable and deduplicatable.
 
 Potential sources:
+
 - Daily completion,
 - Daily performance,
 - achievements,
@@ -493,6 +519,7 @@ Exact numbers should be tuned later.
 ### Initial achievements
 
 Start with roughly 5-8 simple achievements. Example concepts:
+
 - First Steps — finish first game
 - Bullseye — exact episode guess
 - Perfect Round — 5,000-point round
@@ -516,6 +543,7 @@ Bootstrap the developer as ADMIN through an explicit configuration path such as 
 ### `/admin/frames`
 
 Provide:
+
 - table/grid view,
 - filters for season/episode/difficulty/status,
 - image preview,
@@ -530,6 +558,7 @@ This page manages uploaded frames. It does not access local video files.
 ### `/admin/dailies`
 
 Provide:
+
 - calendar/date-range view,
 - generated/approved/locked/void state,
 - challenge preview,
@@ -542,6 +571,7 @@ Provide:
 ## 14. Leaderboards
 
 Launch with:
+
 - today's Daily leaderboard,
 - previous Daily leaderboard/history browser.
 
@@ -556,6 +586,7 @@ Ties share rank.
 Modern clean product UI influenced by Frieren's atmosphere.
 
 Preferred qualities:
+
 - calm,
 - refined,
 - spacious,
@@ -649,6 +680,7 @@ GuessrUserStats
 ## 18. Anti-cheat boundary
 
 Protect against trivial cheating:
+
 - answers stay server-side until submission,
 - frame URL/object key reveals no answer,
 - ranked round submission is server-validated,
@@ -664,6 +696,7 @@ Do not spend substantial project time fighting determined reverse engineering.
 ### Vitest
 
 Protect deterministic domain logic:
+
 - score curve,
 - global episode ordering,
 - valid episode-distance calculation,
@@ -677,6 +710,7 @@ Protect deterministic domain logic:
 ### Playwright
 
 Keep a small set of high-value flows:
+
 - anonymous Unlimited happy path,
 - authenticated Daily happy path,
 - second ranked Daily attempt rejected/converted to practice,
@@ -688,6 +722,7 @@ Tests should be explained to the developer as safeguards, not treated as ceremon
 ## 20. Non-goals for the initial project
 
 Do not prioritize:
+
 - manga gameplay,
 - specials/OVAs/movies,
 - audio clips,

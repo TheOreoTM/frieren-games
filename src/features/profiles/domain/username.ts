@@ -30,8 +30,12 @@ export function normalizeUsername(value: string): string {
 }
 
 export function suffixedUsername(base: string, suffix: string): string {
-  const safeSuffix = suffix.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 12);
-  if (!safeSuffix) throw new Error("Username suffix must contain a letter or number.");
+  const safeSuffix = suffix
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .slice(0, 12);
+  if (!safeSuffix)
+    throw new Error("Username suffix must contain a letter or number.");
   const availableBaseLength = USERNAME_MAX_LENGTH - safeSuffix.length - 1;
   const trimmedBase = base.slice(0, availableBaseLength).replace(/[-_]+$/g, "");
   return `${trimmedBase}-${safeSuffix}`;

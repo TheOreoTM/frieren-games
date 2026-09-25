@@ -8,7 +8,10 @@ export function objectKeyForLocalId(localId: string): string {
   return `frames/${localId}.webp`;
 }
 
-export function frameInputFromManifest(record: ManifestFrame, episodeId: number) {
+export function frameInputFromManifest(
+  record: ManifestFrame,
+  episodeId: number,
+) {
   return {
     id: record.localId,
     episodeId,

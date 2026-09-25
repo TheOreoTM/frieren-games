@@ -13,7 +13,8 @@ import {
 
 async function requireDailyUser() {
   const session = await auth();
-  if (!session?.user?.id) redirect("/api/auth/signin?callbackUrl=/guessr/daily");
+  if (!session?.user?.id)
+    redirect("/api/auth/signin?callbackUrl=/guessr/daily");
   return session.user.id;
 }
 
@@ -28,8 +29,13 @@ export async function submitDailyGuess(
   _previousState: GuessActionState,
   formData: FormData,
 ): Promise<GuessActionState> {
-  const parsed = z.coerce.number().int().positive().safeParse(formData.get("episodeId"));
-  if (!parsed.success) return { reveal: null, error: "Choose an episode before locking in." };
+  const parsed = z.coerce
+    .number()
+    .int()
+    .positive()
+    .safeParse(formData.get("episodeId"));
+  if (!parsed.success)
+    return { reveal: null, error: "Choose an episode before locking in." };
 
   try {
     const userId = await requireDailyUser();
@@ -40,7 +46,10 @@ export async function submitDailyGuess(
   } catch (error) {
     return {
       reveal: null,
-      error: error instanceof Error ? error.message : "That guess could not be scored.",
+      error:
+        error instanceof Error
+          ? error.message
+          : "That guess could not be scored.",
     };
   }
 }

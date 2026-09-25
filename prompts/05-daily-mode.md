@@ -24,6 +24,7 @@ Ship one globally shared five-round Daily challenge per UTC date with scheduling
 ## Generator constraints
 
 When inventory allows:
+
 - 5 distinct frames,
 - 5 distinct episodes,
 - exact frame may never be reused in another ranked Daily,
@@ -42,6 +43,7 @@ Do not let tomorrow's exact image appear in Unlimited today.
 ## Admin `/admin/dailies`
 
 Build a practical calendar/date-range workflow:
+
 - month/date view,
 - states such as generated/draft, approved, locked/active, completed, void,
 - choose an arbitrary future date range,
@@ -57,6 +59,7 @@ I may prepare many days or months in advance; do not limit generation to one wee
 ## Fallback generation
 
 If a UTC date becomes active without an approved challenge:
+
 - generate a valid challenge once,
 - save it immediately,
 - use that persisted challenge from then on,
@@ -79,6 +82,7 @@ A voided Daily should be clearly unranked/invalid. Do not replace an active roun
 Persist ranked state server-side.
 
 Do not let users:
+
 - restart their ranked attempt,
 - create two ranked attempts for the same Daily,
 - submit client-computed scores.
@@ -94,6 +98,7 @@ Completing the Daily preserves the streak even with a bad score.
 ## Leaderboard
 
 Launch with:
+
 - current Daily leaderboard,
 - previous Daily/history navigation.
 
@@ -104,6 +109,7 @@ Equal scores share the same rank. Do not break ties by speed or completion time.
 This phase needs strong tests. Explain each group to me.
 
 Cover at minimum:
+
 - generator returns five valid distinct rounds,
 - exact Daily frame cannot be reused,
 - future Daily frames are excluded from Unlimited,
@@ -119,6 +125,7 @@ Add a small Playwright flow for a ranked Daily if the test environment supports 
 ## Explicit non-goals
 
 Do NOT implement:
+
 - XP,
 - levels,
 - achievements,

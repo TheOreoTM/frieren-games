@@ -1,34 +1,41 @@
 import "server-only";
 
-import {
-  DailyChallengeStatus,
-  type Prisma,
-} from "@/generated/prisma/client";
+import { DailyChallengeStatus, type Prisma } from "@/generated/prisma/client";
 import { getDb } from "@/lib/db";
 
 import { ensurePersistedDaily } from "../domain/daily-fallback";
 import { selectDailyFrames } from "../domain/daily-generator";
-import { addUtcDays, parseUtcDateKey, startOfUtcDate, utcDateKey } from "../domain/utc-date";
+import {
+  addUtcDays,
+  parseUtcDateKey,
+  startOfUtcDate,
+  utcDateKey,
+} from "../domain/utc-date";
 
 const dailyWithRounds = {
   rounds: { orderBy: { roundNumber: "asc" as const } },
 } satisfies Prisma.DailyChallengeInclude;
 
 function isUniqueConflict(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2002"
+  );
 }
 
 function isRetryableGenerationConflict(error: unknown): boolean {
   return (
     isUniqueConflict(error) ||
-    (typeof error === "object" && error !== null && "code" in error && error.code === "P2034")
+    (typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2034")
   );
 }
 
-async function createChallenge(
-  dateUtc: Date,
-  status: DailyChallengeStatus,
-) {
+async function createChallenge(dateUtc: Date, status: DailyChallengeStatus) {
   return getDb().$transaction(
     async (database) => {
       const recentSince = addUtcDays(dateUtc, -14);
@@ -49,14 +56,17 @@ async function createChallenge(
       ]);
 
       const selected = selectDailyFrames(candidates, {
-        recentEpisodeIds: new Set(recentRounds.map((round) => round.frame.episodeId)),
+        recentEpisodeIds: new Set(
+          recentRounds.map((round) => round.frame.episodeId),
+        ),
       });
 
       return database.dailyChallenge.create({
         data: {
           dateUtc,
           status,
-          approvedAt: status === DailyChallengeStatus.APPROVED ? new Date() : null,
+          approvedAt:
+            status === DailyChallengeStatus.APPROVED ? new Date() : null,
           rounds: {
             create: selected.map((frame, index) => ({
               roundNumber: index + 1,
@@ -99,14 +109,20 @@ export async function ensureCurrentDaily(now = new Date()) {
       if (existing?.status === DailyChallengeStatus.DRAFT) {
         return getDb().dailyChallenge.update({
           where: { id: existing.id },
-          data: { status: DailyChallengeStatus.APPROVED, approvedAt: new Date() },
+          data: {
+            status: DailyChallengeStatus.APPROVED,
+            approvedAt: new Date(),
+          },
           include: dailyWithRounds,
         });
       }
       return existing;
     },
     async create(key) {
-      return createDailyChallenge(parseUtcDateKey(key), DailyChallengeStatus.APPROVED);
+      return createDailyChallenge(
+        parseUtcDateKey(key),
+        DailyChallengeStatus.APPROVED,
+      );
     },
     isDateConflict: isUniqueConflict,
   });

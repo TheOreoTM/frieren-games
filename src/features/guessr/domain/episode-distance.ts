@@ -1,4 +1,7 @@
-export function episodeDistance(actualGlobalOrder: number, guessedGlobalOrder: number) {
+export function episodeDistance(
+  actualGlobalOrder: number,
+  guessedGlobalOrder: number,
+) {
   if (
     !Number.isInteger(actualGlobalOrder) ||
     !Number.isInteger(guessedGlobalOrder) ||

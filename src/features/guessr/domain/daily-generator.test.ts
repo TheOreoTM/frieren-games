@@ -50,7 +50,9 @@ describe("selectDailyFrames", () => {
 
     const selectedEpisodes = selected.map((frame) => frame.episodeId);
     expect(selectedEpisodes).toEqual(expect.arrayContaining([2, 5, 6, 8]));
-    expect(selectedEpisodes.filter((episodeId) => [1, 3, 4, 7].includes(episodeId))).toHaveLength(1);
+    expect(
+      selectedEpisodes.filter((episodeId) => [1, 3, 4, 7].includes(episodeId)),
+    ).toHaveLength(1);
   });
 
   it("falls back across difficulties but still requires five episodes", () => {
@@ -60,6 +62,8 @@ describe("selectDailyFrames", () => {
       difficulty: "EASY" as const,
     }));
     expect(selectDailyFrames(allEasy, { random: () => 0.1 })).toHaveLength(5);
-    expect(() => selectDailyFrames(allEasy.slice(0, 4))).toThrow("at least 5 episodes");
+    expect(() => selectDailyFrames(allEasy.slice(0, 4))).toThrow(
+      "at least 5 episodes",
+    );
   });
 });

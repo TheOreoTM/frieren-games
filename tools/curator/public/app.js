@@ -20,7 +20,12 @@ const elements = {
   episodeApproved: document.querySelector("#episode-approved"),
 };
 
-const state = { episodes: [], selectedIndex: -1, loading: false, approving: false };
+const state = {
+  episodes: [],
+  selectedIndex: -1,
+  loading: false,
+  approving: false,
+};
 
 function formatTime(seconds) {
   if (!Number.isFinite(seconds)) return "00:00.000";
@@ -44,9 +49,13 @@ function updateControls() {
   const episode = selectedEpisode();
   const usable = Boolean(episode?.season && !state.loading && !state.approving);
   elements.approve.disabled = !usable;
-  elements.select.disabled = state.loading || state.approving || state.episodes.length === 0;
+  elements.select.disabled =
+    state.loading || state.approving || state.episodes.length === 0;
   elements.previous.disabled = state.selectedIndex <= 0 || state.loading;
-  elements.next.disabled = state.selectedIndex < 0 || state.selectedIndex >= state.episodes.length - 1 || state.loading;
+  elements.next.disabled =
+    state.selectedIndex < 0 ||
+    state.selectedIndex >= state.episodes.length - 1 ||
+    state.loading;
   elements.playPause.disabled = !episode || state.loading;
   elements.seekBack.disabled = !episode || state.loading;
   elements.seekForward.disabled = !episode || state.loading;
@@ -55,7 +64,8 @@ function updateControls() {
 async function request(url, options) {
   const response = await fetch(url, options);
   const value = await response.json();
-  if (!response.ok) throw new Error(value.error || `Request failed (${response.status}).`);
+  if (!response.ok)
+    throw new Error(value.error || `Request failed (${response.status}).`);
   return value;
 }
 
@@ -66,7 +76,10 @@ async function selectEpisode(index) {
   const episode = selectedEpisode();
   elements.sourceName.textContent = episode.relativePath;
   elements.pictureInfo.textContent = `${episode.width}×${episode.height} · ${episode.videoCodec}`;
-  elements.previewInfo.textContent = episode.playback === "source" ? "Direct local source" : "Cached H.264 proxy";
+  elements.previewInfo.textContent =
+    episode.playback === "source"
+      ? "Direct local source"
+      : "Cached H.264 proxy";
   elements.episodeApproved.textContent = String(episode.approvedCount);
   elements.duration.textContent = `/ ${formatTime(episode.durationMs / 1000)}`;
   elements.scrubber.max = String(episode.durationMs / 1000);
@@ -78,7 +91,11 @@ async function selectEpisode(index) {
   elements.loading.hidden = false;
   state.loading = true;
   updateControls();
-  setStatus(episode.playback === "proxy" ? "Generating or opening the cached local proxy…" : "Opening the local source…");
+  setStatus(
+    episode.playback === "proxy"
+      ? "Generating or opening the cached local proxy…"
+      : "Opening the local source…",
+  );
 
   try {
     const result = await request(`/api/episodes/${episode.id}/preview`, {
@@ -88,10 +105,15 @@ async function selectEpisode(index) {
     });
     elements.video.src = result.mediaUrl;
     elements.video.load();
-    setStatus(episode.season ? `Ready: Season ${episode.season}, Episode ${episode.episode}.` : "This filename is unmapped and cannot be approved.");
+    setStatus(
+      episode.season
+        ? `Ready: Season ${episode.season}, Episode ${episode.episode}.`
+        : "This filename is unmapped and cannot be approved.",
+    );
   } catch (error) {
     elements.placeholder.hidden = false;
-    elements.placeholder.textContent = "The local preview could not be prepared.";
+    elements.placeholder.textContent =
+      "The local preview could not be prepared.";
     setStatus(error.message, true);
   } finally {
     state.loading = false;
@@ -101,12 +123,16 @@ async function selectEpisode(index) {
 }
 
 function seek(deltaSeconds) {
-  const nextTime = Math.min(elements.video.duration || 0, Math.max(0, elements.video.currentTime + deltaSeconds));
+  const nextTime = Math.min(
+    elements.video.duration || 0,
+    Math.max(0, elements.video.currentTime + deltaSeconds),
+  );
   elements.video.currentTime = nextTime;
 }
 
 function chooseDifficulty(value) {
-  document.querySelector(`input[name="difficulty"][value="${value}"]`).checked = true;
+  document.querySelector(`input[name="difficulty"][value="${value}"]`).checked =
+    true;
 }
 
 async function approveFrame() {
@@ -115,8 +141,12 @@ async function approveFrame() {
   state.approving = true;
   updateControls();
   const timestampMs = Math.round(elements.video.currentTime * 1000);
-  const difficulty = document.querySelector('input[name="difficulty"]:checked').value;
-  setStatus(`Extracting ${formatTime(timestampMs / 1000)} from the original source…`);
+  const difficulty = document.querySelector(
+    'input[name="difficulty"]:checked',
+  ).value;
+  setStatus(
+    `Extracting ${formatTime(timestampMs / 1000)} from the original source…`,
+  );
 
   try {
     const result = await request("/api/approve", {
@@ -127,7 +157,9 @@ async function approveFrame() {
     episode.approvedCount += 1;
     elements.episodeApproved.textContent = String(episode.approvedCount);
     elements.approvedTotal.textContent = String(result.approvedTotal);
-    setStatus(`Approved ${result.frame.localId}.webp at ${formatTime(timestampMs / 1000)}.`);
+    setStatus(
+      `Approved ${result.frame.localId}.webp at ${formatTime(timestampMs / 1000)}.`,
+    );
   } catch (error) {
     setStatus(error.message, true);
   } finally {
@@ -136,9 +168,15 @@ async function approveFrame() {
   }
 }
 
-elements.select.addEventListener("change", () => selectEpisode(Number(elements.select.value)));
-elements.previous.addEventListener("click", () => selectEpisode(state.selectedIndex - 1));
-elements.next.addEventListener("click", () => selectEpisode(state.selectedIndex + 1));
+elements.select.addEventListener("change", () =>
+  selectEpisode(Number(elements.select.value)),
+);
+elements.previous.addEventListener("click", () =>
+  selectEpisode(state.selectedIndex - 1),
+);
+elements.next.addEventListener("click", () =>
+  selectEpisode(state.selectedIndex + 1),
+);
 elements.playPause.addEventListener("click", () => {
   if (elements.video.paused) elements.video.play();
   else elements.video.pause();
@@ -146,23 +184,30 @@ elements.playPause.addEventListener("click", () => {
 elements.seekBack.addEventListener("click", () => seek(-5));
 elements.seekForward.addEventListener("click", () => seek(5));
 elements.approve.addEventListener("click", approveFrame);
-elements.scrubber.addEventListener("input", () => { elements.video.currentTime = Number(elements.scrubber.value); });
+elements.scrubber.addEventListener("input", () => {
+  elements.video.currentTime = Number(elements.scrubber.value);
+});
 elements.video.addEventListener("timeupdate", () => {
   elements.currentTime.textContent = formatTime(elements.video.currentTime);
-  if (!elements.scrubber.matches(":active")) elements.scrubber.value = String(elements.video.currentTime);
+  if (!elements.scrubber.matches(":active"))
+    elements.scrubber.value = String(elements.video.currentTime);
 });
-elements.video.addEventListener("play", () => { elements.playPause.firstChild.textContent = "Pause "; });
-elements.video.addEventListener("pause", () => { elements.playPause.firstChild.textContent = "Play "; });
+elements.video.addEventListener("play", () => {
+  elements.playPause.firstChild.textContent = "Pause ";
+});
+elements.video.addEventListener("pause", () => {
+  elements.playPause.firstChild.textContent = "Play ";
+});
 
 document.addEventListener("keydown", (event) => {
-  if (["SELECT", "INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)) return;
+  if (["SELECT", "INPUT", "TEXTAREA"].includes(document.activeElement?.tagName))
+    return;
   const key = event.key.toLowerCase();
   if ([" ", "arrowleft", "arrowright"].includes(key)) event.preventDefault();
   if (key === " ") {
     if (elements.video.paused) elements.video.play();
     else elements.video.pause();
-  }
-  else if (key === "arrowleft") seek(event.shiftKey ? -1 : -5);
+  } else if (key === "arrowleft") seek(event.shiftKey ? -1 : -5);
   else if (key === "arrowright") seek(event.shiftKey ? 1 : 5);
   else if (key === "1") chooseDifficulty("EASY");
   else if (key === "2") chooseDifficulty("MEDIUM");
@@ -177,18 +222,23 @@ async function initialize() {
     const result = await request("/api/episodes");
     state.episodes = result.episodes;
     elements.approvedTotal.textContent = String(result.approvedTotal);
-    elements.select.replaceChildren(...state.episodes.map((episode, index) => {
-      const option = document.createElement("option");
-      option.value = String(index);
-      option.textContent = episode.season
-        ? `S${String(episode.season).padStart(2, "0")}E${String(episode.episode).padStart(2, "0")} · ${episode.filename}`
-        : `Unmapped · ${episode.filename}`;
-      return option;
-    }));
+    elements.select.replaceChildren(
+      ...state.episodes.map((episode, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = episode.season
+          ? `S${String(episode.season).padStart(2, "0")}E${String(episode.episode).padStart(2, "0")} · ${episode.filename}`
+          : `Unmapped · ${episode.filename}`;
+        return option;
+      }),
+    );
 
     if (state.episodes.length === 0) {
       elements.select.replaceChildren(new Option("No video files found", ""));
-      setStatus("No supported video files were found under CURATOR_MEDIA_ROOT.", true);
+      setStatus(
+        "No supported video files were found under CURATOR_MEDIA_ROOT.",
+        true,
+      );
       updateControls();
       return;
     }

@@ -10,7 +10,11 @@ import type { ManifestRecord } from "./types";
 const temporaryDirectories: string[] = [];
 
 afterEach(async () => {
-  await Promise.all(temporaryDirectories.splice(0).map((directory) => rm(directory, { recursive: true })));
+  await Promise.all(
+    temporaryDirectories
+      .splice(0)
+      .map((directory) => rm(directory, { recursive: true })),
+  );
 });
 
 describe("curator manifest", () => {
@@ -33,11 +37,20 @@ describe("curator manifest", () => {
       createdAt: "2026-09-21T00:00:00.000Z",
     };
 
-    expect(await readManifest(manifestPath)).toEqual({ version: 1, frames: [] });
+    expect(await readManifest(manifestPath)).toEqual({
+      version: 1,
+      frames: [],
+    });
     await appendManifestRecord(manifestPath, record);
 
-    expect(await readManifest(manifestPath)).toEqual({ version: 1, frames: [record] });
-    expect(JSON.parse(await readFile(manifestPath, "utf8"))).toEqual({ version: 1, frames: [record] });
+    expect(await readManifest(manifestPath)).toEqual({
+      version: 1,
+      frames: [record],
+    });
+    expect(JSON.parse(await readFile(manifestPath, "utf8"))).toEqual({
+      version: 1,
+      frames: [record],
+    });
   });
 
   it("rejects a duplicate opaque ID", async () => {
@@ -60,6 +73,8 @@ describe("curator manifest", () => {
     };
 
     await appendManifestRecord(manifestPath, record);
-    await expect(appendManifestRecord(manifestPath, record)).rejects.toThrow("already contains");
+    await expect(appendManifestRecord(manifestPath, record)).rejects.toThrow(
+      "already contains",
+    );
   });
 });

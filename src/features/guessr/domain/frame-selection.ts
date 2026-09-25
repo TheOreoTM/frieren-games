@@ -17,7 +17,8 @@ export function selectUnlimitedFrames(
   count: number,
   random: () => number = Math.random,
 ): EligibleFrame[] {
-  if (!Number.isInteger(count) || count < 1) throw new Error("Frame count must be positive.");
+  if (!Number.isInteger(count) || count < 1)
+    throw new Error("Frame count must be positive.");
   if (eligibleFrames.length < count) {
     throw new Error(`Unlimited requires at least ${count} enabled frames.`);
   }

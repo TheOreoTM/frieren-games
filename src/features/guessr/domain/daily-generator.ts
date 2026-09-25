@@ -47,7 +47,8 @@ function exactComposition(
     const options = preferFreshEpisodes(
       candidates.filter(
         (candidate) =>
-          candidate.difficulty === difficulty && !episodeIds.has(candidate.episodeId),
+          candidate.difficulty === difficulty &&
+          !episodeIds.has(candidate.episodeId),
       ),
       recentEpisodeIds,
     );
@@ -93,5 +94,7 @@ export function selectDailyFrames(
     if (fallback.length === 5) return fallback;
   }
 
-  throw new Error("Daily generation requires enabled unused frames from at least 5 episodes.");
+  throw new Error(
+    "Daily generation requires enabled unused frames from at least 5 episodes.",
+  );
 }

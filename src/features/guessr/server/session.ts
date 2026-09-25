@@ -26,12 +26,16 @@ export async function readUnlimitedSession(): Promise<UnlimitedSession | null> {
 }
 
 export async function writeUnlimitedSession(session: UnlimitedSession) {
-  (await cookies()).set(COOKIE_NAME, signUnlimitedSession(session, sessionSecret()), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/guessr",
-    maxAge: COOKIE_MAX_AGE_SECONDS,
-    priority: "high",
-  });
+  (await cookies()).set(
+    COOKIE_NAME,
+    signUnlimitedSession(session, sessionSecret()),
+    {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/guessr",
+      maxAge: COOKIE_MAX_AGE_SECONDS,
+      priority: "high",
+    },
+  );
 }

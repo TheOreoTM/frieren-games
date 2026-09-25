@@ -22,12 +22,14 @@ Add Discord identity and site profiles without making login mandatory for Unlimi
 ### Public identity
 
 A new user needs:
+
 - unique site `username`,
 - `displayName`,
 - avatar/image where available,
 - onboarding-complete state or equivalent.
 
 On first Discord login:
+
 1. prefill site username from Discord username,
 2. prefill display name from Discord display/global name when available,
 3. redirect to `/onboarding`,
@@ -55,6 +57,7 @@ Replace any temporary Phase 2 admin protection with real server-side admin autho
 ### Anonymous behavior
 
 Anonymous users must still be able to:
+
 - open `/guessr`,
 - play Unlimited,
 - finish a game.
@@ -74,6 +77,7 @@ Add a lightweight onboarding/auth flow test only if feasible without brittle ext
 ## Explicit non-goals
 
 Do NOT implement:
+
 - Daily,
 - XP,
 - achievements,

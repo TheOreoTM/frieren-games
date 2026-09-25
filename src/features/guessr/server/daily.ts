@@ -14,14 +14,24 @@ import { ensureCurrentDaily } from "./daily-generation";
 import { listEpisodeOptions, scoreRound } from "./game";
 
 function isUniqueConflict(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2002"
+  );
 }
 
 export async function getTodayDailyOverview(userId: string, now = new Date()) {
   const challenge = await ensureCurrentDaily(now);
   const rankedAttempt = await getDb().dailyAttempt.findFirst({
     where: { userId, challengeId: challenge.id, ranked: true },
-    select: { id: true, currentRound: true, completedAt: true, totalScore: true },
+    select: {
+      id: true,
+      currentRound: true,
+      completedAt: true,
+      totalScore: true,
+    },
   });
 
   return {
@@ -31,7 +41,10 @@ export async function getTodayDailyOverview(userId: string, now = new Date()) {
   };
 }
 
-export async function startOrResumeDailyAttempt(userId: string, now = new Date()) {
+export async function startOrResumeDailyAttempt(
+  userId: string,
+  now = new Date(),
+) {
   const challenge = await ensureCurrentDaily(now);
   if (challenge.status === DailyChallengeStatus.VOID) {
     throw new Error("Today's Daily has been voided.");
@@ -71,7 +84,9 @@ async function ownedAttempt(userId: string, attemptId: string) {
         include: {
           rounds: {
             orderBy: { roundNumber: "asc" },
-            include: { frame: { select: { objectKey: true, width: true, height: true } } },
+            include: {
+              frame: { select: { objectKey: true, width: true, height: true } },
+            },
           },
         },
       },
@@ -80,7 +95,10 @@ async function ownedAttempt(userId: string, attemptId: string) {
   });
 }
 
-export async function getDailyAttemptPageData(userId: string, attemptId: string) {
+export async function getDailyAttemptPageData(
+  userId: string,
+  attemptId: string,
+) {
   const attempt = await ownedAttempt(userId, attemptId);
   if (!attempt) return null;
   if (attempt.challenge.status === DailyChallengeStatus.VOID) {
@@ -131,13 +149,20 @@ export async function submitDailyRound(
   guessedEpisodeId: number,
 ) {
   const attempt = await ownedAttempt(userId, attemptId);
-  if (!attempt || attempt.completedAt || attempt.currentRound >= STANDARD_ROUND_COUNT) {
+  if (
+    !attempt ||
+    attempt.completedAt ||
+    attempt.currentRound >= STANDARD_ROUND_COUNT
+  ) {
     throw new Error("This Daily attempt is unavailable.");
   }
   if (attempt.challenge.status === DailyChallengeStatus.VOID) {
     throw new Error("This Daily has been voided.");
   }
-  if (attempt.ranked && utcDateKey(attempt.challenge.dateUtc) !== utcDateKey(new Date())) {
+  if (
+    attempt.ranked &&
+    utcDateKey(attempt.challenge.dateUtc) !== utcDateKey(new Date())
+  ) {
     throw new Error("This ranked attempt expired at the 00:00 UTC reset.");
   }
 
@@ -146,7 +171,8 @@ export async function submitDailyRound(
   const existingGuess = attempt.guesses.find(
     (guess) => guess.roundNumber === round.roundNumber,
   );
-  if (existingGuess) return scoreRound(round.frameId, existingGuess.guessedEpisodeId);
+  if (existingGuess)
+    return scoreRound(round.frameId, existingGuess.guessedEpisodeId);
 
   const reveal = await scoreRound(round.frameId, guessedEpisodeId);
   try {
@@ -170,12 +196,15 @@ export async function submitDailyRound(
         },
         data: { totalScore: { increment: reveal.score } },
       });
-      if (updated.count !== 1) throw new Error("Daily attempt changed during submission.");
+      if (updated.count !== 1)
+        throw new Error("Daily attempt changed during submission.");
     });
   } catch (error) {
     if (!isUniqueConflict(error)) throw error;
     const saved = await getDb().dailyRoundGuess.findUnique({
-      where: { attemptId_roundNumber: { attemptId, roundNumber: round.roundNumber } },
+      where: {
+        attemptId_roundNumber: { attemptId, roundNumber: round.roundNumber },
+      },
     });
     if (!saved) throw error;
     return scoreRound(saved.frameId, saved.guessedEpisodeId);
@@ -185,13 +214,20 @@ export async function submitDailyRound(
 
 export async function advanceDailyAttempt(userId: string, attemptId: string) {
   const attempt = await ownedAttempt(userId, attemptId);
-  if (!attempt || attempt.completedAt || attempt.currentRound >= STANDARD_ROUND_COUNT) {
+  if (
+    !attempt ||
+    attempt.completedAt ||
+    attempt.currentRound >= STANDARD_ROUND_COUNT
+  ) {
     throw new Error("This Daily attempt cannot advance.");
   }
   if (attempt.challenge.status === DailyChallengeStatus.VOID) {
     throw new Error("This Daily has been voided.");
   }
-  if (attempt.ranked && utcDateKey(attempt.challenge.dateUtc) !== utcDateKey(new Date())) {
+  if (
+    attempt.ranked &&
+    utcDateKey(attempt.challenge.dateUtc) !== utcDateKey(new Date())
+  ) {
     throw new Error("This ranked attempt expired at the 00:00 UTC reset.");
   }
   const roundNumber = attempt.currentRound + 1;
@@ -200,13 +236,19 @@ export async function advanceDailyAttempt(userId: string, attemptId: string) {
   }
   const nextRound = attempt.currentRound + 1;
   const updated = await getDb().dailyAttempt.updateMany({
-    where: { id: attemptId, userId, currentRound: attempt.currentRound, completedAt: null },
+    where: {
+      id: attemptId,
+      userId,
+      currentRound: attempt.currentRound,
+      completedAt: null,
+    },
     data: {
       currentRound: nextRound,
       completedAt: nextRound === STANDARD_ROUND_COUNT ? new Date() : undefined,
     },
   });
-  if (updated.count !== 1) throw new Error("Daily attempt changed while advancing.");
+  if (updated.count !== 1)
+    throw new Error("Daily attempt changed while advancing.");
   if (nextRound === STANDARD_ROUND_COUNT && attempt.ranked) {
     await ensureDailyProgression(userId, attemptId);
   }
@@ -224,7 +266,9 @@ export async function getDailyResults(userId: string, attemptId: string) {
           guessedEpisode: { select: { season: true, episodeNumber: true } },
           frame: {
             select: {
-              episode: { select: { season: true, episodeNumber: true, title: true } },
+              episode: {
+                select: { season: true, episodeNumber: true, title: true },
+              },
             },
           },
         },
@@ -254,16 +298,30 @@ export async function getDailyLeaderboard(dateUtc: Date) {
   const challenge =
     utcDateKey(normalizedDate) === utcDateKey(new Date())
       ? await ensureCurrentDaily()
-      : await getDb().dailyChallenge.findUnique({ where: { dateUtc: normalizedDate } });
+      : await getDb().dailyChallenge.findUnique({
+          where: { dateUtc: normalizedDate },
+        });
   if (!challenge || challenge.status === DailyChallengeStatus.VOID) {
     return { challenge, entries: [] };
   }
   const attempts = await getDb().dailyAttempt.findMany({
-    where: { challengeId: challenge.id, ranked: true, completedAt: { not: null } },
+    where: {
+      challengeId: challenge.id,
+      ranked: true,
+      completedAt: { not: null },
+    },
     select: {
       id: true,
       totalScore: true,
-      user: { select: { id: true, username: true, displayName: true, name: true, image: true } },
+      user: {
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          name: true,
+          image: true,
+        },
+      },
     },
   });
   const entries = assignSharedRanks(
@@ -271,7 +329,11 @@ export async function getDailyLeaderboard(dateUtc: Date) {
       attemptId: attempt.id,
       totalScore: attempt.totalScore,
       username: attempt.user.username,
-      displayName: attempt.user.displayName ?? attempt.user.name ?? attempt.user.username ?? "Traveler",
+      displayName:
+        attempt.user.displayName ??
+        attempt.user.name ??
+        attempt.user.username ??
+        "Traveler",
       avatarUrl: attempt.user.image ? `/api/avatar/${attempt.user.id}` : null,
     })),
   );
@@ -306,7 +368,10 @@ export async function getUserDailyStreak(
   const today = startOfUtcDate(now);
   const [challenges, completions] = await Promise.all([
     getDb().dailyChallenge.findMany({
-      where: { dateUtc: { lte: today }, status: { not: DailyChallengeStatus.VOID } },
+      where: {
+        dateUtc: { lte: today },
+        status: { not: DailyChallengeStatus.VOID },
+      },
       orderBy: { dateUtc: "asc" },
       select: { id: true, dateUtc: true },
     }),
@@ -324,6 +389,8 @@ export async function getUserDailyStreak(
     challenges.map((challenge) => challenge.id),
     new Set(completions.map((attempt) => attempt.challengeId)),
     currentChallengeId ??
-      challenges.find((challenge) => utcDateKey(challenge.dateUtc) === utcDateKey(today))?.id,
+      challenges.find(
+        (challenge) => utcDateKey(challenge.dateUtc) === utcDateKey(today),
+      )?.id,
   );
 }

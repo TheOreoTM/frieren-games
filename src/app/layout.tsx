@@ -52,7 +52,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Suspense fallback={<div className="h-16 border-b border-border bg-background" aria-hidden="true" />}>
+        <Suspense
+          fallback={
+            <div
+              className="border-border bg-background h-16 border-b"
+              aria-hidden="true"
+            />
+          }
+        >
           <SiteHeader />
         </Suspense>
         {children}

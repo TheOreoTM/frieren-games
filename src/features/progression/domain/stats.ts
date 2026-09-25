@@ -17,6 +17,7 @@ export function combineGuessStats(...sources: readonly GuessAggregate[]) {
   );
   return {
     ...totals,
-    averageDistance: totals.guesses === 0 ? 0 : totals.totalDistance / totals.guesses,
+    averageDistance:
+      totals.guesses === 0 ? 0 : totals.totalDistance / totals.guesses,
   };
 }

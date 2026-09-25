@@ -15,7 +15,12 @@ export function SubmitButton({
   const { pending } = useFormStatus();
 
   return (
-    <button {...props} type="submit" disabled={disabled || pending} aria-disabled={disabled || pending}>
+    <button
+      {...props}
+      type="submit"
+      disabled={disabled || pending}
+      aria-disabled={disabled || pending}
+    >
       {pending ? pendingLabel : children}
     </button>
   );

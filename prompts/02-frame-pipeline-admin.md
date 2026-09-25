@@ -33,6 +33,7 @@ pnpm frames:push
 ```
 
 It should:
+
 - read the local approval manifest,
 - validate records with a clear schema,
 - verify image files exist and are expected WebP images,
@@ -63,6 +64,7 @@ If full auth is not implemented yet, do not fake a production-ready auth system 
 ### `/admin/frames`
 
 Build a useful frame-management page for uploaded frames with:
+
 - image preview,
 - season,
 - episode number,
@@ -92,6 +94,7 @@ The answer belongs in the database, not the object path.
 ## Testing
 
 Add focused tests for:
+
 - manifest validation,
 - idempotency-related pure logic,
 - opaque object-key generation shape if deterministic properties can be tested,
@@ -102,6 +105,7 @@ Do not overbuild an R2 integration test suite unless there is already infrastruc
 ## Explicit non-goals
 
 Do NOT implement:
+
 - Guessr gameplay,
 - Daily mode,
 - Discord OAuth,

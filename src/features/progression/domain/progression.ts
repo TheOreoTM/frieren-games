@@ -20,7 +20,8 @@ export function unlimitedXpGrant(earnedToday: number): number {
 }
 
 export function xpRequiredForLevel(level: number): number {
-  if (!Number.isInteger(level) || level < 1) throw new Error("Level must be positive.");
+  if (!Number.isInteger(level) || level < 1)
+    throw new Error("Level must be positive.");
   return 100 * (level - 1) ** 2;
 }
 
@@ -42,7 +43,9 @@ export function levelProgress(totalXp: number) {
 
 export function gameProgressionSummary(totalXp: number, xpGained: number) {
   if (!Number.isInteger(xpGained) || xpGained < 0 || xpGained > totalXp) {
-    throw new Error("XP gained must be a non-negative integer no greater than total XP.");
+    throw new Error(
+      "XP gained must be a non-negative integer no greater than total XP.",
+    );
   }
 
   const level = levelProgress(totalXp);

@@ -17,6 +17,7 @@ Then work through the prompts one at a time with your coding agent.
 Do **not** paste every phase at once.
 
 For each phase:
+
 1. give the agent the relevant prompt,
 2. let it inspect the repo,
 3. discuss any meaningful architectural choice it raises,
@@ -50,6 +51,7 @@ R2 and Discord OAuth are not required for the first curator proof of concept.
 ## Secrets
 
 Do not commit:
+
 - `DATABASE_URL`
 - Discord OAuth credentials
 - R2 credentials

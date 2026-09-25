@@ -41,12 +41,19 @@ describe("inspectWebp", () => {
     });
   });
 
-  it.each(["EXIF", "XMP ", "ICCP", "ANIM", "ANMF"])("rejects %s chunks", (tag) => {
-    expect(() => inspectWebp(webp(vp8x(1280, 720), chunk(tag, [])))).toThrow(/forbidden/);
-  });
+  it.each(["EXIF", "XMP ", "ICCP", "ANIM", "ANMF"])(
+    "rejects %s chunks",
+    (tag) => {
+      expect(() => inspectWebp(webp(vp8x(1280, 720), chunk(tag, [])))).toThrow(
+        /forbidden/,
+      );
+    },
+  );
 
   it("rejects metadata declared in VP8X flags", () => {
-    expect(() => inspectWebp(webp(vp8x(1280, 720, 0x08)))).toThrow(/declares animation or EXIF/);
+    expect(() => inspectWebp(webp(vp8x(1280, 720, 0x08)))).toThrow(
+      /declares animation or EXIF/,
+    );
   });
 
   it("rejects a mismatched RIFF length", () => {

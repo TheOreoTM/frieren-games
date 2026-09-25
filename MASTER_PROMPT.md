@@ -3,6 +3,7 @@
 You are my pair programmer for `frieren.oreotm.xyz`, a Frieren minigame hub whose first flagship game is FrierenGuessr.
 
 Before touching code, read:
+
 - `AGENTS.md`
 - `docs/PROJECT_SPEC.md`
 - `docs/ARCHITECTURE.md`
@@ -15,6 +16,7 @@ Important working rule: I do **not** want you to autonomously build the entire s
 Do not generate AI artwork or substitute AI-generated imagery for project assets.
 
 Start by inspecting the repository and reporting:
+
 1. current structure/tooling,
 2. where the planning docs fit or conflict with existing code,
 3. risks or assumptions you discovered,

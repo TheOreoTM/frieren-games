@@ -21,7 +21,9 @@ const frameFilterSchema = z.object({
 
 export type AdminFrameFilters = z.infer<typeof frameFilterSchema>;
 
-export function parseAdminFrameFilters(input: Record<string, string | string[] | undefined>) {
+export function parseAdminFrameFilters(
+  input: Record<string, string | string[] | undefined>,
+) {
   const first = (value: string | string[] | undefined) =>
     Array.isArray(value) ? value[0] : value;
   const parsed = frameFilterSchema.safeParse({
@@ -37,7 +39,12 @@ export function parseAdminFrameFilters(input: Record<string, string | string[] |
 export async function listAdminFrames(filters: AdminFrameFilters) {
   const where: Prisma.FrameWhereInput = {
     difficulty: filters.difficulty,
-    enabled: filters.status === "enabled" ? true : filters.status === "disabled" ? false : undefined,
+    enabled:
+      filters.status === "enabled"
+        ? true
+        : filters.status === "disabled"
+          ? false
+          : undefined,
     episode:
       filters.season || filters.episode
         ? {
@@ -90,7 +97,10 @@ export async function listFrameFilterOptions() {
   });
 }
 
-export async function setFrameDifficulty(id: string, difficulty: "EASY" | "MEDIUM" | "HARD") {
+export async function setFrameDifficulty(
+  id: string,
+  difficulty: "EASY" | "MEDIUM" | "HARD",
+) {
   await getDb().frame.update({ where: { id }, data: { difficulty } });
 }
 

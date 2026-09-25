@@ -37,7 +37,11 @@ describe("achievement evaluation", () => {
       hasPerfectGame: false,
     };
 
-    expect(newAchievementIds(progress, new Set(["FIRST_STEPS"]))).toEqual(["BULLSEYE"]);
-    expect(newAchievementIds(progress, new Set(["FIRST_STEPS", "BULLSEYE"]))).toEqual([]);
+    expect(newAchievementIds(progress, new Set(["FIRST_STEPS"]))).toEqual([
+      "BULLSEYE",
+    ]);
+    expect(
+      newAchievementIds(progress, new Set(["FIRST_STEPS", "BULLSEYE"])),
+    ).toEqual([]);
   });
 });

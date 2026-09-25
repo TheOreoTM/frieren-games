@@ -2,7 +2,10 @@ import "server-only";
 
 import { DailyChallengeStatus } from "@/generated/prisma/client";
 import { getUserDailyStreak } from "@/features/guessr/server/daily";
-import { ACHIEVEMENTS, type AchievementId } from "@/features/progression/domain/achievements";
+import {
+  ACHIEVEMENTS,
+  type AchievementId,
+} from "@/features/progression/domain/achievements";
 import { levelProgress } from "@/features/progression/domain/progression";
 import { combineGuessStats } from "@/features/progression/domain/stats";
 import { getDb } from "@/lib/db";
@@ -51,7 +54,10 @@ export async function getPublicProfile(username: string) {
     recentDailies,
     streak,
   ] = await Promise.all([
-    getDb().xPTransaction.aggregate({ where: { userId: user.id }, _sum: { amount: true } }),
+    getDb().xPTransaction.aggregate({
+      where: { userId: user.id },
+      _sum: { amount: true },
+    }),
     getDb().dailyAttempt.count({ where: rankedDailyFilter }),
     getDb().unlimitedAttempt.count({ where: { userId: user.id } }),
     getDb().dailyRoundGuess.aggregate({
@@ -64,9 +70,16 @@ export async function getPublicProfile(username: string) {
       _count: { _all: true },
       _sum: { distance: true },
     }),
-    getDb().dailyRoundGuess.count({ where: { ...dailyGuessFilter, distance: 0 } }),
-    getDb().unlimitedRoundGuess.count({ where: { ...unlimitedGuessFilter, distance: 0 } }),
-    getDb().dailyAttempt.aggregate({ where: rankedDailyFilter, _max: { totalScore: true } }),
+    getDb().dailyRoundGuess.count({
+      where: { ...dailyGuessFilter, distance: 0 },
+    }),
+    getDb().unlimitedRoundGuess.count({
+      where: { ...unlimitedGuessFilter, distance: 0 },
+    }),
+    getDb().dailyAttempt.aggregate({
+      where: rankedDailyFilter,
+      _max: { totalScore: true },
+    }),
     getDb().dailyAttempt.findMany({
       where: rankedDailyFilter,
       orderBy: { completedAt: "desc" },
@@ -108,11 +121,13 @@ export async function getPublicProfile(username: string) {
     recentDailies,
     achievements: user.achievements.flatMap((unlock) =>
       isAchievementId(unlock.achievementId)
-        ? [{
-            id: unlock.achievementId,
-            ...ACHIEVEMENTS[unlock.achievementId],
-            unlockedAt: unlock.unlockedAt,
-          }]
+        ? [
+            {
+              id: unlock.achievementId,
+              ...ACHIEVEMENTS[unlock.achievementId],
+              unlockedAt: unlock.unlockedAt,
+            },
+          ]
         : [],
     ),
   };

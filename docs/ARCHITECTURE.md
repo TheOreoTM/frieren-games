@@ -98,6 +98,7 @@ The exact folders can change if the repository already has a strong convention. 
 ### Server-only
 
 Keep these server-side:
+
 - Prisma/database access,
 - correct episode answers before submission,
 - Daily composition and ranked-attempt state,
@@ -109,6 +110,7 @@ Keep these server-side:
 ### Client-side
 
 Client Components are appropriate for:
+
 - episode-grid interaction,
 - active round state that is safe to expose,
 - reveal animation/timeline,
@@ -210,6 +212,7 @@ The server creates a game/attempt definition containing safe round identifiers a
 A useful rule: do not send all five correct answers to the browser upfront. The browser only needs enough information to render the current frame and submit a guess.
 
 After submission:
+
 1. server loads frame + episode,
 2. server loads guessed episode,
 3. calculates distance and score,
@@ -271,6 +274,7 @@ VOID
 ```
 
 Do not overfit the exact names. The important semantics are:
+
 - future generated challenge can be edited,
 - approved future challenge is ready,
 - active challenge is immutable,
@@ -311,6 +315,7 @@ Can browser play source?
 The proxy is for navigation only. It need not be archival quality.
 
 Requirements:
+
 - preserve duration accurately enough for timestamp seeking,
 - browser-friendly container/codec,
 - cached so reopening an episode does not transcode it every time,
@@ -326,6 +331,7 @@ If seeking/transcoding creates timestamp drift, verify the final extracted still
 ### Local media server
 
 If serving media through localhost:
+
 - bind to loopback by default,
 - support HTTP Range requests for seeking,
 - reject arbitrary filesystem paths from browser input,
@@ -345,6 +351,7 @@ S02E10
 Allow prefixes/suffixes around the token.
 
 If a filename cannot be parsed:
+
 - show it as unmapped,
 - allow an explicit local mapping or skip,
 - do not guess silently.
@@ -366,6 +373,7 @@ FAILED
 `frames:push` should be safe to retry.
 
 Possible idempotency strategies:
+
 - stable random `localId` persisted in the manifest and reused as the DB/frame ID,
 - unique DB constraint on frame ID/object key,
 - transaction around DB insertion where appropriate.
@@ -377,6 +385,7 @@ A failed upload should not cause a second copy on retry.
 Hide R2 details behind a small server/tooling module.
 
 Responsibilities:
+
 - generate opaque object key,
 - upload WebP,
 - delete object when explicitly needed,
@@ -390,6 +399,7 @@ Do not spread S3-compatible client calls throughout the app.
 Use Auth.js/NextAuth with Discord.
 
 On first authenticated session:
+
 - determine whether onboarding is complete,
 - redirect to `/onboarding` when necessary,
 - prefill public identity from Discord,
@@ -421,6 +431,7 @@ If preview deployments are later introduced, decide deliberately whether they re
 Use semantic design tokens rather than hardcoding dozens of one-off colors.
 
 Examples of semantic concepts:
+
 - background
 - surface
 - elevated surface
@@ -453,6 +464,7 @@ awardUnlimitedXpWithinCap()
 ### Integration tests where DB constraints matter
 
 Use integration tests when behavior depends on:
+
 - unique ranked Daily attempt,
 - Daily frame reuse prevention,
 - transactional XP deduplication.
@@ -464,6 +476,7 @@ The UI should not depend on a huge brittle E2E suite.
 ## 17. Observability
 
 Initial observability should be lightweight:
+
 - structured server logs for failed game submissions,
 - explicit curator/push CLI summaries,
 - admin-visible failed Daily generation states if needed.
@@ -485,6 +498,7 @@ Third-party product analytics is not part of the initial scope.
 ## 19. Copyright-conscious technical choices
 
 The product uses individual anime stills as game prompts. Technical choices should minimize unnecessary redistribution:
+
 - do not host full episodes,
 - do not host surrounding video clips,
 - do not host audio as part of Guessr,
@@ -497,6 +511,7 @@ Legal treatment varies by jurisdiction; technical minimization does not itself e
 ## 20. Architecture principle for future games
 
 Share:
+
 - auth,
 - profiles,
 - XP/achievements,
@@ -505,6 +520,7 @@ Share:
 - common leaderboard primitives only when truly common.
 
 Do not share prematurely:
+
 - Guessr attempt state with Frierendle state,
 - Guessr rounds with Connections groups,
 - one giant polymorphic `GameAttempt.payload` JSON model.

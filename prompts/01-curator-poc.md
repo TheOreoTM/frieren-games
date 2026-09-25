@@ -5,6 +5,7 @@ Read `AGENTS.md`, `docs/PROJECT_SPEC.md`, `docs/ARCHITECTURE.md`, and `docs/ROAD
 We are starting **Phase 1 only**. Do not implement later phases.
 
 I want to work on this with you, not hand the whole project off. Begin by inspecting the repository and briefly tell me:
+
 - the current structure and relevant tooling,
 - anything in the repo that conflicts with the planning docs,
 - the exact small implementation plan you propose for this phase,
@@ -78,6 +79,7 @@ The most important thing to validate is timestamp correctness. If a preview prox
 ## Explicit non-goals
 
 Do NOT implement in this phase:
+
 - Cloudflare R2 upload,
 - `frames:push`,
 - full production admin,
@@ -94,6 +96,7 @@ Do NOT implement in this phase:
 ## Definition of done
 
 I can point the curator at at least one local Frieren episode, scrub to a moment, choose difficulty, approve it, and see:
+
 - a real WebP extracted from the original source,
 - correct season/episode/timestamp metadata,
 - a durable local manifest record.
@@ -101,6 +104,7 @@ I can point the curator at at least one local Frieren episode, scrub to a moment
 When that works, **STOP**. Do not begin R2 or the Guessr UI.
 
 At the end, give me:
+
 1. what you changed,
 2. why,
 3. files changed,

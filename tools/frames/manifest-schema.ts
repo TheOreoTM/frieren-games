@@ -5,7 +5,9 @@ export const FRAME_STATUSES = ["LOCAL_APPROVED", "PUSHED", "FAILED"] as const;
 
 export const manifestFrameSchema = z
   .object({
-    localId: z.string().regex(/^[a-f0-9]{32}$/, "must be 32 lowercase hexadecimal characters"),
+    localId: z
+      .string()
+      .regex(/^[a-f0-9]{32}$/, "must be 32 lowercase hexadecimal characters"),
     season: z.number().int().positive(),
     episode: z.number().int().positive(),
     timestampMs: z.number().int().nonnegative(),
@@ -14,7 +16,9 @@ export const manifestFrameSchema = z
     outputFile: z.string().min(1),
     width: z.number().int().positive().max(8_192),
     height: z.number().int().positive().max(8_192),
-    sha256: z.string().regex(/^[a-f0-9]{64}$/, "must be a lowercase SHA-256 digest"),
+    sha256: z
+      .string()
+      .regex(/^[a-f0-9]{64}$/, "must be a lowercase SHA-256 digest"),
     status: z.enum(FRAME_STATUSES),
     createdAt: z.string().datetime({ offset: true }),
     objectKey: z.string().optional(),
@@ -32,10 +36,18 @@ export const manifestFrameSchema = z
 
     if (record.status === "PUSHED") {
       if (!record.objectKey) {
-        context.addIssue({ code: "custom", path: ["objectKey"], message: "is required when pushed" });
+        context.addIssue({
+          code: "custom",
+          path: ["objectKey"],
+          message: "is required when pushed",
+        });
       }
       if (!record.pushedAt) {
-        context.addIssue({ code: "custom", path: ["pushedAt"], message: "is required when pushed" });
+        context.addIssue({
+          code: "custom",
+          path: ["pushedAt"],
+          message: "is required when pushed",
+        });
       }
     }
   });

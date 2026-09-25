@@ -10,16 +10,26 @@ describe("onboardingSchema", () => {
   });
 
   it("rejects an empty or oversized display name", () => {
-    expect(onboardingSchema.safeParse({ username: "fern", displayName: "   " }).success).toBe(false);
     expect(
-      onboardingSchema.safeParse({ username: "fern", displayName: "x".repeat(41) }).success,
+      onboardingSchema.safeParse({ username: "fern", displayName: "   " })
+        .success,
+    ).toBe(false);
+    expect(
+      onboardingSchema.safeParse({
+        username: "fern",
+        displayName: "x".repeat(41),
+      }).success,
     ).toBe(false);
   });
 
   it("does not silently turn invalid punctuation into a generated username", () => {
-    expect(onboardingSchema.safeParse({ username: "---", displayName: "Fern" }).success).toBe(false);
     expect(
-      onboardingSchema.safeParse({ username: "two words", displayName: "Fern" }).success,
+      onboardingSchema.safeParse({ username: "---", displayName: "Fern" })
+        .success,
+    ).toBe(false);
+    expect(
+      onboardingSchema.safeParse({ username: "two words", displayName: "Fern" })
+        .success,
     ).toBe(false);
   });
 });

@@ -35,6 +35,7 @@ A polished landing/mode entry that fits the hub design.
 ### `/guessr/play`
 
 For each round:
+
 - large frame,
 - round indicator (e.g. 2/5),
 - season tabs,
@@ -46,6 +47,7 @@ For each round:
 ### Reveal
 
 After a guess:
+
 - score,
 - user's guess,
 - correct season/episode,
@@ -58,6 +60,7 @@ After a guess:
 ### Final results
 
 After five rounds:
+
 - total / 25,000,
 - per-round score summary,
 - exact guesses visually distinguished,
@@ -70,6 +73,7 @@ Do not add arbitrary grades/ranks like S/A/B unless I ask later.
 Use only enabled approved frames.
 
 For a single five-round Unlimited game:
+
 - avoid duplicate exact frame,
 - avoid duplicate episode where inventory makes that practical,
 - keep the selector function isolated so Daily constraints can be added later.
@@ -83,6 +87,7 @@ Anonymous play must be first-class. Do not require a user record.
 Choose a server-authoritative approach that fits Next.js cleanly. Explain why you chose server persistence vs a signed/encrypted attempt token if that decision is not already made by the repo.
 
 The client must never be trusted to submit:
+
 - distance,
 - score,
 - correct episode.
@@ -96,6 +101,7 @@ Follow the Modern × Frieren direction in `AGENTS.md`.
 This should not look like a generic shadcn admin dashboard.
 
 Prioritize:
+
 - strong frame presentation,
 - calm spacing,
 - excellent mobile episode-grid tapping,
@@ -107,6 +113,7 @@ Do not generate AI artwork.
 ## Tests
 
 Use Vitest to cover at minimum:
+
 - score reference values,
 - exact score = 5000,
 - episode distance across season boundary,
@@ -119,6 +126,7 @@ Explain the tests to me when done; I am learning how they work.
 ## Explicit non-goals
 
 Do NOT implement:
+
 - Daily mode,
 - leaderboard,
 - XP,

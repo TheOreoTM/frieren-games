@@ -26,8 +26,8 @@ describe("selectUnlimitedFrames", () => {
   });
 
   it("refuses insufficient eligible inventory", () => {
-    expect(() => selectUnlimitedFrames([{ id: "only", episodeId: 1 }], 5)).toThrow(
-      "at least 5 enabled frames",
-    );
+    expect(() =>
+      selectUnlimitedFrames([{ id: "only", episodeId: 1 }], 5),
+    ).toThrow("at least 5 enabled frames");
   });
 });

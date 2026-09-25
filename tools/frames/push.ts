@@ -24,7 +24,10 @@ const manifestPath = path.join(curatorRoot, "manifest.json");
 function errorMessage(error: unknown) {
   if (error instanceof z.ZodError) {
     return error.issues
-      .map((issue) => `${issue.path.join(".") || "configuration"}: ${issue.message}`)
+      .map(
+        (issue) =>
+          `${issue.path.join(".") || "configuration"}: ${issue.message}`,
+      )
       .join("; ");
   }
   return error instanceof Error ? error.message : String(error);
@@ -61,7 +64,8 @@ async function main() {
 
         const bytes = await readFile(imagePath);
         const sha256 = createHash("sha256").update(bytes).digest("hex");
-        if (sha256 !== record.sha256) throw new Error("WebP checksum differs from the approved manifest.");
+        if (sha256 !== record.sha256)
+          throw new Error("WebP checksum differs from the approved manifest.");
 
         const image = inspectWebp(bytes);
         if (image.width !== record.width || image.height !== record.height) {
@@ -80,11 +84,15 @@ async function main() {
           select: { id: true },
         });
         if (!episode) {
-          throw new Error(`Episode S${record.season}E${record.episode} is missing from the database.`);
+          throw new Error(
+            `Episode S${record.season}E${record.episode} is missing from the database.`,
+          );
         }
 
         const input = frameInputFromManifest(record, episode.id);
-        const existing = await prisma.frame.findUnique({ where: { id: input.id } });
+        const existing = await prisma.frame.findUnique({
+          where: { id: input.id },
+        });
         if (
           existing &&
           (existing.episodeId !== input.episodeId ||
@@ -93,7 +101,9 @@ async function main() {
             existing.width !== input.width ||
             existing.height !== input.height)
         ) {
-          throw new Error("An existing Frame with this ID has conflicting immutable metadata.");
+          throw new Error(
+            "An existing Frame with this ID has conflicting immutable metadata.",
+          );
         }
 
         await putFrameObject(input.objectKey, bytes);

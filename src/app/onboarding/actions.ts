@@ -19,7 +19,8 @@ export async function completeOnboarding(
   formData: FormData,
 ): Promise<OnboardingActionState> {
   const session = await auth();
-  if (!session?.user?.id) return { message: "Your session expired. Sign in again." };
+  if (!session?.user?.id)
+    return { message: "Your session expired. Sign in again." };
 
   const parsed = onboardingSchema.safeParse({
     username: formData.get("username"),
@@ -39,7 +40,12 @@ export async function completeOnboarding(
       },
     });
   } catch (error) {
-    if (typeof error === "object" && error !== null && "code" in error && error.code === "P2002") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "P2002"
+    ) {
       return { errors: { username: ["That username is already taken."] } };
     }
     return { message: "Your profile could not be saved. Please try again." };

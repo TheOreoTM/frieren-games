@@ -3,10 +3,7 @@
 import { useActionState, useMemo, useState } from "react";
 
 import { SubmitButton } from "@/components/ui/submit-button";
-import type {
-  EpisodeOption,
-  RoundReveal,
-} from "@/features/guessr/server/game";
+import type { EpisodeOption, RoundReveal } from "@/features/guessr/server/game";
 
 export type GuessActionState = {
   reveal: RoundReveal | null;
@@ -48,15 +45,17 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
     reveal.sequence.lastGlobalOrder - reveal.sequence.firstGlobalOrder,
   );
   const guessPosition =
-    ((reveal.guessed.globalOrder - reveal.sequence.firstGlobalOrder) / range) * 100;
+    ((reveal.guessed.globalOrder - reveal.sequence.firstGlobalOrder) / range) *
+    100;
   const correctPosition =
-    ((reveal.correct.globalOrder - reveal.sequence.firstGlobalOrder) / range) * 100;
+    ((reveal.correct.globalOrder - reveal.sequence.firstGlobalOrder) / range) *
+    100;
   const lineStart = Math.min(guessPosition, correctPosition);
   const lineWidth = Math.abs(correctPosition - guessPosition);
   const exactMatch = reveal.distance === 0;
 
   return (
-    <div className="mt-6 rounded-2xl border border-border bg-background/70 p-4">
+    <div className="border-border bg-background/70 mt-6 rounded-2xl border p-4">
       <div
         className="relative mx-4 h-16"
         role="img"
@@ -66,30 +65,46 @@ function RevealTimeline({ reveal }: { reveal: RoundReveal }) {
             : `Your guess is ${reveal.distance} episodes away from the answer on the chronological timeline.`
         }
       >
-        <div className="absolute inset-x-0 top-7 h-px bg-border" />
+        <div className="bg-border absolute inset-x-0 top-7 h-px" />
         <div
-          className="absolute top-[1.625rem] h-1 rounded-full bg-gold"
-          style={{ left: `${lineStart}%`, width: `${Math.max(lineWidth, 0.6)}%` }}
+          className="bg-gold absolute top-[1.625rem] h-1 rounded-full"
+          style={{
+            left: `${lineStart}%`,
+            width: `${Math.max(lineWidth, 0.6)}%`,
+          }}
         />
         {exactMatch ? (
-          <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
-            <span className="timeline-marker-label-above">Your guess &amp; answer</span>
+          <div
+            className="timeline-marker bg-sage"
+            style={{ left: `${correctPosition}%` }}
+          >
+            <span className="timeline-marker-label-above">
+              Your guess &amp; answer
+            </span>
           </div>
         ) : (
           <>
-            <div className="timeline-marker bg-muted" style={{ left: `${guessPosition}%` }}>
+            <div
+              className="timeline-marker bg-muted"
+              style={{ left: `${guessPosition}%` }}
+            >
               <span>Your guess</span>
             </div>
-            <div className="timeline-marker bg-sage" style={{ left: `${correctPosition}%` }}>
+            <div
+              className="timeline-marker bg-sage"
+              style={{ left: `${correctPosition}%` }}
+            >
               <span className="timeline-marker-label-above">Answer</span>
             </div>
           </>
         )}
       </div>
-      <div className="mt-2 flex justify-between text-xs text-muted">
+      <div className="text-muted mt-2 flex justify-between text-xs">
         <span>Beginning</span>
         <strong className="text-foreground">
-          {reveal.distance === 0 ? "Exact episode" : `${reveal.distance} episode${reveal.distance === 1 ? "" : "s"} away`}
+          {reveal.distance === 0
+            ? "Exact episode"
+            : `${reveal.distance} episode${reveal.distance === 1 ? "" : "s"} away`}
         </strong>
         <span>Latest</span>
       </div>
@@ -112,7 +127,9 @@ export function GameRound(props: GameRoundProps) {
   const [season, setSeason] = useState(
     props.initialReveal?.guessed.season ?? seasons[0] ?? 1,
   );
-  const [episodeId, setEpisodeId] = useState<number | null>(initiallyGuessed?.id ?? null);
+  const [episodeId, setEpisodeId] = useState<number | null>(
+    initiallyGuessed?.id ?? null,
+  );
   const [previewEpisodeId, setPreviewEpisodeId] = useState<number | null>(null);
   const initialState: GuessActionState = {
     reveal: props.initialReveal,
@@ -123,7 +140,9 @@ export function GameRound(props: GameRoundProps) {
     initialState,
   );
   const reveal = state.reveal;
-  const visibleEpisodes = props.episodes.filter((episode) => episode.season === season);
+  const visibleEpisodes = props.episodes.filter(
+    (episode) => episode.season === season,
+  );
   const previewEpisode = props.episodes.find(
     (episode) => episode.id === (previewEpisodeId ?? episodeId),
   );
@@ -139,20 +158,27 @@ export function GameRound(props: GameRoundProps) {
     <div className="mx-auto w-full max-w-6xl">
       <header className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">{props.modeLabel}</p>
+          <p className="text-sage text-xs font-semibold tracking-[0.2em] uppercase">
+            {props.modeLabel}
+          </p>
           <h1 className="mt-1 font-serif text-3xl tracking-tight sm:text-4xl">
-            Round {props.roundNumber} <span className="text-muted">/ {props.roundCount}</span>
+            Round {props.roundNumber}{" "}
+            <span className="text-muted">/ {props.roundCount}</span>
           </h1>
         </div>
         <div className="text-right">
-          <p className="text-xs uppercase tracking-wide text-muted">Running score</p>
-          <p className="mt-1 font-mono text-xl font-semibold">{props.runningTotal.toLocaleString()}</p>
+          <p className="text-muted text-xs tracking-wide uppercase">
+            Running score
+          </p>
+          <p className="mt-1 font-mono text-xl font-semibold">
+            {props.runningTotal.toLocaleString()}
+          </p>
         </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(19rem,0.8fr)]">
         <section>
-          <div className="overflow-hidden rounded-2xl border border-border bg-[#111411] shadow-[0_24px_70px_-40px_var(--shadow)]">
+          <div className="border-border overflow-hidden rounded-2xl border bg-[#111411] shadow-[0_24px_70px_-40px_var(--shadow)]">
             {/* Runtime-configured R2 domain; answer-safe object names are enforced during push. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -167,32 +193,55 @@ export function GameRound(props: GameRoundProps) {
           </div>
 
           {reveal ? (
-            <section className="reveal-enter mt-5 rounded-2xl border border-border bg-surface p-5 sm:p-6" aria-live="polite">
+            <section
+              className="reveal-enter border-border bg-surface mt-5 rounded-2xl border p-5 sm:p-6"
+              aria-live="polite"
+            >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sage">Round result</p>
-                  <p className="mt-2 font-serif text-4xl tracking-tight">{reveal.score.toLocaleString()} pts</p>
+                  <p className="text-sage text-xs font-semibold tracking-[0.18em] uppercase">
+                    Round result
+                  </p>
+                  <p className="mt-2 font-serif text-4xl tracking-tight">
+                    {reveal.score.toLocaleString()} pts
+                  </p>
                 </div>
                 <div className="grid grid-cols-2 gap-x-7 gap-y-2 text-sm">
-                  <span className="text-muted">Your guess</span><strong>{episodeLabel(reveal.guessed)}</strong>
-                  <span className="text-muted">Answer</span><strong>{episodeLabel(reveal.correct)}</strong>
-                  <span className="text-muted">Timestamp</span><strong className="font-mono">{timestampLabel(reveal.timestampMs)}</strong>
+                  <span className="text-muted">Your guess</span>
+                  <strong>{episodeLabel(reveal.guessed)}</strong>
+                  <span className="text-muted">Answer</span>
+                  <strong>{episodeLabel(reveal.correct)}</strong>
+                  <span className="text-muted">Timestamp</span>
+                  <strong className="font-mono">
+                    {timestampLabel(reveal.timestampMs)}
+                  </strong>
                 </div>
               </div>
-              <p className="mt-5 border-t border-border pt-4 text-lg font-medium">{reveal.correct.title}</p>
+              <p className="border-border mt-5 border-t pt-4 text-lg font-medium">
+                {reveal.correct.title}
+              </p>
               <RevealTimeline reveal={reveal} />
               <form action={props.advanceRound} className="mt-5">
-                <SubmitButton pendingLabel="Continuing…" className="w-full rounded-xl bg-sage px-5 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
-                  {props.roundNumber === props.roundCount ? "View results" : "Next round"}
+                <SubmitButton
+                  pendingLabel="Continuing…"
+                  className="bg-sage w-full rounded-xl px-5 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+                >
+                  {props.roundNumber === props.roundCount
+                    ? "View results"
+                    : "Next round"}
                 </SubmitButton>
               </form>
             </section>
           ) : null}
         </section>
 
-        <aside className="rounded-2xl border border-border bg-surface p-5 lg:sticky lg:top-6 lg:self-start">
+        <aside className="border-border bg-surface rounded-2xl border p-5 lg:sticky lg:top-6 lg:self-start">
           <p className="text-sm font-semibold">Which episode is this?</p>
-          <div className="mt-4 flex gap-2" role="group" aria-label="Choose a season">
+          <div
+            className="mt-4 flex gap-2"
+            role="group"
+            aria-label="Choose a season"
+          >
             {seasons.map((seasonNumber) => (
               <button
                 key={seasonNumber}
@@ -228,22 +277,30 @@ export function GameRound(props: GameRoundProps) {
                 </button>
               ))}
             </div>
-            <p className="mt-3 flex min-h-10 items-center justify-center text-center text-sm leading-5 text-muted">
+            <p className="text-muted mt-3 flex min-h-10 items-center justify-center text-center text-sm leading-5">
               {previewEpisode
                 ? `${episodeLabel(previewEpisode)} · ${previewEpisode.title}`
                 : "Hover, focus, or select an episode to see its title."}
             </p>
-            {state.error ? <p className="mt-3 text-sm text-red-700 dark:text-red-300" role="alert">{state.error}</p> : null}
+            {state.error ? (
+              <p
+                className="mt-3 text-sm text-red-700 dark:text-red-300"
+                role="alert"
+              >
+                {state.error}
+              </p>
+            ) : null}
             <button
               type="submit"
               disabled={episodeId === null || pending || Boolean(reveal)}
-              className="mt-5 w-full rounded-xl bg-foreground px-5 py-3.5 font-semibold text-background transition enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-foreground text-background mt-5 w-full rounded-xl px-5 py-3.5 font-semibold transition enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
               {pending ? "Scoring…" : reveal ? "Guess locked" : "Lock in"}
             </button>
           </form>
-          <p className="mt-4 text-center text-xs leading-5 text-muted">
-            Distance follows the complete chronological episode order across seasons.
+          <p className="text-muted mt-4 text-center text-xs leading-5">
+            Distance follows the complete chronological episode order across
+            seasons.
           </p>
         </aside>
       </div>

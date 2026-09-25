@@ -18,12 +18,17 @@ const challengeIdSchema = z.string().cuid();
 const monthSchema = z.string().regex(/^\d{4}-\d{2}$/);
 
 function monthFrom(formData: FormData) {
-  return monthSchema.safeParse(formData.get("month")).data ?? new Date().toISOString().slice(0, 7);
+  return (
+    monthSchema.safeParse(formData.get("month")).data ??
+    new Date().toISOString().slice(0, 7)
+  );
 }
 
 function finish(month: string, notice: string) {
   revalidatePath("/admin/dailies");
-  redirect(`/admin/dailies?month=${month}&notice=${encodeURIComponent(notice)}`);
+  redirect(
+    `/admin/dailies?month=${month}&notice=${encodeURIComponent(notice)}`,
+  );
 }
 
 function errorNotice(error: unknown) {
@@ -32,10 +37,15 @@ function errorNotice(error: unknown) {
 
 export async function generateDailies(formData: FormData) {
   await requireAdmin("/admin/dailies");
-  const input = z.object({ start: z.string(), end: z.string() }).parse(Object.fromEntries(formData));
+  const input = z
+    .object({ start: z.string(), end: z.string() })
+    .parse(Object.fromEntries(formData));
   let notice: string;
   try {
-    const result = await generateDailyRange(parseUtcDateKey(input.start), parseUtcDateKey(input.end));
+    const result = await generateDailyRange(
+      parseUtcDateKey(input.start),
+      parseUtcDateKey(input.end),
+    );
     notice = `Generated ${result.created}; skipped ${result.skipped} existing.`;
   } catch (error) {
     notice = errorNotice(error);
@@ -97,7 +107,10 @@ export async function voidDailyAction(formData: FormData) {
     .safeParse(Object.fromEntries(formData));
   const month = monthFrom(formData);
   if (!input.success) {
-    return finish(month, "Error: Confirm that ranked results should be invalidated.");
+    return finish(
+      month,
+      "Error: Confirm that ranked results should be invalidated.",
+    );
   }
   let notice = "Daily voided. Ranked scores are no longer valid.";
   try {

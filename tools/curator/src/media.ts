@@ -20,17 +20,26 @@ type FfprobeOutput = {
   }>;
 };
 
-async function walkMediaFiles(root: string, directory = root): Promise<string[]> {
+async function walkMediaFiles(
+  root: string,
+  directory = root,
+): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const files: string[] = [];
 
   for (const entry of entries) {
-    const candidate = requirePathInsideRoot(root, path.join(directory, entry.name));
+    const candidate = requirePathInsideRoot(
+      root,
+      path.join(directory, entry.name),
+    );
 
     if (entry.isSymbolicLink()) continue;
     if (entry.isDirectory()) {
       files.push(...(await walkMediaFiles(root, candidate)));
-    } else if (entry.isFile() && VIDEO_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) {
+    } else if (
+      entry.isFile() &&
+      VIDEO_EXTENSIONS.has(path.extname(entry.name).toLowerCase())
+    ) {
       files.push(candidate);
     }
   }
@@ -38,7 +47,10 @@ async function walkMediaFiles(root: string, directory = root): Promise<string[]>
   return files;
 }
 
-export async function probeMedia(filePath: string, ffprobePath: string): Promise<MediaProbe> {
+export async function probeMedia(
+  filePath: string,
+  ffprobePath: string,
+): Promise<MediaProbe> {
   const { stdout } = await runProcess(
     ffprobePath,
     [
@@ -57,7 +69,9 @@ export async function probeMedia(filePath: string, ffprobePath: string): Promise
   const durationSeconds = Number(result.format?.duration ?? video?.duration);
 
   if (!video || !Number.isFinite(durationSeconds) || durationSeconds <= 0) {
-    throw new Error(`No usable video stream found in ${path.basename(filePath)}.`);
+    throw new Error(
+      `No usable video stream found in ${path.basename(filePath)}.`,
+    );
   }
 
   return {
@@ -101,11 +115,16 @@ export async function probeImage(
 function canPlaySource(filePath: string, probe: MediaProbe): boolean {
   const extension = path.extname(filePath).toLowerCase();
 
-  if ((extension === ".mp4" || extension === ".m4v") && probe.videoCodec === "h264") {
+  if (
+    (extension === ".mp4" || extension === ".m4v") &&
+    probe.videoCodec === "h264"
+  ) {
     return true;
   }
 
-  return extension === ".webm" && ["vp8", "vp9", "av1"].includes(probe.videoCodec);
+  return (
+    extension === ".webm" && ["vp8", "vp9", "av1"].includes(probe.videoCodec)
+  );
 }
 
 export async function discoverEpisodes(
@@ -115,7 +134,9 @@ export async function discoverEpisodes(
   const files = await walkMediaFiles(mediaRoot);
   const episodes: DiscoveredEpisode[] = [];
 
-  for (const absolutePath of files.sort((left, right) => left.localeCompare(right))) {
+  for (const absolutePath of files.sort((left, right) =>
+    left.localeCompare(right),
+  )) {
     const probe = await probeMedia(absolutePath, ffprobePath);
     const relativePath = path.relative(mediaRoot, absolutePath);
 
@@ -151,7 +172,9 @@ export async function createPreviewProxy(
   await mkdir(cacheDirectory, { recursive: true });
   const sourceStats = await stat(episode.absolutePath);
   const cacheKey = createHash("sha256")
-    .update(`${episode.absolutePath}:${sourceStats.size}:${sourceStats.mtimeMs}`)
+    .update(
+      `${episode.absolutePath}:${sourceStats.size}:${sourceStats.mtimeMs}`,
+    )
     .digest("hex")
     .slice(0, 24);
   const outputPath = path.join(cacheDirectory, `${cacheKey}.mp4`);
@@ -197,7 +220,9 @@ export async function createPreviewProxy(
     temporaryPath,
   ]);
 
-  await import("node:fs/promises").then(({ rename }) => rename(temporaryPath, outputPath));
+  await import("node:fs/promises").then(({ rename }) =>
+    rename(temporaryPath, outputPath),
+  );
   return outputPath;
 }
 

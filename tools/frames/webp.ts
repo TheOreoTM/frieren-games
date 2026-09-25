@@ -66,7 +66,11 @@ function dimensionsFromChunk(
 }
 
 export function inspectWebp(bytes: Uint8Array): WebpInspection {
-  if (bytes.length < 20 || ascii(bytes, 0, 4) !== "RIFF" || ascii(bytes, 8, 4) !== "WEBP") {
+  if (
+    bytes.length < 20 ||
+    ascii(bytes, 0, 4) !== "RIFF" ||
+    ascii(bytes, 8, 4) !== "WEBP"
+  ) {
     throw new Error("File is not a RIFF WebP image.");
   }
 
@@ -81,14 +85,18 @@ export function inspectWebp(bytes: Uint8Array): WebpInspection {
   let offset = 12;
 
   while (offset < bytes.length) {
-    if (offset + 8 > bytes.length) throw new Error("WebP chunk header is truncated.");
+    if (offset + 8 > bytes.length)
+      throw new Error("WebP chunk header is truncated.");
     const tag = ascii(bytes, offset, 4);
     const size = view.getUint32(offset + 4, true);
     const dataOffset = offset + 8;
     const nextOffset = dataOffset + size + (size % 2);
-    if (nextOffset > bytes.length) throw new Error(`${tag.trim()} chunk exceeds the file size.`);
+    if (nextOffset > bytes.length)
+      throw new Error(`${tag.trim()} chunk exceeds the file size.`);
     if (FORBIDDEN_CHUNKS.has(tag)) {
-      throw new Error(`WebP contains forbidden ${tag.trim()} metadata/animation chunk.`);
+      throw new Error(
+        `WebP contains forbidden ${tag.trim()} metadata/animation chunk.`,
+      );
     }
 
     chunks.push(tag.trim());

@@ -13,6 +13,8 @@ describe("episodeSeedData", () => {
   });
 
   it("contains display titles rather than placeholder labels", () => {
-    expect(episodeSeedData.every((episode) => !episode.title.startsWith("Season "))).toBe(true);
+    expect(
+      episodeSeedData.every((episode) => !episode.title.startsWith("Season ")),
+    ).toBe(true);
   });
 });

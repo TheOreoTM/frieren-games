@@ -34,9 +34,17 @@ describe("progression XP", () => {
   });
 
   it("calculates level boundaries from cumulative XP", () => {
-    expect(levelProgress(0)).toMatchObject({ level: 1, earnedThisLevel: 0, neededThisLevel: 100 });
+    expect(levelProgress(0)).toMatchObject({
+      level: 1,
+      earnedThisLevel: 0,
+      neededThisLevel: 100,
+    });
     expect(levelProgress(99).level).toBe(1);
-    expect(levelProgress(100)).toMatchObject({ level: 2, earnedThisLevel: 0, neededThisLevel: 300 });
+    expect(levelProgress(100)).toMatchObject({
+      level: 2,
+      earnedThisLevel: 0,
+      neededThisLevel: 300,
+    });
     expect(levelProgress(399).level).toBe(2);
     expect(levelProgress(400).level).toBe(3);
   });

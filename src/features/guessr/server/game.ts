@@ -8,10 +8,7 @@ import { publicFrameUrl } from "@/lib/r2";
 import { episodeDistance } from "../domain/episode-distance";
 import { selectUnlimitedFrames } from "../domain/frame-selection";
 import { isReservedForUnlimited } from "../domain/daily-policy";
-import {
-  scoreEpisodeDistance,
-  STANDARD_ROUND_COUNT,
-} from "../domain/score";
+import { scoreEpisodeDistance, STANDARD_ROUND_COUNT } from "../domain/score";
 import type { UnlimitedSession } from "../domain/session-token";
 import { startOfUtcDate } from "../domain/utc-date";
 
@@ -95,7 +92,10 @@ export async function listEpisodeOptions(): Promise<EpisodeOption[]> {
   });
 }
 
-export async function scoreRound(frameId: string, guessedEpisodeId: number): Promise<RoundReveal> {
+export async function scoreRound(
+  frameId: string,
+  guessedEpisodeId: number,
+): Promise<RoundReveal> {
   const [frame, guessed, sequence] = await Promise.all([
     getDb().frame.findUnique({
       where: { id: frameId },
@@ -118,8 +118,12 @@ export async function scoreRound(frameId: string, guessedEpisodeId: number): Pro
     episodeSequenceBounds(),
   ]);
 
-  if (!frame || !guessed) throw new Error("The selected round or episode is unavailable.");
-  const distance = episodeDistance(frame.episode.globalOrder, guessed.globalOrder);
+  if (!frame || !guessed)
+    throw new Error("The selected round or episode is unavailable.");
+  const distance = episodeDistance(
+    frame.episode.globalOrder,
+    guessed.globalOrder,
+  );
 
   return {
     score: scoreEpisodeDistance(distance),
@@ -141,7 +145,8 @@ export async function getRoundPageData(session: UnlimitedSession) {
     }),
     listEpisodeOptions(),
   ]);
-  if (!frame) throw new Error("This game contains a frame that is no longer available.");
+  if (!frame)
+    throw new Error("This game contains a frame that is no longer available.");
 
   const submittedGuess = session.guesses[session.currentRound];
   const reveal = submittedGuess
@@ -162,13 +167,19 @@ export async function getRoundPageData(session: UnlimitedSession) {
 }
 
 export async function getGameResults(session: UnlimitedSession) {
-  if (session.currentRound !== STANDARD_ROUND_COUNT || session.guesses.length !== STANDARD_ROUND_COUNT) {
+  if (
+    session.currentRound !== STANDARD_ROUND_COUNT ||
+    session.guesses.length !== STANDARD_ROUND_COUNT
+  ) {
     throw new Error("Unlimited game is not complete.");
   }
 
   const rounds = await Promise.all(
     session.guesses.map(async (guess, index) => {
-      const reveal = await scoreRound(session.frameIds[index], guess.guessedEpisodeId);
+      const reveal = await scoreRound(
+        session.frameIds[index],
+        guess.guessedEpisodeId,
+      );
       return {
         roundNumber: index + 1,
         score: reveal.score,

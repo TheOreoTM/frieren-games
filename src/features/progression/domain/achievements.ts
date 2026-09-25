@@ -46,7 +46,9 @@ export type AchievementProgress = {
   hasPerfectGame: boolean;
 };
 
-export function earnedAchievementIds(progress: AchievementProgress): AchievementId[] {
+export function earnedAchievementIds(
+  progress: AchievementProgress,
+): AchievementId[] {
   const earned: AchievementId[] = [];
   if (progress.gamesPlayed >= 1) earned.push("FIRST_STEPS");
   if (progress.rankedDailiesCompleted >= 1) earned.push("DAILY_INITIATE");

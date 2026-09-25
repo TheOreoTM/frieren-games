@@ -27,8 +27,13 @@ export async function submitUnlimitedGuess(
   _previousState: GuessActionState,
   formData: FormData,
 ): Promise<GuessActionState> {
-  const parsed = z.coerce.number().int().positive().safeParse(formData.get("episodeId"));
-  if (!parsed.success) return { reveal: null, error: "Choose an episode before locking in." };
+  const parsed = z.coerce
+    .number()
+    .int()
+    .positive()
+    .safeParse(formData.get("episodeId"));
+  if (!parsed.success)
+    return { reveal: null, error: "Choose an episode before locking in." };
 
   const session = await readUnlimitedSession();
   if (!session || session.currentRound >= session.frameIds.length) {
@@ -47,7 +52,10 @@ export async function submitUnlimitedGuess(
   }
 
   try {
-    const reveal = await scoreRound(session.frameIds[session.currentRound], parsed.data);
+    const reveal = await scoreRound(
+      session.frameIds[session.currentRound],
+      parsed.data,
+    );
     session.guesses.push({
       guessedEpisodeId: parsed.data,
       distance: reveal.distance,
@@ -56,7 +64,10 @@ export async function submitUnlimitedGuess(
     await writeUnlimitedSession(session);
     return { reveal, error: null };
   } catch {
-    return { reveal: null, error: "That guess could not be scored. Please try again." };
+    return {
+      reveal: null,
+      error: "That guess could not be scored. Please try again.",
+    };
   }
 }
 

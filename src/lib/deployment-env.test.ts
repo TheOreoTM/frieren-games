@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { productionEnvironmentSchema } from "./deployment-env";
 
 const validEnvironment = {
-  DATABASE_URL: "postgresql://user:password@db.example.test/app?sslmode=verify-full",
+  DATABASE_URL:
+    "postgresql://user:password@db.example.test/app?sslmode=verify-full",
   AUTH_SECRET: "auth-secret-that-is-longer-than-thirty-two-characters",
   AUTH_DISCORD_ID: "discord-client-id",
   AUTH_DISCORD_SECRET: "discord-client-secret",
@@ -14,7 +15,9 @@ const validEnvironment = {
 
 describe("production environment", () => {
   it("accepts a complete server configuration", () => {
-    expect(productionEnvironmentSchema.safeParse(validEnvironment).success).toBe(true);
+    expect(
+      productionEnvironmentSchema.safeParse(validEnvironment).success,
+    ).toBe(true);
   });
 
   it("rejects placeholders, insecure media URLs, and missing database SSL", () => {

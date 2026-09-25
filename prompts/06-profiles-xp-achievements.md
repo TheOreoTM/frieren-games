@@ -13,6 +13,7 @@ Add meaningful personal progression without turning the game into a grind or let
 ## Public profile
 
 Implement `/user/[username]` with game-only public information such as:
+
 - avatar,
 - display name,
 - username,
@@ -35,6 +36,7 @@ Use an XP transaction ledger rather than only mutating `user.xp`.
 Each award should have enough identity/reason metadata to avoid accidental duplicate grants.
 
 Potential sources:
+
 - Daily completion,
 - modest Daily performance bonus,
 - achievements,
@@ -57,6 +59,7 @@ Exact XP numbers and level thresholds should live in a centralized configuration
 ## Achievements
 
 Build a small extensible system and ship roughly 5-8 achievements, for example:
+
 - First Steps — complete first game
 - Bullseye — exact episode guess
 - Perfect Round — 5,000 points in one round
@@ -75,6 +78,7 @@ Prefer a design that can be repaired/recalculated if a bug is discovered later.
 ## Tests
 
 Cover:
+
 - XP award deduplication,
 - Unlimited daily XP cap,
 - level calculation,
@@ -86,6 +90,7 @@ Explain how these tests protect progression integrity.
 ## Explicit non-goals
 
 Do NOT add:
+
 - friends,
 - followers,
 - comments,

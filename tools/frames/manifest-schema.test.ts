@@ -19,7 +19,9 @@ const validFrame = {
 
 describe("curatorManifestSchema", () => {
   it("accepts an existing local approval", () => {
-    expect(curatorManifestSchema.parse({ version: 1, frames: [validFrame] })).toEqual({
+    expect(
+      curatorManifestSchema.parse({ version: 1, frames: [validFrame] }),
+    ).toEqual({
       version: 1,
       frames: [validFrame],
     });

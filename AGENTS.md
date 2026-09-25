@@ -41,6 +41,7 @@ The developer is actively learning and participating in the project. AI should a
 **Never generate AI artwork or AI-generated replacement imagery for this project.**
 
 For visual identity, use:
+
 - CSS,
 - typography,
 - gradients/textures,
@@ -104,6 +105,7 @@ Do not introduce Redis until there is a concrete requirement that PostgreSQL can
 ## Current domain model direction
 
 Shared platform concepts may include:
+
 - User / auth account/session
 - UserProfile
 - UserRole (`USER`, `ADMIN`)
@@ -112,6 +114,7 @@ Shared platform concepts may include:
 - UserAchievement
 
 Guessr concepts may include:
+
 - Episode
 - Frame
 - DailyChallenge
@@ -135,12 +138,11 @@ Do **not** implement all of these just because they are listed. Follow the curre
 
 ```ts
 score(distance) =
-  distance === 0
-    ? 5000
-    : round(5000 * exp(-0.12 * distance ** 1.25))
+  distance === 0 ? 5000 : round(5000 * exp(-0.12 * distance ** 1.25));
 ```
 
 Reference values:
+
 - 0 away -> 5000
 - 1 away -> 4435
 - 2 away -> 3759
@@ -157,6 +159,7 @@ Keep the curve in one well-named domain module with tests. Do not duplicate cons
 ## Guessr modes
 
 ### Unlimited
+
 - Available anonymously.
 - Five-round games.
 - Uses approved eligible frames.
@@ -166,6 +169,7 @@ Keep the curve in one well-named domain module with tests. Do not duplicate cons
 - No serious global Unlimited leaderboard is required initially.
 
 ### Daily
+
 - One globally shared five-round challenge per UTC date.
 - One ranked attempt per account.
 - Replays after completion are practice/unranked.
@@ -178,6 +182,7 @@ Keep the curve in one well-named domain module with tests. Do not duplicate cons
 ## Daily generation rules
 
 Generated Dailies should use constrained randomness:
+
 - exactly 5 frames,
 - no duplicate episode within the same Daily,
 - never reuse the exact same frame in another ranked Daily,
@@ -214,6 +219,7 @@ pnpm curator
 ```
 
 Expected workflow:
+
 1. Scan a configured local episode directory.
 2. Parse season/episode from filenames where possible.
 3. Let the developer watch/scrub an episode locally.
@@ -228,6 +234,7 @@ Expected workflow:
 Important: MKV/browser playback is not guaranteed. If the original file cannot be played reliably in a browser, create and cache a local browser-friendly preview/proxy (for example H.264 MP4) for curation while still extracting final stills from the original source.
 
 Useful curator keyboard controls should include:
+
 - Space: play/pause
 - Left/Right: seek roughly ±5 seconds
 - Shift+Left/Right: seek roughly ±1 second
@@ -242,11 +249,13 @@ Scene detection may provide suggested jump markers, but the human chooses the ac
 Production admin is separate from the local curator.
 
 Expected admin areas eventually:
+
 - `/admin/frames`
 - `/admin/dailies`
 - `/admin/users` only if needed
 
 `/admin/frames` manages already approved/uploaded frames:
+
 - filter/search,
 - enable/disable,
 - change difficulty,
@@ -255,6 +264,7 @@ Expected admin areas eventually:
 - delete where safe.
 
 `/admin/dailies` manages:
+
 - calendar/date-range generation,
 - preview,
 - replace individual frame,
@@ -290,6 +300,7 @@ Progression comes later than the core game.
 Target style: **modern product UI × Frieren**, not generic gaming neon and not overdecorated medieval fantasy.
 
 Use:
+
 - calm spacious layouts,
 - warm off-white/parchment-like light surfaces,
 - deep charcoal dark surfaces,
@@ -302,6 +313,7 @@ Use:
 - restrained borders and textures.
 
 Avoid:
+
 - generic `bg-zinc-950` dashboard appearance,
 - excessive glassmorphism,
 - giant ornamental fantasy frames around every component,
@@ -334,6 +346,7 @@ Future games may use routes such as `/frierendle` and `/connections`.
 The developer is not yet experienced with automated tests. Take the lead, but explain what each category protects.
 
 Use Vitest for high-value deterministic domain logic, including:
+
 - score curve,
 - episode distance/global ordering,
 - frame eligibility,
@@ -343,6 +356,7 @@ Use Vitest for high-value deterministic domain logic, including:
 - XP calculations when XP exists.
 
 Use Playwright only for a small number of important browser flows, for example:
+
 - complete one Unlimited game,
 - complete one ranked Daily,
 - prevent a second ranked Daily attempt,
@@ -365,6 +379,7 @@ Prevent trivial cheating, not determined reverse engineering.
 ## Scope discipline
 
 Do not let these delay the first playable Guessr:
+
 - friends/followers,
 - comments/social feed,
 - chat,

@@ -10,7 +10,9 @@ describe("UTC Daily dates", () => {
 
   it("enumerates arbitrary inclusive date ranges", () => {
     expect(
-      enumerateUtcDates(new Date("2026-09-29"), new Date("2026-10-02")).map(utcDateKey),
+      enumerateUtcDates(new Date("2026-09-29"), new Date("2026-10-02")).map(
+        utcDateKey,
+      ),
     ).toEqual(["2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02"]);
   });
 });

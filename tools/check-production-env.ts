@@ -8,7 +8,9 @@ try {
 } catch (error) {
   if (error instanceof ZodError) {
     for (const issue of error.issues) {
-      console.error(`${issue.path.join(".") || "environment"}: ${issue.message}`);
+      console.error(
+        `${issue.path.join(".") || "environment"}: ${issue.message}`,
+      );
     }
   } else {
     console.error(error instanceof Error ? error.message : error);

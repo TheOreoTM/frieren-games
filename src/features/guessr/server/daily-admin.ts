@@ -4,13 +4,26 @@ import { DailyChallengeStatus, type Prisma } from "@/generated/prisma/client";
 import { getDb } from "@/lib/db";
 import { publicFrameUrl } from "@/lib/r2";
 
-import { canEditDailyComposition, dailyDisplayState } from "../domain/daily-policy";
+import {
+  canEditDailyComposition,
+  dailyDisplayState,
+} from "../domain/daily-policy";
 import { selectDailyFrames } from "../domain/daily-generator";
-import { addUtcDays, enumerateUtcDates, startOfUtcDate, utcDateKey } from "../domain/utc-date";
+import {
+  addUtcDays,
+  enumerateUtcDates,
+  startOfUtcDate,
+  utcDateKey,
+} from "../domain/utc-date";
 import { createDailyChallenge } from "./daily-generation";
 
 function isUniqueConflict(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002";
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    error.code === "P2002"
+  );
 }
 
 async function selectInTransaction(
@@ -35,11 +48,17 @@ async function selectInTransaction(
   ]);
   return selectDailyFrames(candidates, {
     usedFrameIds,
-    recentEpisodeIds: new Set(recentRounds.map((round) => round.frame.episodeId)),
+    recentEpisodeIds: new Set(
+      recentRounds.map((round) => round.frame.episodeId),
+    ),
   });
 }
 
-export async function generateDailyRange(firstDate: Date, lastDate: Date, now = new Date()) {
+export async function generateDailyRange(
+  firstDate: Date,
+  lastDate: Date,
+  now = new Date(),
+) {
   const today = startOfUtcDate(now);
   const dates = enumerateUtcDates(firstDate, lastDate);
   if (dates.some((date) => date <= today)) {
@@ -74,10 +93,14 @@ export async function approveDaily(challengeId: string, now = new Date()) {
       where: { id: challengeId },
       include: { rounds: true },
     });
-    if (!challenge || !canEditDailyComposition(challenge.dateUtc, challenge.status, now)) {
+    if (
+      !challenge ||
+      !canEditDailyComposition(challenge.dateUtc, challenge.status, now)
+    ) {
       throw new Error("Only future non-void Dailies can be approved.");
     }
-    if (challenge.rounds.length !== 5) throw new Error("A Daily must contain exactly five rounds.");
+    if (challenge.rounds.length !== 5)
+      throw new Error("A Daily must contain exactly five rounds.");
     await database.dailyChallenge.update({
       where: { id: challengeId },
       data: { status: DailyChallengeStatus.APPROVED, approvedAt: new Date() },
@@ -92,8 +115,13 @@ export async function regenerateDaily(challengeId: string, now = new Date()) {
         where: { id: challengeId },
         include: { rounds: true },
       });
-      if (!challenge || !canEditDailyComposition(challenge.dateUtc, challenge.status, now)) {
-        throw new Error("Active, completed, or void Dailies cannot be regenerated.");
+      if (
+        !challenge ||
+        !canEditDailyComposition(challenge.dateUtc, challenge.status, now)
+      ) {
+        throw new Error(
+          "Active, completed, or void Dailies cannot be regenerated.",
+        );
       }
       const previousFrameIds = challenge.rounds.map((round) => round.frameId);
       await database.dailyChallengeRound.deleteMany({ where: { challengeId } });
@@ -129,10 +157,15 @@ export async function replaceDailyRound(
         where: { id: challengeId },
         include: { rounds: { include: { frame: true } } },
       });
-      if (!challenge || !canEditDailyComposition(challenge.dateUtc, challenge.status, now)) {
+      if (
+        !challenge ||
+        !canEditDailyComposition(challenge.dateUtc, challenge.status, now)
+      ) {
         throw new Error("Active, completed, or void Dailies cannot be edited.");
       }
-      const target = challenge.rounds.find((round) => round.roundNumber === roundNumber);
+      const target = challenge.rounds.find(
+        (round) => round.roundNumber === roundNumber,
+      );
       if (!target) throw new Error("Daily round was not found.");
       const otherEpisodeIds = challenge.rounds
         .filter((round) => round.roundNumber !== roundNumber)
@@ -151,7 +184,10 @@ export async function replaceDailyRound(
       );
       const pool = sameDifficulty.length > 0 ? sameDifficulty : candidates;
       const replacement = pool[Math.floor(Math.random() * pool.length)];
-      if (!replacement) throw new Error("No unused frame from a distinct episode is available.");
+      if (!replacement)
+        throw new Error(
+          "No unused frame from a distinct episode is available.",
+        );
 
       await database.dailyChallengeRound.update({
         where: { challengeId_roundNumber: { challengeId, roundNumber } },
@@ -173,16 +209,29 @@ export async function voidDaily(challengeId: string) {
   });
 }
 
-export async function listAdminDailies(firstDate: Date, lastDate: Date, now = new Date()) {
+export async function listAdminDailies(
+  firstDate: Date,
+  lastDate: Date,
+  now = new Date(),
+) {
   const challenges = await getDb().dailyChallenge.findMany({
-    where: { dateUtc: { gte: startOfUtcDate(firstDate), lte: startOfUtcDate(lastDate) } },
+    where: {
+      dateUtc: {
+        gte: startOfUtcDate(firstDate),
+        lte: startOfUtcDate(lastDate),
+      },
+    },
     orderBy: { dateUtc: "asc" },
     include: {
       rounds: {
         orderBy: { roundNumber: "asc" },
         include: {
           frame: {
-            include: { episode: { select: { season: true, episodeNumber: true, title: true } } },
+            include: {
+              episode: {
+                select: { season: true, episodeNumber: true, title: true },
+              },
+            },
           },
         },
       },

@@ -58,7 +58,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user, account }) {
       if (
         account?.provider === "discord" &&
-        isBootstrapAdmin(account.providerAccountId, process.env.ADMIN_DISCORD_ID)
+        isBootstrapAdmin(
+          account.providerAccountId,
+          process.env.ADMIN_DISCORD_ID,
+        )
       ) {
         await getDb().user.updateMany({
           where: { id: user.id, role: { not: UserRole.ADMIN } },

@@ -11,6 +11,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 ## Review areas
 
 ### UX
+
 - mobile episode selector,
 - frame sizing/aspect behavior,
 - loading states,
@@ -22,6 +23,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - keyboard accessibility where applicable.
 
 ### Accessibility
+
 - semantic controls,
 - keyboard navigation,
 - visible focus,
@@ -30,6 +32,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - reduced-motion support.
 
 ### Visual consistency
+
 - Modern × Frieren identity,
 - intentional light + dark themes,
 - restrained ornamentation,
@@ -38,6 +41,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - no AI-generated artwork.
 
 ### Performance
+
 - image sizing/loading,
 - unnecessary client components,
 - avoid fetching answers/data prematurely,
@@ -46,6 +50,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - bundle/dependency sanity.
 
 ### Security/config
+
 - admin authorization,
 - production env secrets,
 - development vs production Neon URLs,
@@ -54,6 +59,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - local curator cannot be accidentally exposed as a production filesystem browser.
 
 ### Public-project basics
+
 - metadata/title/description,
 - favicon/site identity using non-AI assets,
 - clear unofficial fan-project notice,
@@ -61,6 +67,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 - sensible error pages.
 
 ### Tests
+
 - run/fix existing tests,
 - remove brittle tests rather than piling on workarounds,
 - add only missing high-value coverage discovered during audit.
@@ -68,6 +75,7 @@ Make the existing hub + Guessr experience robust enough to share publicly.
 ## Explicit non-goals
 
 Do not use this phase to add:
+
 - a second minigame,
 - social features,
 - new progression systems,

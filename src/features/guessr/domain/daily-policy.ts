@@ -2,7 +2,8 @@ import { startOfUtcDate, utcDateKey } from "./utc-date";
 
 export type DailyStatus = "DRAFT" | "APPROVED" | "VOID";
 
-export type DailyDisplayState = "DRAFT" | "APPROVED" | "ACTIVE" | "COMPLETED" | "VOID";
+export type DailyDisplayState =
+  "DRAFT" | "APPROVED" | "ACTIVE" | "COMPLETED" | "VOID";
 
 export function dailyDisplayState(
   dateUtc: Date,
@@ -32,11 +33,13 @@ export function isReservedForUnlimited(
   const todayKey = utcDateKey(now);
   return reservations.some(
     (reservation) =>
-      reservation.status !== "VOID" && utcDateKey(reservation.dateUtc) >= todayKey,
+      reservation.status !== "VOID" &&
+      utcDateKey(reservation.dateUtc) >= todayKey,
   );
 }
 
-export type DailyAttemptPlan = "CREATE_RANKED" | "RESUME_RANKED" | "CREATE_PRACTICE";
+export type DailyAttemptPlan =
+  "CREATE_RANKED" | "RESUME_RANKED" | "CREATE_PRACTICE";
 
 export function dailyAttemptPlan(
   rankedAttempt: { completed: boolean } | null,

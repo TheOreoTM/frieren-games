@@ -1,12 +1,20 @@
 import "server-only";
 
-import { DailyChallengeStatus, type Prisma, XPSource } from "@/generated/prisma/client";
+import {
+  DailyChallengeStatus,
+  type Prisma,
+  XPSource,
+} from "@/generated/prisma/client";
 import { calculateDailyStreak } from "@/features/guessr/domain/daily-streak";
 import { STANDARD_ROUND_COUNT } from "@/features/guessr/domain/score";
 import { startOfUtcDate, utcDateKey } from "@/features/guessr/domain/utc-date";
 import { getDb } from "@/lib/db";
 
-import { ACHIEVEMENTS, earnedAchievementIds, newAchievementIds } from "../domain/achievements";
+import {
+  ACHIEVEMENTS,
+  earnedAchievementIds,
+  newAchievementIds,
+} from "../domain/achievements";
 import {
   DAILY_COMPLETION_XP,
   dailyPerformanceXp,
@@ -38,11 +46,15 @@ function isRetryableConflict(error: unknown): boolean {
   );
 }
 
-async function runSerializable<T>(work: (database: Database) => Promise<T>): Promise<T> {
+async function runSerializable<T>(
+  work: (database: Database) => Promise<T>,
+): Promise<T> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
-      return await getDb().$transaction(work, { isolationLevel: "Serializable" });
+      return await getDb().$transaction(work, {
+        isolationLevel: "Serializable",
+      });
     } catch (error) {
       lastError = error;
       if (!isRetryableConflict(error)) throw error;
@@ -51,57 +63,76 @@ async function runSerializable<T>(work: (database: Database) => Promise<T>): Pro
   throw lastError;
 }
 
-async function achievementProgress(database: Database, userId: string, now: Date) {
+async function achievementProgress(
+  database: Database,
+  userId: string,
+  now: Date,
+) {
   const today = startOfUtcDate(now);
-  const [dailyGames, unlimitedGames, dailyExact, unlimitedExact, perfectDaily, perfectUnlimited, challenges, completions] =
-    await Promise.all([
-      database.dailyAttempt.count({
-        where: {
+  const [
+    dailyGames,
+    unlimitedGames,
+    dailyExact,
+    unlimitedExact,
+    perfectDaily,
+    perfectUnlimited,
+    challenges,
+    completions,
+  ] = await Promise.all([
+    database.dailyAttempt.count({
+      where: {
+        userId,
+        ranked: true,
+        completedAt: { not: null },
+        challenge: { status: { not: DailyChallengeStatus.VOID } },
+      },
+    }),
+    database.unlimitedAttempt.count({ where: { userId } }),
+    database.dailyRoundGuess.count({
+      where: {
+        distance: 0,
+        attempt: {
           userId,
           ranked: true,
           completedAt: { not: null },
           challenge: { status: { not: DailyChallengeStatus.VOID } },
         },
-      }),
-      database.unlimitedAttempt.count({ where: { userId } }),
-      database.dailyRoundGuess.count({
-        where: {
-          distance: 0,
-          attempt: {
-            userId,
-            ranked: true,
-            completedAt: { not: null },
-            challenge: { status: { not: DailyChallengeStatus.VOID } },
-          },
-        },
-      }),
-      database.unlimitedRoundGuess.count({ where: { distance: 0, attempt: { userId } } }),
-      database.dailyAttempt.count({
-        where: {
-          userId,
-          ranked: true,
-          completedAt: { not: null },
-          totalScore: 25_000,
-          challenge: { status: { not: DailyChallengeStatus.VOID } },
-        },
-      }),
-      database.unlimitedAttempt.count({ where: { userId, totalScore: 25_000 } }),
-      database.dailyChallenge.findMany({
-        where: { dateUtc: { lte: today }, status: { not: DailyChallengeStatus.VOID } },
-        orderBy: { dateUtc: "asc" },
-        select: { id: true, dateUtc: true },
-      }),
-      database.dailyAttempt.findMany({
-        where: {
-          userId,
-          ranked: true,
-          completedAt: { not: null },
-          challenge: { status: { not: DailyChallengeStatus.VOID } },
-        },
-        select: { challengeId: true },
-      }),
-    ]);
-  const todayChallenge = challenges.find((challenge) => utcDateKey(challenge.dateUtc) === utcDateKey(today));
+      },
+    }),
+    database.unlimitedRoundGuess.count({
+      where: { distance: 0, attempt: { userId } },
+    }),
+    database.dailyAttempt.count({
+      where: {
+        userId,
+        ranked: true,
+        completedAt: { not: null },
+        totalScore: 25_000,
+        challenge: { status: { not: DailyChallengeStatus.VOID } },
+      },
+    }),
+    database.unlimitedAttempt.count({ where: { userId, totalScore: 25_000 } }),
+    database.dailyChallenge.findMany({
+      where: {
+        dateUtc: { lte: today },
+        status: { not: DailyChallengeStatus.VOID },
+      },
+      orderBy: { dateUtc: "asc" },
+      select: { id: true, dateUtc: true },
+    }),
+    database.dailyAttempt.findMany({
+      where: {
+        userId,
+        ranked: true,
+        completedAt: { not: null },
+        challenge: { status: { not: DailyChallengeStatus.VOID } },
+      },
+      select: { challengeId: true },
+    }),
+  ]);
+  const todayChallenge = challenges.find(
+    (challenge) => utcDateKey(challenge.dateUtc) === utcDateKey(today),
+  );
 
   return {
     gamesPlayed: dailyGames + unlimitedGames,
@@ -193,14 +224,16 @@ async function awardDailyInTransaction(
         createdAt: attempt.completedAt,
       },
       ...(performanceXp > 0
-        ? [{
-            userId,
-            source: XPSource.DAILY_PERFORMANCE,
-            sourceKey: attemptId,
-            amount: performanceXp,
-            earnedDateUtc: attempt.challenge.dateUtc,
-            createdAt: attempt.completedAt,
-          }]
+        ? [
+            {
+              userId,
+              source: XPSource.DAILY_PERFORMANCE,
+              sourceKey: attemptId,
+              amount: performanceXp,
+              earnedDateUtc: attempt.challenge.dateUtc,
+              createdAt: attempt.completedAt,
+            },
+          ]
         : []),
     ],
     skipDuplicates: true,
@@ -208,8 +241,14 @@ async function awardDailyInTransaction(
   await ensureAchievements(database, userId, now, attempt.completedAt);
 }
 
-export async function ensureDailyProgression(userId: string, attemptId: string, now = new Date()) {
-  await runSerializable((database) => awardDailyInTransaction(database, userId, attemptId, now));
+export async function ensureDailyProgression(
+  userId: string,
+  attemptId: string,
+  now = new Date(),
+) {
+  await runSerializable((database) =>
+    awardDailyInTransaction(database, userId, attemptId, now),
+  );
 }
 
 export async function recordUnlimitedCompletion(
@@ -222,8 +261,11 @@ export async function recordUnlimitedCompletion(
   }
 
   return runSerializable(async (database) => {
-    const existing = await database.unlimitedAttempt.findUnique({ where: { id: game.id } });
-    if (existing && existing.userId !== userId) throw new Error("Unlimited game ownership mismatch.");
+    const existing = await database.unlimitedAttempt.findUnique({
+      where: { id: game.id },
+    });
+    if (existing && existing.userId !== userId)
+      throw new Error("Unlimited game ownership mismatch.");
     if (!existing) {
       await database.unlimitedAttempt.create({
         data: {
@@ -266,7 +308,12 @@ export async function recordUnlimitedCompletion(
       }
     }
 
-    await ensureAchievements(database, userId, now, existing?.completedAt ?? now);
+    await ensureAchievements(
+      database,
+      userId,
+      now,
+      existing?.completedAt ?? now,
+    );
     const total = await database.xPTransaction.aggregate({
       where: {
         userId,
@@ -300,7 +347,8 @@ type RewardRow = {
 function rewardLabel(reward: RewardRow) {
   if (reward.source === XPSource.DAILY_COMPLETION) return "Daily completion";
   if (reward.source === XPSource.DAILY_PERFORMANCE) return "Score bonus";
-  if (reward.source === XPSource.UNLIMITED_COMPLETION) return "Unlimited completion";
+  if (reward.source === XPSource.UNLIMITED_COMPLETION)
+    return "Unlimited completion";
 
   const achievementId = reward.sourceKey as keyof typeof ACHIEVEMENTS;
   return ACHIEVEMENTS[achievementId]
@@ -349,7 +397,10 @@ async function rewardsForCompletion(
   });
 }
 
-export async function getDailyGameProgression(userId: string, attemptId: string) {
+export async function getDailyGameProgression(
+  userId: string,
+  attemptId: string,
+) {
   const attempt = await getDb().dailyAttempt.findFirst({
     where: { id: attemptId, userId, completedAt: { not: null } },
     select: { completedAt: true },
@@ -362,7 +413,10 @@ export async function getDailyGameProgression(userId: string, attemptId: string)
   );
 }
 
-export async function getUnlimitedGameProgression(userId: string, gameId: string) {
+export async function getUnlimitedGameProgression(
+  userId: string,
+  gameId: string,
+) {
   const attempt = await getDb().unlimitedAttempt.findFirst({
     where: { id: gameId, userId },
     select: { completedAt: true },

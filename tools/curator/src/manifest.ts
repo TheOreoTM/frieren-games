@@ -6,14 +6,18 @@ import {
 } from "../../frames/manifest-schema";
 import type { CuratorManifest, ManifestRecord } from "./types";
 
-export async function readManifest(manifestPath: string): Promise<CuratorManifest> {
+export async function readManifest(
+  manifestPath: string,
+): Promise<CuratorManifest> {
   try {
     const parsed = curatorManifestSchema.safeParse(
       JSON.parse(await readFile(manifestPath, "utf8")),
     );
 
     if (!parsed.success) {
-      throw new Error(`Invalid curator manifest:\n${formatManifestError(parsed.error)}`);
+      throw new Error(
+        `Invalid curator manifest:\n${formatManifestError(parsed.error)}`,
+      );
     }
 
     return parsed.data;
@@ -51,10 +55,15 @@ export async function writeManifest(
 ): Promise<void> {
   const validated = curatorManifestSchema.safeParse(manifest);
   if (!validated.success) {
-    throw new Error(`Refusing to write an invalid curator manifest:\n${formatManifestError(validated.error)}`);
+    throw new Error(
+      `Refusing to write an invalid curator manifest:\n${formatManifestError(validated.error)}`,
+    );
   }
 
   const temporaryPath = `${manifestPath}.tmp`;
-  await writeFile(temporaryPath, `${JSON.stringify(validated.data, null, 2)}\n`);
+  await writeFile(
+    temporaryPath,
+    `${JSON.stringify(validated.data, null, 2)}\n`,
+  );
   await rename(temporaryPath, manifestPath);
 }

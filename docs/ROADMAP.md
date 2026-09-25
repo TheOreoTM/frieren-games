@@ -7,6 +7,7 @@ This roadmap is intentionally phased so the developer remains involved and the A
 Goal: understand what already exists before changing architecture.
 
 Tasks:
+
 - inspect package manager, Next.js structure, Tailwind/shadcn setup, linting, TypeScript, Prisma if present,
 - read `AGENTS.md` and docs,
 - identify conflicts between repo reality and proposed structure,
@@ -19,6 +20,7 @@ Stop before broad implementation if the repo significantly differs from the plan
 Goal: validate the riskiest technical workflow first.
 
 Deliverables:
+
 - basic design tokens/theme scaffold if missing,
 - Neon development DB connection,
 - initial `Episode` + `Frame` schema only,
@@ -36,6 +38,7 @@ Deliverables:
 - tests for filename parsing and any important pure logic.
 
 Explicit non-goals:
+
 - R2 upload,
 - full game UI,
 - auth,
@@ -51,6 +54,7 @@ Exit test:
 Goal: turn curated local frames into usable application content.
 
 Deliverables:
+
 - `frames:push`,
 - manifest validation,
 - opaque IDs/object keys,
@@ -72,6 +76,7 @@ a batch of local-approved frames can be pushed, viewed in admin, and loaded by t
 Goal: ship the core playable loop.
 
 Deliverables:
+
 - `/guessr` landing/mode entry,
 - `/guessr/play`,
 - five-round Unlimited game,
@@ -94,6 +99,7 @@ an anonymous user can complete multiple five-round games without any answer bein
 Goal: add identity without entangling the game with login requirements.
 
 Deliverables:
+
 - Discord Auth.js/NextAuth setup,
 - profile/user persistence,
 - `USER | ADMIN`,
@@ -111,6 +117,7 @@ Unlimited still works anonymously; a new Discord user can log in, choose/keep a 
 Goal: add the main competitive loop.
 
 Deliverables:
+
 - Daily schema,
 - challenge/round generation,
 - constrained selection,
@@ -136,6 +143,7 @@ two accounts receive the same Daily; each gets one ranked attempt; tomorrow's re
 Goal: add retention/progression after gameplay is stable.
 
 Deliverables:
+
 - `/user/[username]`,
 - Guessr stats,
 - recent Dailies,
@@ -155,6 +163,7 @@ progression is auditable and cannot be farmed infinitely through Unlimited in on
 Goal: make the site feel deliberate and safe to share.
 
 Deliverables:
+
 - accessibility pass,
 - mobile/device pass,
 - loading/error/empty states,
@@ -173,6 +182,7 @@ Deliverables:
 Recommended next game: Frierendle or Connections.
 
 Before building it:
+
 - identify which platform pieces are genuinely reusable,
 - only then extract abstractions supported by two real games,
 - keep the new game's domain tables/logic independent.

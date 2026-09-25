@@ -39,15 +39,24 @@ function resultTitle(totalScore: number) {
   return "The journey continues";
 }
 
-function ProgressionPanel({ progression }: { progression?: GameProgressionData }) {
+function ProgressionPanel({
+  progression,
+}: {
+  progression?: GameProgressionData;
+}) {
   if (!progression) {
     return (
-      <section className="flex flex-col gap-3 border-y border-border py-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="border-border flex flex-col gap-3 border-y py-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-medium">Want to keep your progress?</p>
-          <p className="mt-1 text-sm text-muted">Sign in before your next run to earn XP and achievements.</p>
+          <p className="text-muted mt-1 text-sm">
+            Sign in before your next run to earn XP and achievements.
+          </p>
         </div>
-        <Link href="/api/auth/signin?callbackUrl=/guessr" className="text-sm font-semibold text-sage">
+        <Link
+          href="/api/auth/signin?callbackUrl=/guessr"
+          className="text-sage text-sm font-semibold"
+        >
           Sign in →
         </Link>
       </section>
@@ -56,7 +65,8 @@ function ProgressionPanel({ progression }: { progression?: GameProgressionData }
 
   const levelPercent = Math.min(
     100,
-    (progression.level.earnedThisLevel / progression.level.neededThisLevel) * 100,
+    (progression.level.earnedThisLevel / progression.level.neededThisLevel) *
+      100,
   );
   const xpToNextLevel = progression.level.nextLevelXp - progression.totalXp;
   const zeroXpMessage = progression.dailyCap
@@ -64,40 +74,55 @@ function ProgressionPanel({ progression }: { progression?: GameProgressionData }
     : "Practice runs do not award XP";
 
   return (
-    <section className="border-y border-border py-5">
+    <section className="border-border border-y py-5">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-sm text-muted">{progression.leveledUp ? "Level up" : "XP earned"}</p>
-          <p className="mt-1 font-mono text-2xl font-semibold">+{progression.xpGained.toLocaleString()} XP</p>
+          <p className="text-muted text-sm">
+            {progression.leveledUp ? "Level up" : "XP earned"}
+          </p>
+          <p className="mt-1 font-mono text-2xl font-semibold">
+            +{progression.xpGained.toLocaleString()} XP
+          </p>
         </div>
         <p className="text-sm font-semibold">Level {progression.level.level}</p>
       </div>
       <div
-        className="mt-4 h-1.5 overflow-hidden rounded-full bg-border"
+        className="bg-border mt-4 h-1.5 overflow-hidden rounded-full"
         role="progressbar"
         aria-label={`Level ${progression.level.level} progress`}
         aria-valuemin={0}
         aria-valuemax={progression.level.neededThisLevel}
         aria-valuenow={progression.level.earnedThisLevel}
       >
-        <div className="h-full rounded-full bg-gold" style={{ width: `${levelPercent}%` }} />
+        <div
+          className="bg-gold h-full rounded-full"
+          style={{ width: `${levelPercent}%` }}
+        />
       </div>
-      <div className="mt-2 flex justify-between gap-4 text-xs text-muted">
+      <div className="text-muted mt-2 flex justify-between gap-4 text-xs">
         <span>{progression.totalXp.toLocaleString()} total XP</span>
-        <span>{xpToNextLevel.toLocaleString()} XP to level {progression.level.level + 1}</span>
+        <span>
+          {xpToNextLevel.toLocaleString()} XP to level{" "}
+          {progression.level.level + 1}
+        </span>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-        {progression.rewards.length > 0
-          ? progression.rewards.map((reward) => (
-              <p key={reward.label}>
-                <span className="text-muted">{reward.label}</span>{" "}
-                <strong className="font-mono text-gold">+{reward.amount}</strong>
-              </p>
-            ))
-          : <p className="text-muted">{zeroXpMessage}</p>}
+        {progression.rewards.length > 0 ? (
+          progression.rewards.map((reward) => (
+            <p key={reward.label}>
+              <span className="text-muted">{reward.label}</span>{" "}
+              <strong className="text-gold font-mono">+{reward.amount}</strong>
+            </p>
+          ))
+        ) : (
+          <p className="text-muted">{zeroXpMessage}</p>
+        )}
         {progression.dailyCap ? (
-          <p className="text-muted">Daily Unlimited XP {progression.dailyCap.earned}/{progression.dailyCap.cap}</p>
+          <p className="text-muted">
+            Daily Unlimited XP {progression.dailyCap.earned}/
+            {progression.dailyCap.cap}
+          </p>
         ) : null}
       </div>
     </section>
@@ -117,40 +142,56 @@ export function GameResults({
   actionLabel: string;
   progression?: GameProgressionData;
 }) {
-  const exactGuesses = results.rounds.filter((round) => round.distance === 0).length;
+  const exactGuesses = results.rounds.filter(
+    (round) => round.distance === 0,
+  ).length;
   const averageDistance =
-    results.rounds.reduce((total, round) => total + round.distance, 0) / results.rounds.length;
+    results.rounds.reduce((total, round) => total + round.distance, 0) /
+    results.rounds.length;
   const scorePercent = (results.totalScore / 25_000) * 100;
 
   return (
     <div className="mx-auto w-full max-w-3xl">
-      <section className="reveal-enter rounded-3xl border border-border bg-surface p-6 shadow-[0_24px_70px_-50px_var(--shadow)] sm:p-10">
+      <section className="reveal-enter border-border bg-surface rounded-3xl border p-6 shadow-[0_24px_70px_-50px_var(--shadow)] sm:p-10">
         <header className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">{modeLabel}</p>
-          <h1 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">Game complete</h1>
-          <p className="mt-2 text-sm text-muted">{resultTitle(results.totalScore)}</p>
-          <p className="mt-6 font-mono text-4xl font-semibold sm:text-5xl">{results.totalScore.toLocaleString()}</p>
-          <p className="mt-1 text-sm text-muted">out of 25,000</p>
+          <p className="text-sage text-xs font-semibold tracking-[0.2em] uppercase">
+            {modeLabel}
+          </p>
+          <h1 className="mt-3 font-serif text-4xl tracking-tight sm:text-5xl">
+            Game complete
+          </h1>
+          <p className="text-muted mt-2 text-sm">
+            {resultTitle(results.totalScore)}
+          </p>
+          <p className="mt-6 font-mono text-4xl font-semibold sm:text-5xl">
+            {results.totalScore.toLocaleString()}
+          </p>
+          <p className="text-muted mt-1 text-sm">out of 25,000</p>
           <div
-            className="mx-auto mt-5 h-1.5 max-w-md overflow-hidden rounded-full bg-border"
+            className="bg-border mx-auto mt-5 h-1.5 max-w-md overflow-hidden rounded-full"
             role="progressbar"
             aria-label="Final score"
             aria-valuemin={0}
             aria-valuemax={25_000}
             aria-valuenow={results.totalScore}
           >
-            <div className="h-full rounded-full bg-sage" style={{ width: `${scorePercent}%` }} />
+            <div
+              className="bg-sage h-full rounded-full"
+              style={{ width: `${scorePercent}%` }}
+            />
           </div>
         </header>
 
-        <div className="mt-7 flex justify-center divide-x divide-border text-center">
+        <div className="divide-border mt-7 flex justify-center divide-x text-center">
           <div className="px-6">
             <p className="font-mono text-xl font-semibold">{exactGuesses}/5</p>
-            <p className="mt-1 text-xs text-muted">Exact guesses</p>
+            <p className="text-muted mt-1 text-xs">Exact guesses</p>
           </div>
           <div className="px-6">
-            <p className="font-mono text-xl font-semibold">{averageDistance.toFixed(1)}</p>
-            <p className="mt-1 text-xs text-muted">Average distance</p>
+            <p className="font-mono text-xl font-semibold">
+              {averageDistance.toFixed(1)}
+            </p>
+            <p className="text-muted mt-1 text-xs">Average distance</p>
           </div>
         </div>
 
@@ -159,22 +200,32 @@ export function GameResults({
 
           <section>
             <h2 className="font-serif text-xl">Round recap</h2>
-            <div className="mt-2 divide-y divide-border">
+            <div className="divide-border mt-2 divide-y">
               {results.rounds.map((round) => (
                 <article
                   key={round.roundNumber}
                   className="grid gap-2 py-4 sm:grid-cols-[4rem_1fr_auto] sm:items-center"
                 >
-                  <p className="text-sm font-semibold text-muted">Round {round.roundNumber}</p>
+                  <p className="text-muted text-sm font-semibold">
+                    Round {round.roundNumber}
+                  </p>
                   <div>
                     <p className="font-medium">
-                      {episodeLabel(round.guessed)} → {episodeLabel(round.correct)}
+                      {episodeLabel(round.guessed)} →{" "}
+                      {episodeLabel(round.correct)}
                     </p>
-                    <p className="mt-1 text-sm text-muted">
-                      {round.distance === 0 ? "Exact episode" : `${round.distance} episode${round.distance === 1 ? "" : "s"} away`} · {round.correct.title}
+                    <p className="text-muted mt-1 text-sm">
+                      {round.distance === 0
+                        ? "Exact episode"
+                        : `${round.distance} episode${
+                            round.distance === 1 ? "" : "s"
+                          } away`}{" "}
+                      · {round.correct.title}
                     </p>
                   </div>
-                  <p className={`font-mono font-semibold ${round.distance === 0 ? "text-gold" : ""}`}>
+                  <p
+                    className={`font-mono font-semibold ${round.distance === 0 ? "text-gold" : ""}`}
+                  >
                     {round.score.toLocaleString()}
                   </p>
                 </article>
@@ -183,7 +234,10 @@ export function GameResults({
           </section>
 
           <form action={action}>
-            <SubmitButton pendingLabel="Preparing your next journey…" className="w-full rounded-xl bg-sage px-6 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60">
+            <SubmitButton
+              pendingLabel="Preparing your next journey…"
+              className="bg-sage w-full rounded-xl px-6 py-4 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+            >
               {actionLabel}
             </SubmitButton>
           </form>

@@ -2,10 +2,7 @@
 
 import { useActionState } from "react";
 
-import {
-  completeOnboarding,
-  type OnboardingActionState,
-} from "./actions";
+import { completeOnboarding, type OnboardingActionState } from "./actions";
 
 const initialState: OnboardingActionState = {};
 
@@ -16,7 +13,10 @@ export function OnboardingForm({
   defaultUsername: string;
   defaultDisplayName: string;
 }) {
-  const [state, action, pending] = useActionState(completeOnboarding, initialState);
+  const [state, action, pending] = useActionState(
+    completeOnboarding,
+    initialState,
+  );
 
   return (
     <form action={action} className="mt-8 grid gap-5">
@@ -33,11 +33,18 @@ export function OnboardingForm({
           aria-invalid={Boolean(state.errors?.username)}
           required
         />
-        <span id="username-help" className="text-xs font-normal leading-5 text-muted">
-          Your unique public name. Lowercase letters, numbers, hyphens, and underscores only.
+        <span
+          id="username-help"
+          className="text-muted text-xs leading-5 font-normal"
+        >
+          Your unique public name. Lowercase letters, numbers, hyphens, and
+          underscores only.
         </span>
         {state.errors?.username ? (
-          <span id="username-error" className="text-sm font-normal text-red-700 dark:text-red-300">
+          <span
+            id="username-error"
+            className="text-sm font-normal text-red-700 dark:text-red-300"
+          >
             {state.errors.username[0]}
           </span>
         ) : null}
@@ -56,18 +63,25 @@ export function OnboardingForm({
           required
         />
         {state.errors?.displayName ? (
-          <span id="display-name-error" className="text-sm font-normal text-red-700 dark:text-red-300">
+          <span
+            id="display-name-error"
+            className="text-sm font-normal text-red-700 dark:text-red-300"
+          >
             {state.errors.displayName[0]}
           </span>
         ) : null}
       </label>
 
-      {state.message ? <p className="text-sm text-red-700 dark:text-red-300" role="alert">{state.message}</p> : null}
+      {state.message ? (
+        <p className="text-sm text-red-700 dark:text-red-300" role="alert">
+          {state.message}
+        </p>
+      ) : null}
 
       <button
         type="submit"
         disabled={pending}
-        className="mt-2 rounded-xl bg-sage px-6 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
+        className="bg-sage mt-2 rounded-xl px-6 py-3.5 font-semibold text-white transition hover:brightness-105 disabled:cursor-wait disabled:opacity-60"
       >
         {pending ? "Saving…" : "Continue to FrierenGuessr"}
       </button>

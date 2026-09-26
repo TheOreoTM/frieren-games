@@ -2,7 +2,7 @@
 
 `frieren.oreotm.xyz` is an unofficial Frieren fan-game collection: small games from a long journey. Its first game is FrierenGuessr, where a player identifies a TV episode from a curated still frame.
 
-Product and engineering decisions live in `AGENTS.md` and `docs/`.
+Product and engineering decisions live in `docs/`.
 
 ## App development
 

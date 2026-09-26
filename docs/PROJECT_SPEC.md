@@ -605,7 +605,7 @@ Preferred qualities:
 - excessive glass cards,
 - cyberpunk/gamer aesthetic,
 - ornate borders everywhere,
-- AI-generated character art,
+- generated character art,
 - unlicensed decorative art added just to fill space.
 
 ### Responsive behavior
@@ -755,6 +755,6 @@ Before building the full game, prove the riskiest local-media workflow:
 11. FFmpeg extracts a real WebP still from the original source at that timestamp.
 12. A local manifest record is created.
 13. Tests cover any nontrivial parsing/domain logic introduced.
-14. The AI stops and hands the project back for review.
+14. Work stops at this phase boundary for review.
 
 No auth, Daily system, XP, achievements, or broad admin dashboard should be built as part of this proof-of-concept unless required by an already-existing repo constraint.

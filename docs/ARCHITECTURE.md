@@ -88,7 +88,6 @@ tools/
     manifest-schema.ts
 
 docs/
-AGENTS.md
 ```
 
 The exact folders can change if the repository already has a strong convention. Avoid needless nesting.

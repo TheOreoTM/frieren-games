@@ -1,6 +1,6 @@
 # Development Roadmap
 
-This roadmap is intentionally phased so the developer remains involved and the AI does not sprint through the whole application.
+This roadmap is intentionally phased so each stage can be reviewed before work begins on the next one.
 
 ## Phase 0 — Repo review
 
@@ -9,7 +9,7 @@ Goal: understand what already exists before changing architecture.
 Tasks:
 
 - inspect package manager, Next.js structure, Tailwind/shadcn setup, linting, TypeScript, Prisma if present,
-- read `AGENTS.md` and docs,
+- read the project docs,
 - identify conflicts between repo reality and proposed structure,
 - propose the smallest adjustments.
 

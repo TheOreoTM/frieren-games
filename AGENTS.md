@@ -103,7 +103,7 @@ Do not introduce Redis until there is a concrete requirement that PostgreSQL can
 - Use migrations rather than ad-hoc destructive schema changes.
 - Preserve existing data where reasonable.
 - **Never reset, drop, truncate, or reseed the developer's database without explicit authorization.**
-- Development and production must use separate Neon databases/branches/credentials.
+- Local tooling and production currently share one Neon database through `DATABASE_URL`. Treat every local database write as a live-data change; do not reset, drop, truncate, or reseed it without explicit authorization.
 - Application code should depend on `DATABASE_URL`, not on Neon-specific APIs unless a Neon-only feature is intentionally adopted later.
 - Prefer explicit game-specific tables over a generic polymorphic "GameData" blob.
 

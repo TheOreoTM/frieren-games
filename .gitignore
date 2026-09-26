@@ -35,7 +35,6 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 !.env.example
-!.env.frames-production.example
 
 # local curator media derivatives and approval queue
 /tools/curator/cache/

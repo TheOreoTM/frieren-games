@@ -20,7 +20,7 @@ npm run build
 ```
 
 The focused browser suite uses Playwright. Install its Chromium runtime once, then run it against
-the development database:
+the configured database:
 
 ```bash
 npx playwright install --with-deps chromium
@@ -51,24 +51,17 @@ npm run curator
 
 See `tools/curator/README.md` for the media workflow, timestamp model, generated paths, and local safety boundary.
 
-## Development database
+## Database
 
-Set `DATABASE_URL` in `.env.local` to a development-only Neon PostgreSQL database. Never use the production credential for local migration work.
+Set `DATABASE_URL` in `.env.local`. Local tooling and the deployed app use the same configured database, so migration, seed, and test commands may affect live data.
 
 ```bash
 npm run db:migrate
+npm run db:migrate:deploy
 npm run db:seed
 ```
 
-The schema includes curated Guessr content plus Auth.js users, accounts, and sessions.
-
-Production migrations use the guarded target configured in `.env.frames-production.local`.
-The command checks status by default and requires the exact target label before it writes:
-
-```bash
-npm run db:migrate:production
-npm run db:migrate:production -- --apply --confirm=frieren-production
-```
+Use `db:migrate` while creating a new migration and `db:migrate:deploy` to apply already committed migrations. The schema includes curated Guessr content plus Auth.js users, accounts, and sessions.
 
 ## Frame pipeline and admin
 
@@ -79,11 +72,6 @@ npm run frames:push
 ```
 
 The command validates each WebP, uploads it under an opaque key, upserts its `Frame` record, and marks the local manifest entry as pushed. It is safe to retry.
-
-To synchronize that curated inventory into the separate production database and R2 target, use the
-guarded `npm run frames:promote` workflow documented in
-[`tools/frames/README.md`](tools/frames/README.md). It defaults to a dry-run and never changes the
-local manifest.
 
 The frame manager at `/admin/frames` requires an authenticated user with the `ADMIN` role. See the Discord setup below for bootstrapping the first administrator, and `tools/frames/README.md` for the frame pipeline safety model.
 

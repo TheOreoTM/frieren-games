@@ -408,21 +408,16 @@ On first authenticated session:
 
 Admin access must be checked server-side. Hiding nav links is not authorization.
 
-## 14. Neon environments
+## 14. Neon environment
 
-Use separate credentials/databases or branches for development and production.
-
-Suggested env distinction:
+The project currently uses one Neon database for local development and the deployed application:
 
 ```text
-# local .env.local
-DATABASE_URL=<development Neon URL>
-
-# Vercel production secret
-DATABASE_URL=<production Neon URL>
+# local .env.local and Vercel production secret
+DATABASE_URL=<shared Neon URL>
 ```
 
-Never point routine local migrations/testing at production.
+Local migrations, seeds, scripts, and tests can therefore affect live data. Review database-writing commands before running them and use `prisma migrate deploy` for already committed migrations.
 
 If preview deployments are later introduced, decide deliberately whether they receive disposable Neon branches.
 

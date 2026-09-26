@@ -12,11 +12,10 @@
     "test:e2e": "playwright test",
     "curator": "node --env-file-if-exists=.env.local --import tsx tools/curator/src/server.ts",
     "frames:push": "node --env-file-if-exists=.env.local --import tsx tools/frames/push.ts",
-    "frames:promote": "node --env-file-if-exists=.env.frames-production.local --import tsx tools/frames/promote.ts",
     "env:check": "node --env-file-if-exists=.env.local --import tsx tools/check-production-env.ts",
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:migrate:production": "node --env-file-if-exists=.env.frames-production.local --import tsx tools/migrations/production.ts",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:seed": "npm run prisma:generate && prisma db seed",
     "format": "prettier . --write",
     "format:check": "prettier . --check"

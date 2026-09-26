@@ -1,9 +1,9 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 import Discord, { type DiscordProfile } from "next-auth/providers/discord";
 
 import { UserRole } from "@/generated/prisma/client";
 import { isBootstrapAdmin } from "@/features/auth/domain/admin-bootstrap";
+import { emailFreePrismaAdapter } from "@/features/auth/server/email-free-adapter";
 import { findAvailableUsername } from "@/features/profiles/server/usernames";
 import { getDb } from "@/lib/db";
 
@@ -21,14 +21,14 @@ function discordAvatarUrl(profile: DiscordProfile): string {
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(getDb()),
+  adapter: emailFreePrismaAdapter(getDb()),
   providers: [
     Discord({
+      authorization: { params: { scope: "identify" } },
       async profile(profile) {
         return {
           id: profile.id,
           name: profile.global_name ?? profile.username,
-          email: profile.email,
           image: discordAvatarUrl(profile),
           username: await findAvailableUsername(profile.username, profile.id),
           displayName: profile.global_name ?? profile.username,

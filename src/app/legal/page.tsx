@@ -46,9 +46,10 @@ export default function LegalPage() {
             <h2 className="text-foreground font-serif text-2xl">Privacy</h2>
             <p className="mt-2">
               Discord sign-in supplies account identity and avatar information.
+              The site does not request or store your Discord email address.
               Public profiles show only the chosen username, display name,
-              avatar, and game activity. Email addresses, Discord IDs, OAuth
-              tokens, and session data are not public.
+              avatar, and game activity. Discord IDs, OAuth tokens, and session
+              data are not public.
             </p>
           </section>
           <section>

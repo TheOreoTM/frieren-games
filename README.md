@@ -127,3 +127,4 @@ ADMIN_DISCORD_ID="your personal Discord user ID"
 Generate `AUTH_SECRET` with `npx auth secret`. `ADMIN_DISCORD_ID` is read only on the server; when that Discord account signs in, its database role is promoted to `ADMIN`. Existing manually assigned admins are not demoted if the variable later changes.
 
 New Discord users are sent through `/onboarding` once to review their public username and display name. Discord provider IDs and direct Discord avatar URLs are not exposed by public site UI.
+The OAuth request uses only Discord's `identify` scope; Discord email addresses are neither requested nor stored.

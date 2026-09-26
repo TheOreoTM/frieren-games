@@ -62,6 +62,14 @@ npm run db:seed
 
 The schema includes curated Guessr content plus Auth.js users, accounts, and sessions.
 
+Production migrations use the guarded target configured in `.env.frames-production.local`.
+The command checks status by default and requires the exact target label before it writes:
+
+```bash
+npm run db:migrate:production
+npm run db:migrate:production -- --apply --confirm=frieren-production
+```
+
 ## Frame pipeline and admin
 
 After approving local frames and configuring the R2 variables from `.env.example`:

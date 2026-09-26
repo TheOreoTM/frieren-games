@@ -15,8 +15,8 @@ Use this checklist for the first production deploy and for later high-risk relea
 
 - Take a Neon branch/snapshot before the first production migration and before migrations that rewrite existing data.
 - Review every SQL file in `prisma/migrations/` before applying it.
-- Apply production migrations with `npx prisma migrate deploy`; never use `prisma migrate dev`, reset, or seed against production.
-- Confirm `npx prisma migrate status` reports the production schema as up to date.
+- Review with `npm run db:migrate:production`, then apply with the displayed target label; never use `prisma migrate dev`, reset, or seed against production.
+- Confirm `npm run db:migrate:production` reports the production schema as up to date.
 - Test restoring a Neon branch or snapshot before relying on it as a backup plan.
 
 ## R2 and media

@@ -56,8 +56,7 @@ The curator manifest has one local workflow status, so do not edit `PUSHED` reco
 `.env.local` at production. Production promotion deliberately ignores the development push status
 and synchronizes every locally approved manifest record to an explicitly named target.
 
-First apply the reviewed Prisma migrations to the production database using
-`prisma migrate deploy`. Then create the ignored production promotion environment file:
+First create the ignored production tooling environment file:
 
 ```bash
 cp .env.frames-production.example .env.frames-production.local
@@ -65,7 +64,14 @@ cp .env.frames-production.example .env.frames-production.local
 
 Fill it with the production Neon and R2 values. This custom filename is intentional: Next.js does
 not automatically load the R2 write credentials during normal production builds. Run the default
-dry-run first:
+production migration status check, then apply reviewed migrations with the exact target label:
+
+```bash
+npm run db:migrate:production
+npm run db:migrate:production -- --apply --confirm=frieren-production
+```
+
+Run the frame-promotion dry-run next:
 
 ```bash
 npm run frames:promote

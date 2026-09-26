@@ -160,13 +160,12 @@ export async function saveConnectionsPuzzleDraft(
       for (const group of puzzle.groups) {
         await database.connectionsGroup.create({
           data: {
-            puzzleId: stored.id,
+            puzzle: { connect: { id: stored.id } },
             position: group.position,
             label: group.label,
             explanation: group.explanation,
             tiles: {
               create: group.tiles.map((tile) => ({
-                puzzleId: stored.id,
                 text: tile.text,
                 normalizedText: normalizeConnectionsText(tile.text),
               })),

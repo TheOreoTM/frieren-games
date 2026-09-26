@@ -8,6 +8,7 @@ import { PrismaClient } from "../../src/generated/prisma/client";
 import { readManifest, writeManifest } from "../curator/src/manifest";
 import { frameInputFromManifest } from "./frame-input";
 import { curatorManifestPath, readVerifiedFrameBytes } from "./local-frame";
+import { parseFramePushOptions } from "./push-options";
 import { putFrameObject, validateR2Environment } from "./r2-storage";
 
 if (existsSync(".env.local")) loadEnvFile(".env.local");
@@ -25,6 +26,7 @@ function errorMessage(error: unknown) {
 }
 
 async function main() {
+  const options = parseFramePushOptions(process.argv.slice(2));
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL is required.");
   validateR2Environment();
@@ -38,7 +40,7 @@ async function main() {
   try {
     for (let index = 0; index < manifest.frames.length; index += 1) {
       const record = manifest.frames[index];
-      if (record.status === "PUSHED") {
+      if (record.status === "PUSHED" && !options.includePushed) {
         summary.skipped += 1;
         continue;
       }

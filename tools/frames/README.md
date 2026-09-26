@@ -30,6 +30,13 @@ Then push:
 npm run frames:push
 ```
 
+Previously pushed manifest entries are skipped. After intentionally rebuilding the configured
+database or changing the target, revalidate and synchronize every approved frame with:
+
+```bash
+npm run frames:push -- --all
+```
+
 ## Safety and retries
 
 - The complete JSON manifest is schema-validated before processing.

@@ -72,6 +72,7 @@ npm run frames:push
 ```
 
 The command validates each WebP, uploads it under an opaque key, upserts its `Frame` record, and marks the local manifest entry as pushed. It is safe to retry.
+After rebuilding the configured database or changing the target, use `npm run frames:push -- --all` to synchronize entries already marked as pushed.
 
 The frame manager at `/admin/frames` requires an authenticated user with the `ADMIN` role. See the Discord setup below for bootstrapping the first administrator, and `tools/frames/README.md` for the frame pipeline safety model.
 
